@@ -1,0 +1,65 @@
+# Decision Engine Configuration
+
+# Risk thresholds
+high_risk_threshold: 0.80
+low_risk_threshold: 0.30
+
+# SLA
+max_latency_ms: 100
+
+# Model weights (ML vs Rules)
+model_weights:
+  ml_score: 0.70
+  rules_score: 0.30
+
+# Feature importance (for explainability)
+feature_importance:
+  velocity_1h: 0.15
+  device_reputation: 0.12
+  behavior_pattern: 0.10
+  merchant_risk_tier: 0.08
+  geovelocity: 0.08
+  ip_reputation: 0.07
+  aml_screening: 0.20
+  graph_analysis: 0.10
+  other: 0.10
+
+# Velocity thresholds
+velocity_thresholds:
+  transactions_per_hour: 5
+  amount_per_day_usd: 5000
+  new_merchant_per_hour: 2
+
+# AML/Compliance
+enable_aml_screening: true
+enable_graph_analysis: true
+enable_pep_screening: true
+
+# A/B Testing
+ab_test_config:
+  enabled: true
+  control_group_percentage: 50
+  variants:
+    - name: "baseline"
+      percentage: 50
+      model_version: "v1.0.0"
+    - name: "new_model"
+      percentage: 50
+      model_version: "v1.1.0"
+
+# Drift detection
+drift_monitoring:
+  enabled: true
+  feature_drift_threshold: 2.0  # Z-score
+  performance_drift_threshold:
+    tpr_decrease: 0.05
+    fpr_increase: 0.02
+
+# Monitoring & Alerts
+monitoring:
+  export_interval_seconds: 60
+  alert_thresholds:
+    high_fpr: 0.10
+    low_tpr: 0.85
+    latency_p95_ms: 100
+    sla_breach_rate: 0.01
