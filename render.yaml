@@ -3,8 +3,22 @@ services:
     name: fraud-detection-api
     env: python
     plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "uvicorn src.api.transaction_handler:app --host 0.0.0.0 --port $PORT"
+    
+    # Build command
+    buildCommand: "pip install --no-cache-dir -r requirements.txt"
+    
+    # Start command with proper timeouts
+    startCommand: "uvicorn src.api.transaction_handler:app --host 0.0.0.0 --port $PORT --workers 1 --loop uvloop --http httptools"
+    
+    # Environment variables
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
+      - key: PORT
+        value: 8000
+    
+    # Health check configuration
+    healthCheckPath: /health
+    healthCheckInterval: 30
+    healthCheckTimeout: 10
+    maxShutdownDelay: 30
