@@ -158,8 +158,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize decision engine
-engine = RiskDecisionEngine(config_path="config/model_config.yaml")
+# Initialize decision engine (lazy loaded to avoid startup delays)
+engine = None
+
+def get_engine():
+    """Get or initialize the decision engine lazily."""
+    global engine
+    if engine is None:
+        try:
+            engine = RiskDecisionEngine(config_path="config/model_config.yaml")
+        except Exception as e:
+            print(f"[WARNING] Could not load RiskDecisionEngine: {e}")
+            engine = None
+    return engine
 
 # Metrics tracking
 class APIMetrics:
@@ -254,8 +265,13 @@ async def score_transaction(request: TransactionRequest):
     try:
         start_time = time.time()
 
+        # Get decision engine
+        decision_engine = get_engine()
+        if not decision_engine:
+            raise HTTPException(status_code=503, detail="Decision engine not available")
+
         # Call decision engine
-        decision = engine.score_transaction(
+        decision = decision_engine.score_transaction(
             transaction={
                 "id": request.transaction_id,
                 "amount": request.amount,
@@ -318,9 +334,13 @@ async def batch_score_transactions(
     Returns list of decisions for bulk transaction processing.
     """
     try:
+        decision_engine = get_engine()
+        if not decision_engine:
+            raise HTTPException(status_code=503, detail="Decision engine not available")
+
         decisions = []
         for req in requests:
-            decision = engine.score_transaction(
+            decision = decision_engine.score_transaction(
                 transaction={
                     "id": req.transaction_id,
                     "amount": req.amount,
