@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Fraud Detection Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .risk-high { color: #ef4444; }
+        .risk-medium { color: #f97316; }
+        .risk-low { color: #22c55e; }
+        .upload-area {
+            transition: all 0.3s ease;
+        }
+        .upload-area.dragover {
+            background-color: #e0e7ff;
+            border-color: #667eea;
+            transform: scale(1.02);
+        }
+        .loading-spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-high {
+            background-color: #fee2e2;
+            color: #7f1d1d;
+        }
+        .badge-medium {
+            background-color: #fed7aa;
+            color: #7c2d12;
+        }
+        .badge-low {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center font-bold text-purple-600">
+                    FD
+                </div>
+                <h1 class="text-2xl font-bold">Fraud Detection Platform</h1>
+            </div>
+            <div class="text-sm opacity-90">Advanced Risk Analysis Engine</div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Upload Section -->
+        <div class="mb-8">
+            <div class="card-shadow rounded-xl bg-white p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Upload Transaction Data</h2>
+                <p class="text-gray-600 mb-6">Upload a CSV, JSON, or Excel file to analyze for fraud patterns and risks</p>
+
+                <div id="uploadArea" class="upload-area border-2 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer transition-all hover:border-purple-400">
+                    <input type="file" id="fileInput" accept=".csv,.json,.jsonl,.xlsx,.xls" style="display: none;">
+                    <div id="uploadContent">
+                        <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20a4 4 0 004 4h24a4 4 0 004-4V20m-8-12v12m0 0l-3-3m3 3l3-3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Drag & Drop or Click to Upload</h3>
+                        <p class="text-gray-500 mb-4">Supported formats: CSV, JSON, Excel</p>
+                        <span class="inline-block px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                            Choose File
+                        </span>
+                    </div>
+                    <div id="uploadingContent" style="display: none;">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <p class="text-gray-600">Uploading and analyzing...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" style="display: none;">
+            <!-- Control Buttons -->
+            <div class="flex gap-4 mb-6">
+                <button id="clearBtn" class="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition">
+                    Clear Results
+                </button>
+                <button id="downloadBtn" class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition">
+                    Download Report
+                </button>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="card-shadow rounded-lg bg-white p-6">
+                    <div class="text-gray-500 text-sm font-semibold mb-2">Total Transactions</div>
+                    <div class="text-4xl font-bold text-gray-800" id="totalTxns">0</div>
+                </div>
+                <div class="card-shadow rounded-lg bg-white p-6">
+                    <div class="text-gray-500 text-sm font-semibold mb-2">High Risk Entities</div>
+                    <div class="text-4xl font-bold risk-high" id="highRisk">0</div>
+                </div>
+                <div class="card-shadow rounded-lg bg-white p-6">
+                    <div class="text-gray-500 text-sm font-semibold mb-2">Anomalies Detected</div>
+                    <div class="text-4xl font-bold risk-medium" id="anomaliesCount">0</div>
+                </div>
+                <div class="card-shadow rounded-lg bg-white p-6">
+                    <div class="text-gray-500 text-sm font-semibold mb-2">ML Patterns Found</div>
+                    <div class="text-4xl font-bold risk-low" id="patternsCount">0</div>
+                </div>
+            </div>
+
+            <!-- Risk Distribution Chart -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="card-shadow rounded-lg bg-white p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Risk Distribution</h3>
+                    <canvas id="riskChart"></canvas>
+                </div>
+
+                <div class="card-shadow rounded-lg bg-white p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Detected Patterns</h3>
+                    <div id="patternsInfo" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- Risk Profiles Table -->
+            <div class="card-shadow rounded-lg bg-white p-6 mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Entity Risk Profiles</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Entity ID</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Risk Score</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Risk Level</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Risk Factors</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Red Flags</th>
+                            </tr>
+                        </thead>
+                        <tbody id="profilesTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Anomalies Section -->
+            <div id="anomaliesSection" style="display: none;">
+                <div class="card-shadow rounded-lg bg-white p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Detected Anomalies</h3>
+                    <div id="anomaliesList" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- Fraud Networks Section -->
+            <div id="networkSection" style="display: none;">
+                <div class="card-shadow rounded-lg bg-white p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Fraud Network Analysis</h3>
+                    <div id="networkInfo" class="space-y-2 text-sm text-gray-700"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMsg" style="display: none;" class="card-shadow rounded-lg bg-red-50 border border-red-200 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-red-800 mb-2">Error</h3>
+            <p id="errorText" class="text-red-700"></p>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadContent = document.getElementById('uploadContent');
+        const uploadingContent = document.getElementById('uploadingContent');
+        const resultsSection = document.getElementById('resultsSection');
+        const clearBtn = document.getElementById('clearBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const errorText = document.getElementById('errorText');
+
+        let analysisResults = null;
+        let riskChart = null;
+
+        // File upload handling
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFile);
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFile();
+            }
+        });
+
+        async function handleFile() {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            errorMsg.style.display = 'none';
+            uploadContent.style.display = 'none';
+            uploadingContent.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await axios.post('/upload-and-analyze', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+
+                analysisResults = response.data;
+                displayResults();
+                resultsSection.style.display = 'block';
+            } catch (error) {
+                showError(error.response?.data?.detail || error.message);
+            } finally {
+                uploadContent.style.display = 'block';
+                uploadingContent.style.display = 'none';
+            }
+        }
+
+        function displayResults() {
+            const data = analysisResults;
+
+            // Update summary cards
+            document.getElementById('totalTxns').textContent = data.records_processed;
+            document.getElementById('highRisk').textContent = data.summary.high_risk_entities;
+            document.getElementById('anomaliesCount').textContent = data.anomalies.length;
+            document.getElementById('patternsCount').textContent = data.money_laundering_patterns.length;
+
+            // Risk distribution chart
+            const ctx = document.getElementById('riskChart').getContext('2d');
+            if (riskChart) riskChart.destroy();
+            riskChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['High Risk', 'Medium Risk', 'Low Risk'],
+                    datasets: [{
+                        data: [
+                            data.summary.high_risk_entities,
+                            data.summary.medium_risk_entities,
+                            data.summary.low_risk_entities
+                        ],
+                        backgroundColor: ['#ef4444', '#f97316', '#22c55e'],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Risk profiles table
+            const profilesTable = document.getElementById('profilesTable');
+            profilesTable.innerHTML = data.risk_profiles.map(profile => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-3 font-mono text-sm">${profile.entity_id}</td>
+                    <td class="px-4 py-3">
+                        <span class="font-semibold">${profile.final_risk_score.toFixed(4)}</span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="badge badge-${profile.risk_level.toLowerCase()}">${profile.risk_level}</span>
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                        ${profile.risk_factors.length > 0 ? profile.risk_factors.join(', ') : 'None'}
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                        ${profile.red_flags.length > 0 ? `<span class="text-red-600 font-semibold">${profile.red_flags.join(', ')}</span>` : 'None'}
+                    </td>
+                </tr>
+            `).join('');
+
+            // Patterns info
+            const patternsInfo = document.getElementById('patternsInfo');
+            if (data.money_laundering_patterns.length > 0) {
+                patternsInfo.innerHTML = data.money_laundering_patterns.map(pattern => `
+                    <div class="p-3 bg-orange-50 border border-orange-200 rounded">
+                        <div class="font-semibold text-orange-900">${pattern.type}</div>
+                        <div class="text-sm text-orange-700 mt-1">${pattern.description}</div>
+                        <div class="text-xs text-orange-600 mt-2">Risk Score: ${pattern.risk_score.toFixed(4)}</div>
+                    </div>
+                `).join('');
+            } else {
+                patternsInfo.innerHTML = '<p class="text-gray-500">No suspicious patterns detected</p>';
+            }
+
+            // Anomalies
+            if (data.anomalies.length > 0) {
+                document.getElementById('anomaliesSection').style.display = 'block';
+                const anomaliesList = document.getElementById('anomaliesList');
+                anomaliesList.innerHTML = data.anomalies.slice(0, 5).map(anomaly => `
+                    <div class="p-3 bg-red-50 border border-red-200 rounded">
+                        <div class="font-semibold text-red-900">${anomaly.method}</div>
+                        <div class="text-sm text-red-700">${anomaly.reason}</div>
+                        <div class="text-xs text-red-600 mt-1">Txn: ${anomaly.transaction_id} | Score: ${anomaly.anomaly_score.toFixed(4)}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Networks
+            if (data.fraud_networks.networks && data.fraud_networks.networks.length > 0) {
+                document.getElementById('networkSection').style.display = 'block';
+                const networkInfo = document.getElementById('networkInfo');
+                networkInfo.innerHTML = `
+                    <div class="mb-3"><strong>Suspicious Clusters:</strong> ${data.fraud_networks.networks.length}</div>
+                    <div class="mb-3"><strong>Total Graph Nodes:</strong> ${data.fraud_networks.total_nodes || 'N/A'}</div>
+                    <div><strong>Graph Density:</strong> ${(data.fraud_networks.graph_density * 100).toFixed(2)}%</div>
+                `;
+            }
+        }
+
+        clearBtn.addEventListener('click', () => {
+            fileInput.value = '';
+            resultsSection.style.display = 'none';
+            uploadContent.style.display = 'block';
+            uploadingContent.style.display = 'none';
+            errorMsg.style.display = 'none';
+            analysisResults = null;
+            if (riskChart) riskChart.destroy();
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            if (!analysisResults) return;
+            const report = JSON.stringify(analysisResults, null, 2);
+            const blob = new Blob([report], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `fraud-analysis-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        function showError(message) {
+            errorMsg.style.display = 'block';
+            errorText.textContent = message;
+        }
+    </script>
+</body>
+</html>

@@ -422,16 +422,25 @@ async def get_analytics():
 
 @app.get("/", tags=["Root"], include_in_schema=False)
 async def root():
-    """Redirect to dashboard."""
+    """Serve the modern fraud detection dashboard."""
     return FileResponse(
-        os.path.join(os.path.dirname(__file__), "dashboard.html"),
+        os.path.join(os.path.dirname(__file__), "modern_dashboard.html"),
         media_type="text/html"
     )
 
 
 @app.get("/dashboard", tags=["Dashboard"], include_in_schema=False)
 async def get_dashboard():
-    """Get the interactive web dashboard."""
+    """Get the modern interactive web dashboard."""
+    return FileResponse(
+        os.path.join(os.path.dirname(__file__), "modern_dashboard.html"),
+        media_type="text/html"
+    )
+
+
+@app.get("/classic", tags=["Dashboard"], include_in_schema=False)
+async def get_classic_dashboard():
+    """Get the classic dashboard."""
     return FileResponse(
         os.path.join(os.path.dirname(__file__), "dashboard.html"),
         media_type="text/html"
@@ -442,7 +451,7 @@ async def get_dashboard():
 async def get_docs():
     """Interactive API documentation (Swagger UI)."""
     return FileResponse(
-        os.path.join(os.path.dirname(__file__), "dashboard.html"),
+        os.path.join(os.path.dirname(__file__), "modern_dashboard.html"),
         media_type="text/html"
     )
 
