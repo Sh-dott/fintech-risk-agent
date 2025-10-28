@@ -20,7 +20,7 @@ import tempfile
 import shutil
 
 from src.core.decision_engine import RiskDecisionEngine, DecisionType, RiskLevel
-from src.analytics import AIInsightsEngine, FileProcessor
+from src.analytics import AIInsightsEngine, FileProcessor, AdvancedFraudDetectionEngine
 
 
 # ============================================================================
@@ -106,6 +106,35 @@ class InsightDetail(BaseModel):
     impact: str
     recommendation: str
     metrics: Dict[str, Any]
+
+
+class RiskProfileResponse(BaseModel):
+    """Risk profile for an entity."""
+    entity_id: str
+    entity_type: str
+    base_risk_score: float
+    ml_risk_score: float
+    behavioral_risk_score: float
+    network_risk_score: float
+    anomaly_score: float
+    final_risk_score: float
+    risk_level: str
+    risk_factors: List[str]
+    red_flags: List[str]
+    confidence_score: float
+
+
+class AdvancedAnalysisResponse(BaseModel):
+    """Advanced fraud detection analysis response."""
+    status: str
+    file_name: str
+    records_processed: int
+    timestamp: str
+    summary: Dict[str, Any]
+    anomalies: List[Dict[str, Any]]
+    fraud_networks: Dict[str, Any]
+    money_laundering_patterns: List[Dict[str, Any]]
+    risk_profiles: List[RiskProfileResponse]
 
 
 # ============================================================================
@@ -418,10 +447,10 @@ async def get_docs():
     )
 
 
-@app.post("/upload-and-analyze", tags=["Analytics"])
+@app.post("/upload-and-analyze", response_model=AdvancedAnalysisResponse, tags=["Advanced Analytics"])
 async def upload_and_analyze(file: UploadFile = File(...)):
     """
-    Upload a transaction data file (CSV/JSON/Excel) and get AI-powered insights.
+    Upload a transaction data file (CSV/JSON/Excel) and get world-class fraud detection analysis.
 
     Supported formats:
     - CSV (comma-separated values)
@@ -429,13 +458,14 @@ async def upload_and_analyze(file: UploadFile = File(...)):
     - JSONL (JSON Lines format)
     - Excel (XLSX/XLS)
 
-    Returns business intelligence including:
-    - Fraud patterns detected
-    - Risk distribution analysis
-    - User behavior insights
-    - Merchant analysis
-    - Geographic patterns
-    - Strategic recommendations
+    Returns comprehensive fraud detection including:
+    - Multi-dimensional risk profiling
+    - Anomaly detection (Isolation Forest + Local Outlier Factor)
+    - Fraud network detection (graph analysis)
+    - Money laundering pattern detection
+    - Entity risk scoring (base + ML + behavioral + network + anomaly)
+    - Detailed risk factors and red flags
+    - Suspicious network clusters
     """
     temp_file_path = None
 
@@ -458,27 +488,49 @@ async def upload_and_analyze(file: UploadFile = File(...)):
                 detail=f"Data quality too low: {validation['data_quality_score']:.1f}%"
             )
 
-        # Generate AI insights
-        insights_engine = AIInsightsEngine()
-        insights_engine.load_transactions(transactions)
-        insights_engine.analyze()
+        # Initialize advanced fraud detection engine
+        fraud_engine = AdvancedFraudDetectionEngine()
+        fraud_engine.load_transactions(transactions)
 
-        # Get summary
-        summary = insights_engine.get_summary()
+        # Run all detection analyses
+        anomalies = fraud_engine.detect_anomalies()
+        fraud_networks = fraud_engine.detect_fraud_networks()
+        ml_patterns = fraud_engine.detect_money_laundering_patterns()
+        risk_profiles = fraud_engine.calculate_comprehensive_risk_scores()
 
-        return {
-            "status": "success",
-            "file_name": file.filename,
-            "records_processed": validation["valid_records"],
-            "data_quality_score": validation["data_quality_score"],
-            "insights": summary["insights"],
-            "summary": {
-                "total_insights": summary["total_insights"],
-                "critical_issues": summary["critical"],
-                "warnings": summary["warning"],
-                "info_items": summary["info"]
-            }
-        }
+        # Generate comprehensive report
+        report = fraud_engine.generate_comprehensive_report()
+
+        # Convert risk profiles to response format
+        risk_profile_responses = [
+            RiskProfileResponse(
+                entity_id=profile.entity_id,
+                entity_type=profile.entity_type,
+                base_risk_score=profile.base_risk_score,
+                ml_risk_score=profile.ml_risk_score,
+                behavioral_risk_score=profile.behavioral_risk_score,
+                network_risk_score=profile.network_risk_score,
+                anomaly_score=profile.anomaly_score,
+                final_risk_score=profile.final_risk_score,
+                risk_level=profile.risk_level,
+                risk_factors=profile.risk_factors,
+                red_flags=profile.red_flags,
+                confidence_score=profile.confidence_score
+            )
+            for profile in risk_profiles.values()
+        ]
+
+        return AdvancedAnalysisResponse(
+            status="success",
+            file_name=file.filename,
+            records_processed=validation["valid_records"],
+            timestamp=datetime.utcnow().isoformat(),
+            summary=report["summary"],
+            anomalies=anomalies,
+            fraud_networks=fraud_networks,
+            money_laundering_patterns=ml_patterns,
+            risk_profiles=risk_profile_responses
+        )
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -490,42 +542,67 @@ async def upload_and_analyze(file: UploadFile = File(...)):
             os.unlink(temp_file_path)
 
 
-@app.post("/analyze-transactions", tags=["Analytics"])
+@app.post("/analyze-transactions", response_model=AdvancedAnalysisResponse, tags=["Advanced Analytics"])
 async def analyze_transactions(transactions: List[Dict[str, Any]]):
     """
-    Analyze a list of transactions and get AI-powered business insights.
+    Analyze a list of transactions (JSON) with world-class fraud detection.
 
     Provides:
-    - Fraud pattern detection
-    - Risk analysis
-    - User behavior patterns
-    - Merchant intelligence
-    - Geographic risk assessment
-    - Strategic recommendations
+    - Multi-dimensional risk profiling
+    - Anomaly detection (Isolation Forest + Local Outlier Factor)
+    - Fraud network detection (graph analysis)
+    - Money laundering pattern detection
+    - Entity risk scoring (base + ML + behavioral + network + anomaly)
+    - Detailed risk factors and red flags
+    - Comprehensive fraud intelligence
     """
     if not transactions:
         raise HTTPException(status_code=400, detail="No transactions provided")
 
     try:
-        # Generate insights
-        insights_engine = AIInsightsEngine()
-        insights_engine.load_transactions(transactions)
-        insights_engine.analyze()
+        # Initialize advanced fraud detection engine
+        fraud_engine = AdvancedFraudDetectionEngine()
+        fraud_engine.load_transactions(transactions)
 
-        # Get summary
-        summary = insights_engine.get_summary()
+        # Run all detection analyses
+        anomalies = fraud_engine.detect_anomalies()
+        fraud_networks = fraud_engine.detect_fraud_networks()
+        ml_patterns = fraud_engine.detect_money_laundering_patterns()
+        risk_profiles = fraud_engine.calculate_comprehensive_risk_scores()
 
-        return {
-            "status": "success",
-            "records_processed": len(transactions),
-            "insights": summary["insights"],
-            "summary": {
-                "total_insights": summary["total_insights"],
-                "critical_issues": summary["critical"],
-                "warnings": summary["warning"],
-                "info_items": summary["info"]
-            }
-        }
+        # Generate comprehensive report
+        report = fraud_engine.generate_comprehensive_report()
+
+        # Convert risk profiles to response format
+        risk_profile_responses = [
+            RiskProfileResponse(
+                entity_id=profile.entity_id,
+                entity_type=profile.entity_type,
+                base_risk_score=profile.base_risk_score,
+                ml_risk_score=profile.ml_risk_score,
+                behavioral_risk_score=profile.behavioral_risk_score,
+                network_risk_score=profile.network_risk_score,
+                anomaly_score=profile.anomaly_score,
+                final_risk_score=profile.final_risk_score,
+                risk_level=profile.risk_level,
+                risk_factors=profile.risk_factors,
+                red_flags=profile.red_flags,
+                confidence_score=profile.confidence_score
+            )
+            for profile in risk_profiles.values()
+        ]
+
+        return AdvancedAnalysisResponse(
+            status="success",
+            file_name="json_input",
+            records_processed=len(transactions),
+            timestamp=datetime.utcnow().isoformat(),
+            summary=report["summary"],
+            anomalies=anomalies,
+            fraud_networks=fraud_networks,
+            money_laundering_patterns=ml_patterns,
+            risk_profiles=risk_profile_responses
+        )
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error analyzing transactions: {str(e)}")
