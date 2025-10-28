@@ -92,8 +92,8 @@ app = FastAPI(
     title="Risk Decision Engine API",
     description="Real-time transaction scoring & fraud detection for fintech payments",
     version="1.0.0",
-    docs_url="/docs",  # Swagger UI
-    redoc_url="/redoc"  # ReDoc UI
+    docs_url="/api-docs",  # Swagger UI (custom path)
+    redoc_url="/api-redoc"  # ReDoc UI (custom path)
 )
 
 # Add CORS for web access
@@ -367,34 +367,31 @@ async def get_analytics():
     }
 
 
-@app.get("/dashboard", tags=["Dashboard"])
-async def get_dashboard():
-    """Get the interactive web dashboard."""
-    dashboard_path = os.path.join(os.path.dirname(__file__), "dashboard.html")
-    if os.path.exists(dashboard_path):
-        return FileResponse(dashboard_path, media_type="text/html")
-    return {"message": "Dashboard not found", "try": "/docs"}
-
-
-@app.get("/", tags=["Root"])
+@app.get("/", tags=["Root"], include_in_schema=False)
 async def root():
     """Redirect to dashboard."""
-    return {"message": "Welcome to Risk Decision Engine", "endpoints": {
-        "dashboard": "GET /dashboard",
-        "api_docs": "GET /docs",
-        "health": "GET /health",
-        "score": "POST /score",
-        "batch_score": "POST /batch-score",
-        "metrics": "GET /metrics",
-        "analytics": "GET /analytics",
-        "history": "GET /history"
-    }}
+    return FileResponse(
+        os.path.join(os.path.dirname(__file__), "dashboard.html"),
+        media_type="text/html"
+    )
 
 
-@app.get("/docs", tags=["Documentation"])
+@app.get("/dashboard", tags=["Dashboard"], include_in_schema=False)
+async def get_dashboard():
+    """Get the interactive web dashboard."""
+    return FileResponse(
+        os.path.join(os.path.dirname(__file__), "dashboard.html"),
+        media_type="text/html"
+    )
+
+
+@app.get("/docs", tags=["Documentation"], include_in_schema=False)
 async def get_docs():
     """Interactive API documentation (Swagger UI)."""
-    return {"message": "Visit /docs for interactive documentation"}
+    return FileResponse(
+        os.path.join(os.path.dirname(__file__), "dashboard.html"),
+        media_type="text/html"
+    )
 
 
 # ============================================================================
