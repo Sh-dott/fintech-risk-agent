@@ -5,18 +5,22 @@ Exposes the decision engine via HTTP endpoints for real-time transaction scoring
 Deploy on cloud platforms (Heroku, AWS, Google Cloud, Azure, etc.)
 """
 
-from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
+from pathlib import Path
 import uvicorn
 import time
 import os
+import tempfile
+import shutil
 
 from src.core.decision_engine import RiskDecisionEngine, DecisionType, RiskLevel
+from src.analytics import AIInsightsEngine, FileProcessor
 
 
 # ============================================================================
@@ -82,6 +86,26 @@ class TransactionHistoryResponse(BaseModel):
     timestamp: str
     user_id: str
     merchant_id: str
+
+
+class FileUploadResponse(BaseModel):
+    """File upload and analysis response."""
+    status: str
+    file_name: str
+    records_processed: int
+    data_quality_score: float
+    insights: List[Dict[str, Any]]
+    summary: Dict[str, Any]
+
+
+class InsightDetail(BaseModel):
+    """Single insight detail."""
+    title: str
+    description: str
+    severity: str
+    impact: str
+    recommendation: str
+    metrics: Dict[str, Any]
 
 
 # ============================================================================
@@ -392,6 +416,119 @@ async def get_docs():
         os.path.join(os.path.dirname(__file__), "dashboard.html"),
         media_type="text/html"
     )
+
+
+@app.post("/upload-and-analyze", tags=["Analytics"])
+async def upload_and_analyze(file: UploadFile = File(...)):
+    """
+    Upload a transaction data file (CSV/JSON/Excel) and get AI-powered insights.
+
+    Supported formats:
+    - CSV (comma-separated values)
+    - JSON (array of transactions)
+    - JSONL (JSON Lines format)
+    - Excel (XLSX/XLS)
+
+    Returns business intelligence including:
+    - Fraud patterns detected
+    - Risk distribution analysis
+    - User behavior insights
+    - Merchant analysis
+    - Geographic patterns
+    - Strategic recommendations
+    """
+    temp_file_path = None
+
+    try:
+        # Save uploaded file temporarily
+        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(file.filename).suffix) as tmp:
+            temp_file_path = tmp.name
+            content = await file.read()
+            tmp.write(content)
+
+        # Process file
+        transactions = FileProcessor.process_file(temp_file_path)
+
+        # Validate data quality
+        validation = FileProcessor.validate_transactions(transactions)
+
+        if validation["data_quality_score"] < 50:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Data quality too low: {validation['data_quality_score']:.1f}%"
+            )
+
+        # Generate AI insights
+        insights_engine = AIInsightsEngine()
+        insights_engine.load_transactions(transactions)
+        insights_engine.analyze()
+
+        # Get summary
+        summary = insights_engine.get_summary()
+
+        return {
+            "status": "success",
+            "file_name": file.filename,
+            "records_processed": validation["valid_records"],
+            "data_quality_score": validation["data_quality_score"],
+            "insights": summary["insights"],
+            "summary": {
+                "total_insights": summary["total_insights"],
+                "critical_issues": summary["critical"],
+                "warnings": summary["warning"],
+                "info_items": summary["info"]
+            }
+        }
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
+    finally:
+        # Clean up temporary file
+        if temp_file_path and os.path.exists(temp_file_path):
+            os.unlink(temp_file_path)
+
+
+@app.post("/analyze-transactions", tags=["Analytics"])
+async def analyze_transactions(transactions: List[Dict[str, Any]]):
+    """
+    Analyze a list of transactions and get AI-powered business insights.
+
+    Provides:
+    - Fraud pattern detection
+    - Risk analysis
+    - User behavior patterns
+    - Merchant intelligence
+    - Geographic risk assessment
+    - Strategic recommendations
+    """
+    if not transactions:
+        raise HTTPException(status_code=400, detail="No transactions provided")
+
+    try:
+        # Generate insights
+        insights_engine = AIInsightsEngine()
+        insights_engine.load_transactions(transactions)
+        insights_engine.analyze()
+
+        # Get summary
+        summary = insights_engine.get_summary()
+
+        return {
+            "status": "success",
+            "records_processed": len(transactions),
+            "insights": summary["insights"],
+            "summary": {
+                "total_insights": summary["total_insights"],
+                "critical_issues": summary["critical"],
+                "warnings": summary["warning"],
+                "info_items": summary["info"]
+            }
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error analyzing transactions: {str(e)}")
 
 
 # ============================================================================
