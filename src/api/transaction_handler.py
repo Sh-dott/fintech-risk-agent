@@ -5,11 +5,16 @@ Exposes the decision engine via HTTP endpoints for real-time transaction scoring
 Deploy on cloud platforms (Heroku, AWS, Google Cloud, Azure, etc.)
 """
 
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 import uvicorn
+import time
+import os
 
 from src.core.decision_engine import RiskDecisionEngine, DecisionType, RiskLevel
 
@@ -50,6 +55,33 @@ class HealthResponse(BaseModel):
     version: str
     timestamp: str
     models_loaded: bool
+    uptime_seconds: float
+    requests_total: int
+
+
+class MetricsResponse(BaseModel):
+    """Metrics response."""
+    total_requests: int
+    total_decisions: int
+    allow_count: int
+    block_count: int
+    review_count: int
+    avg_risk_score: float
+    p95_latency_ms: float
+    approval_rate: float
+    timestamp: str
+
+
+class TransactionHistoryResponse(BaseModel):
+    """Transaction history response."""
+    transaction_id: str
+    decision: str
+    risk_score: float
+    risk_level: str
+    reason_codes: List[str]
+    timestamp: str
+    user_id: str
+    merchant_id: str
 
 
 # ============================================================================
@@ -64,8 +96,62 @@ app = FastAPI(
     redoc_url="/redoc"  # ReDoc UI
 )
 
+# Add CORS for web access
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Initialize decision engine
 engine = RiskDecisionEngine(config_path="config/model_config.yaml")
+
+# Metrics tracking
+class APIMetrics:
+    def __init__(self):
+        self.total_requests = 0
+        self.total_decisions = 0
+        self.allow_count = 0
+        self.block_count = 0
+        self.review_count = 0
+        self.risk_scores = []
+        self.latencies = []
+        self.start_time = datetime.utcnow()
+        self.transaction_history = {}
+
+    def record_decision(self, decision_str: str, risk_score: float, latency: float):
+        self.total_requests += 1
+        self.total_decisions += 1
+        self.risk_scores.append(risk_score)
+        self.latencies.append(latency)
+
+        if decision_str == "allow":
+            self.allow_count += 1
+        elif decision_str == "block":
+            self.block_count += 1
+        elif decision_str == "review":
+            self.review_count += 1
+
+    def get_uptime(self) -> float:
+        return (datetime.utcnow() - self.start_time).total_seconds()
+
+    def get_avg_risk_score(self) -> float:
+        return sum(self.risk_scores) / len(self.risk_scores) if self.risk_scores else 0.0
+
+    def get_p95_latency(self) -> float:
+        if not self.latencies:
+            return 0.0
+        sorted_latencies = sorted(self.latencies)
+        idx = int(len(sorted_latencies) * 0.95)
+        return sorted_latencies[idx]
+
+    def get_approval_rate(self) -> float:
+        total = self.total_decisions
+        return (self.allow_count / total * 100) if total > 0 else 0.0
+
+metrics = APIMetrics()
 
 
 # ============================================================================
@@ -79,7 +165,9 @@ async def health_check():
         status="healthy",
         version="1.0.0",
         timestamp=datetime.utcnow().isoformat(),
-        models_loaded=True
+        models_loaded=True,
+        uptime_seconds=metrics.get_uptime(),
+        requests_total=metrics.total_requests
     )
 
 
@@ -111,6 +199,8 @@ async def score_transaction(request: TransactionRequest):
     ```
     """
     try:
+        start_time = time.time()
+
         # Call decision engine
         decision = engine.score_transaction(
             transaction={
@@ -127,6 +217,22 @@ async def score_transaction(request: TransactionRequest):
                 "timestamp": request.timestamp or datetime.utcnow().isoformat()
             }
         )
+
+        # Record metrics
+        elapsed = (time.time() - start_time) * 1000  # Convert to ms
+        metrics.record_decision(decision.decision.value, decision.risk_score, elapsed)
+
+        # Store in history
+        metrics.transaction_history[request.transaction_id] = {
+            "transaction_id": request.transaction_id,
+            "decision": decision.decision.value,
+            "risk_score": decision.risk_score,
+            "risk_level": decision.risk_level.value,
+            "reason_codes": decision.reason_codes,
+            "timestamp": decision.timestamp,
+            "user_id": request.user_id,
+            "merchant_id": request.merchant_id
+        }
 
         # Convert decision to response
         return DecisionResponse(
@@ -196,6 +302,95 @@ async def batch_score_transactions(
         )
 
 
+@app.get("/metrics", response_model=MetricsResponse, tags=["Analytics"])
+async def get_metrics():
+    """Get real-time metrics and KPIs."""
+    return MetricsResponse(
+        total_requests=metrics.total_requests,
+        total_decisions=metrics.total_decisions,
+        allow_count=metrics.allow_count,
+        block_count=metrics.block_count,
+        review_count=metrics.review_count,
+        avg_risk_score=round(metrics.get_avg_risk_score(), 4),
+        p95_latency_ms=round(metrics.get_p95_latency(), 2),
+        approval_rate=round(metrics.get_approval_rate(), 2),
+        timestamp=datetime.utcnow().isoformat()
+    )
+
+
+@app.get("/history", tags=["Analytics"])
+async def get_transaction_history(
+    limit: int = 100,
+    user_id: Optional[str] = None,
+    merchant_id: Optional[str] = None
+):
+    """Get transaction decision history with optional filters."""
+    history = list(metrics.transaction_history.values())
+
+    # Filter by user_id if provided
+    if user_id:
+        history = [h for h in history if h["user_id"] == user_id]
+
+    # Filter by merchant_id if provided
+    if merchant_id:
+        history = [h for h in history if h["merchant_id"] == merchant_id]
+
+    # Return limited results
+    return {
+        "total": len(history),
+        "limit": limit,
+        "transactions": history[-limit:] if history else []
+    }
+
+
+@app.get("/analytics", tags=["Analytics"])
+async def get_analytics():
+    """Get comprehensive analytics dashboard data."""
+    total = metrics.total_decisions
+    return {
+        "summary": {
+            "total_transactions": total,
+            "total_allowed": metrics.allow_count,
+            "total_blocked": metrics.block_count,
+            "total_review": metrics.review_count,
+            "approval_rate_percent": round(metrics.get_approval_rate(), 2),
+            "block_rate_percent": round((metrics.block_count / total * 100) if total > 0 else 0, 2),
+            "review_rate_percent": round((metrics.review_count / total * 100) if total > 0 else 0, 2)
+        },
+        "performance": {
+            "avg_risk_score": round(metrics.get_avg_risk_score(), 4),
+            "p95_latency_ms": round(metrics.get_p95_latency(), 2),
+            "uptime_seconds": metrics.get_uptime(),
+            "requests_per_minute": round((metrics.total_requests / (metrics.get_uptime() / 60)) if metrics.get_uptime() > 0 else 0, 2)
+        },
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+
+@app.get("/dashboard", tags=["Dashboard"])
+async def get_dashboard():
+    """Get the interactive web dashboard."""
+    dashboard_path = os.path.join(os.path.dirname(__file__), "dashboard.html")
+    if os.path.exists(dashboard_path):
+        return FileResponse(dashboard_path, media_type="text/html")
+    return {"message": "Dashboard not found", "try": "/docs"}
+
+
+@app.get("/", tags=["Root"])
+async def root():
+    """Redirect to dashboard."""
+    return {"message": "Welcome to Risk Decision Engine", "endpoints": {
+        "dashboard": "GET /dashboard",
+        "api_docs": "GET /docs",
+        "health": "GET /health",
+        "score": "POST /score",
+        "batch_score": "POST /batch-score",
+        "metrics": "GET /metrics",
+        "analytics": "GET /analytics",
+        "history": "GET /history"
+    }}
+
+
 @app.get("/docs", tags=["Documentation"])
 async def get_docs():
     """Interactive API documentation (Swagger UI)."""
@@ -209,14 +404,14 @@ async def get_docs():
 @app.on_event("startup")
 async def startup_event():
     """Initialize on startup."""
-    print("✅ Risk Decision Engine API started")
-    print("📚 API Documentation: http://localhost:8000/docs")
+    print("[OK] Risk Decision Engine API started")
+    print("[INFO] API Documentation: http://localhost:8000/docs")
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown."""
-    print("🛑 Risk Decision Engine API stopped")
+    print("[STOP] Risk Decision Engine API stopped")
 
 
 # ============================================================================
