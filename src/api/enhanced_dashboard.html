@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Fraud Detection Analytics Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            opacity: 0.95;
+            font-size: 1.1em;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: linear-gradient(135deg, #e8eef7 0%, #b8d4f1 100%);
+            transform: scale(1.02);
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .upload-text h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .upload-text p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tab-button {
+            padding: 12px 20px;
+            border: none;
+            background: #f0f0f0;
+            color: #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .metric-label {
+            font-size: 0.95em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-change {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .metric-change.positive {
+            color: #4ade80;
+        }
+
+        .metric-change.negative {
+            color: #f87171;
+        }
+
+        /* Denial Analysis Cards */
+        .denial-card {
+            background: white;
+            border-left: 5px solid #ef4444;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .denial-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+        }
+
+        .denial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .denial-id {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .denial-reason {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .denial-risk {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .severity-critical {
+            color: #991b1b;
+        }
+
+        .severity-high {
+            color: #dc2626;
+        }
+
+        .severity-medium {
+            color: #f59e0b;
+        }
+
+        .severity-low {
+            color: #10b981;
+        }
+
+        .contributing-factors {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .factor-tag {
+            display: inline-block;
+            background: #f3f4f6;
+            color: #374151;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-right: 8px;
+            margin-bottom: 5px;
+        }
+
+        /* Charts Container */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .chart-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        canvas {
+            max-height: 300px;
+        }
+
+        /* Risk Heatmap */
+        .heatmap-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .heatmap-cell {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            margin: 2px;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .heatmap-cell::after {
+            content: attr(data-value);
+            position: absolute;
+            font-size: 0.7em;
+            color: white;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* Customer Profiles Table */
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        tr:hover td {
+            background: #f9fafb;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-low {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            padding: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e5e5;
+            border-color: #bbb;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .modal-header h2 {
+            color: #333;
+            font-size: 1.8em;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2em;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        /* Insights Box */
+        .insights-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 5px solid #f59e0b;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .insights-box h3 {
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+
+        .insights-box p {
+            color: #78350f;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc2626;
+        }
+
+        .success-message {
+            background: #dcfce7;
+            color: #166534;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #16a34a;
+        }
+
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Advanced Fraud Detection Analytics</h1>
+            <p>Real-time transaction scoring, denial analysis, and comprehensive risk intelligence</p>
+        </header>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-content">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">
+                        <h3>Upload Transaction Data</h3>
+                        <p>Drag and drop CSV, JSON, Excel files or click to select</p>
+                        <p style="font-size: 0.9em; color: #999; margin-top: 10px;">Supported: CSV, JSON, JSONL, XLSX, XLS (Max 50MB)</p>
+                    </div>
+                </div>
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner"></div>
+                    <p>Analyzing transactions...</p>
+                </div>
+                <input type="file" id="fileInput" accept=".csv,.json,.jsonl,.xlsx,.xls">
+            </div>
+            <div id="errorMsg" class="error-message" style="display: none;"></div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" id="tabsContainer" style="display: none;">
+            <button class="tab-button active" data-tab="overview">Overview</button>
+            <button class="tab-button" data-tab="denials">Denial Analysis</button>
+            <button class="tab-button" data-tab="customers">Customer Analytics</button>
+            <button class="tab-button" data-tab="detailed">Detailed Reports</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="overview" class="tab-content active">
+            <!-- Key Metrics -->
+            <div class="metrics-grid" id="metricsGrid"></div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-title">Decision Distribution</div>
+                    <canvas id="decisionChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Risk Score Distribution</div>
+                    <canvas id="riskChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Top Denial Reasons</div>
+                    <canvas id="denialReasonsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Amount Distribution</div>
+                    <canvas id="amountChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Insights -->
+            <div class="insights-box">
+                <h3>Key Insights</h3>
+                <p id="insightsText">Load data to see insights...</p>
+            </div>
+        </div>
+
+        <!-- Denial Analysis Tab -->
+        <div id="denials" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #333;">Detailed Denial Analysis</h2>
+            <div id="denialsList"></div>
+        </div>
+
+        <!-- Customer Analytics Tab -->
+        <div id="customers" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #333;">Customer Risk Profiles</h2>
+            <div class="table-container">
+                <table id="customersTable">
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Total Transactions</th>
+                            <th>Approved</th>
+                            <th>Denied</th>
+                            <th>Denial Rate</th>
+                            <th>Avg Risk Score</th>
+                            <th>Risk Level</th>
+                            <th>Total Spend</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Detailed Reports Tab -->
+        <div id="detailed" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #333;">Comprehensive Analytics</h2>
+            <div id="detailedReportsContainer"></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons" id="actionButtons" style="display: none;">
+            <button class="btn-primary" onclick="downloadReport()">📥 Download Report</button>
+            <button class="btn-secondary" onclick="clearResults()">🔄 Clear & Analyze New</button>
+            <button class="btn-success" onclick="exportCSV()">📊 Export CSV</button>
+            <button class="btn-secondary" onclick="printResults()">🖨️ Print</button>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Transaction Details</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        let analysisResults = null;
+        let charts = {};
+
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadContent = uploadArea.querySelector('.upload-content');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorMsg = document.getElementById('errorMsg');
+        const tabsContainer = document.getElementById('tabsContainer');
+        const actionButtons = document.getElementById('actionButtons');
+
+        // File upload handlers
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = 'linear-gradient(135deg, #e8eef7 0%, #b8d4f1 100%)';
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFile();
+            }
+        });
+
+        fileInput.addEventListener('change', handleFile);
+
+        async function handleFile() {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            errorMsg.style.display = 'none';
+            uploadContent.style.display = 'none';
+            loadingSpinner.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await axios.post('/upload-and-analyze', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+
+                analysisResults = response.data;
+                displayResults();
+                uploadArea.style.display = 'none';
+                tabsContainer.style.display = 'flex';
+                actionButtons.style.display = 'flex';
+            } catch (error) {
+                showError(error.response?.data?.detail || 'Error analyzing file');
+                loadingSpinner.style.display = 'none';
+                uploadContent.style.display = 'block';
+            }
+        }
+
+        function displayResults() {
+            // Overview Tab
+            displayMetrics();
+            displayCharts();
+            displayInsights();
+
+            // Denial Analysis Tab
+            displayDenials();
+
+            // Customer Analytics Tab
+            displayCustomers();
+
+            // Detailed Reports Tab
+            displayDetailedReports();
+        }
+
+        function displayMetrics() {
+            const data = analysisResults;
+            const metricsGrid = document.getElementById('metricsGrid');
+
+            const metrics = [
+                {
+                    label: 'Total Transactions',
+                    value: data.records_processed,
+                    icon: '📊'
+                },
+                {
+                    label: 'High Risk (>0.7)',
+                    value: data.summary?.high_risk_count || 0,
+                    icon: '⚠️'
+                },
+                {
+                    label: 'Detected Anomalies',
+                    value: data.anomalies?.length || 0,
+                    icon: '🔍'
+                },
+                {
+                    label: 'Fraud Networks',
+                    value: data.fraud_networks?.suspicious_clusters || 0,
+                    icon: '🕸️'
+                },
+                {
+                    label: 'ML Patterns',
+                    value: data.money_laundering_patterns?.length || 0,
+                    icon: '🎯'
+                },
+                {
+                    label: 'Unique Entities',
+                    value: data.risk_profiles?.length || 0,
+                    icon: '👥'
+                }
+            ];
+
+            metricsGrid.innerHTML = metrics.map((m, i) => `
+                <div class="metric-card" onclick="showMetricDetails('${m.label}')">
+                    <div style="font-size: 2em; margin-bottom: 10px;">${m.icon}</div>
+                    <div class="metric-label">${m.label}</div>
+                    <div class="metric-value">${m.value}</div>
+                </div>
+            `).join('');
+        }
+
+        function displayCharts() {
+            // Decision Distribution
+            const decisions = {
+                'Approved': analysisResults.summary?.approved_count || 0,
+                'Denied': analysisResults.summary?.denied_count || 0,
+                'Review': analysisResults.summary?.review_count || 0
+            };
+
+            new Chart(document.getElementById('decisionChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(decisions),
+                    datasets: [{
+                        data: Object.values(decisions),
+                        backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+                        borderColor: 'white',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // Risk Distribution
+            const risks = analysisResults.risk_profiles || [];
+            const riskBins = {
+                'Very Low (0-0.2)': 0,
+                'Low (0.2-0.4)': 0,
+                'Medium (0.4-0.6)': 0,
+                'High (0.6-0.8)': 0,
+                'Very High (0.8-1.0)': 0
+            };
+
+            risks.forEach(r => {
+                const score = r.final_risk_score || 0;
+                if (score < 0.2) riskBins['Very Low (0-0.2)']++;
+                else if (score < 0.4) riskBins['Low (0.2-0.4)']++;
+                else if (score < 0.6) riskBins['Medium (0.4-0.6)']++;
+                else if (score < 0.8) riskBins['High (0.6-0.8)']++;
+                else riskBins['Very High (0.8-1.0)']++;
+            });
+
+            new Chart(document.getElementById('riskChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(riskBins),
+                    datasets: [{
+                        label: 'Count',
+                        data: Object.values(riskBins),
+                        backgroundColor: ['#10b981', '#84cc16', '#f59e0b', '#ef4444', '#991b1b'],
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Denial Reasons
+            const denialReasons = analysisResults.summary?.denial_reasons || {};
+            new Chart(document.getElementById('denialReasonsChart'), {
+                type: 'horizontalBar',
+                data: {
+                    labels: Object.keys(denialReasons).slice(0, 5),
+                    datasets: [{
+                        label: 'Count',
+                        data: Object.values(denialReasons).slice(0, 5),
+                        backgroundColor: '#ef4444',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Amount Distribution
+            const amounts = analysisResults.risk_profiles?.map(r => r.amount) || [];
+            new Chart(document.getElementById('amountChart'), {
+                type: 'line',
+                data: {
+                    labels: amounts.map((_, i) => i + 1),
+                    datasets: [{
+                        label: 'Transaction Amount',
+                        data: amounts,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function displayInsights() {
+            const summary = analysisResults.summary || {};
+            const insights = [
+                `${summary.high_risk_count || 0} high-risk entities detected (>0.7 score)`,
+                `${analysisResults.anomalies?.length || 0} statistical anomalies identified`,
+                `${analysisResults.fraud_networks?.suspicious_clusters || 0} suspicious fraud networks detected`,
+                `${analysisResults.money_laundering_patterns?.length || 0} potential ML patterns found`
+            ].join(' | ');
+
+            document.getElementById('insightsText').textContent = insights;
+        }
+
+        function displayDenials() {
+            const risks = analysisResults.risk_profiles || [];
+            const denied = risks.filter(r => r.risk_level === 'HIGH');
+
+            const html = denied.map(d => `
+                <div class="denial-card" onclick="showDenialDetails('${d.entity_id}')">
+                    <div class="denial-header">
+                        <div class="denial-id">Entity: ${d.entity_id}</div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div class="denial-reason">Risk: ${(d.final_risk_score * 100).toFixed(1)}%</div>
+                            <div class="denial-risk severity-${d.risk_level.toLowerCase()}">${d.risk_level}</div>
+                        </div>
+                    </div>
+                    <div class="contributing-factors">
+                        <strong>Risk Factors:</strong>
+                        ${d.risk_factors?.map(f => `<div class="factor-tag">${f}</div>`).join('') || '<div class="factor-tag">No factors</div>'}
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('denialsList').innerHTML = html || '<p style="color: #999;">No high-risk entities found</p>';
+        }
+
+        function displayCustomers() {
+            const risks = analysisResults.risk_profiles || [];
+            const groupedByCustomer = {};
+
+            risks.forEach(r => {
+                const cid = r.entity_id || 'unknown';
+                if (!groupedByCustomer[cid]) {
+                    groupedByCustomer[cid] = {
+                        total: 0,
+                        riskScores: [],
+                        ...r
+                    };
+                }
+                groupedByCustomer[cid].total++;
+                groupedByCustomer[cid].riskScores.push(r.final_risk_score);
+            });
+
+            const tbody = document.getElementById('customersTableBody');
+            tbody.innerHTML = Object.entries(groupedByCustomer).map(([id, data]) => {
+                const avgRisk = data.riskScores.reduce((a, b) => a + b, 0) / data.riskScores.length;
+                const riskLevel = avgRisk > 0.7 ? 'HIGH' : avgRisk > 0.4 ? 'MEDIUM' : 'LOW';
+                const badgeClass = riskLevel === 'HIGH' ? 'badge-high' : riskLevel === 'MEDIUM' ? 'badge-medium' : 'badge-low';
+
+                return `
+                    <tr onclick="showCustomerDetails('${id}')">
+                        <td><strong>${id}</strong></td>
+                        <td>${data.total}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>${(avgRisk * 100).toFixed(1)}%</td>
+                        <td><span class="badge ${badgeClass}">${riskLevel}</span></td>
+                        <td>-</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function displayDetailedReports() {
+            const container = document.getElementById('detailedReportsContainer');
+            container.innerHTML = `
+                <div class="insights-box">
+                    <h3>Platform Statistics</h3>
+                    <p><strong>Records Processed:</strong> ${analysisResults.records_processed}</p>
+                    <p><strong>Analysis Timestamp:</strong> ${new Date(analysisResults.timestamp).toLocaleString()}</p>
+                    <p><strong>File Name:</strong> ${analysisResults.file_name}</p>
+                </div>
+            `;
+        }
+
+        function showDenialDetails(entityId) {
+            const entity = analysisResults.risk_profiles?.find(r => r.entity_id === entityId);
+            if (!entity) return;
+
+            const modal = document.getElementById('detailModal');
+            const body = document.getElementById('modalBody');
+
+            body.innerHTML = `
+                <div class="insights-box">
+                    <h3>Entity: ${entity.entity_id}</h3>
+                    <p><strong>Risk Score:</strong> ${(entity.final_risk_score * 100).toFixed(1)}%</p>
+                    <p><strong>Risk Level:</strong> ${entity.risk_level}</p>
+                    <p><strong>Risk Factors:</strong> ${entity.risk_factors?.join(', ') || 'None'}</p>
+                    <p><strong>Red Flags:</strong> ${entity.red_flags?.join(', ') || 'None'}</p>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        function showError(msg) {
+            errorMsg.style.display = 'block';
+            errorMsg.textContent = msg;
+        }
+
+        function downloadReport() {
+            const dataStr = JSON.stringify(analysisResults, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `fraud-analysis-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        function exportCSV() {
+            alert('CSV export coming soon');
+        }
+
+        function clearResults() {
+            location.reload();
+        }
+
+        function printResults() {
+            window.print();
+        }
+
+        function showMetricDetails(label) {
+            alert('Details for: ' + label);
+        }
+
+        function showCustomerDetails(id) {
+            alert('Details for customer: ' + id);
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -665,3 +665,25 @@ if __name__ == "__main__":
         port=8000,
         reload=True  # Auto-reload on file changes (development only)
     )
+
+
+# ============================================================================
+# Enhanced Dashboard Routes
+# ============================================================================
+
+@app.get("/enhanced", tags=["Dashboard"], include_in_schema=False)
+async def get_enhanced_dashboard():
+    """Get the ultra-modern enhanced analytics dashboard."""
+    return FileResponse(
+        os.path.join(os.path.dirname(__file__), "enhanced_dashboard.html"),
+        media_type="text/html"
+    )
+
+
+# ============================================================================
+# Advanced Analytics Routes (Registered Below)
+# ============================================================================
+
+from src.api.advanced_analytics_routes import router as analytics_router
+app.include_router(analytics_router)
+
