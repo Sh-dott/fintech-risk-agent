@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: fraud-detection-api
+    env: python
+    plan: free
+
+    # Build command - install Python deps and build frontend
+    buildCommand: "cd backend && pip install --no-cache-dir -r requirements.txt && cd ../frontend && npm install && npm run build"
+
+    # Start command with new entry point
+    startCommand: "uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT --workers 1 --loop uvloop --http httptools"
+
+    # Environment variables
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        value: 8000
+
+    # Health check configuration
+    healthCheckPath: /health
+    healthCheckInterval: 30
+    healthCheckTimeout: 10
+    maxShutdownDelay: 30

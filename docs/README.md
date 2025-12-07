@@ -36,52 +36,36 @@ transactions_stream → Enrichment → Scoring → Decision → Actions → Moni
 
 ## Project Structure
 
-**Reorganized for Professional Full-Stack Development**
-
 ```
 fintech-risk-agent/
-├── backend/                        # Python Backend (FastAPI)
-│   ├── app/
-│   │   ├── main.py                # FastAPI entry point
-│   │   ├── api/
-│   │   │   ├── routes/            # API route modules
-│   │   │   │   ├── health.py      # Health check endpoints
-│   │   │   │   ├── scoring.py     # Transaction scoring endpoints
-│   │   │   │   ├── analytics.py   # Analytics & metrics endpoints
-│   │   │   │   └── dashboard.py   # Dashboard serving endpoints
-│   │   │   └── dependencies.py    # Shared dependencies
-│   │   ├── core/
-│   │   │   ├── config.py          # Configuration management
-│   │   │   └── decision_engine.py # Main risk scoring orchestrator
-│   │   ├── models/
-│   │   │   └── schemas.py         # Pydantic request/response models
-│   │   └── services/
-│   │       ├── analytics/         # Analytics & fraud detection
-│   │       ├── graph/             # Entity graph analysis
-│   │       ├── rules/             # AML/sanctions rules
-│   │       └── monitoring/        # Metrics & drift detection
-│   ├── tests/                     # Backend tests
-│   ├── config/                    # Configuration files
-│   ├── requirements.txt           # Python dependencies
-│   └── pyproject.toml             # Modern Python packaging
-│
-├── frontend/                      # Vite-powered Frontend
-│   ├── src/
-│   │   ├── css/                   # Stylesheets
-│   │   └── js/                    # JavaScript modules
-│   ├── index.html                 # Modern dashboard (main)
-│   ├── classic.html               # Classic dashboard
-│   ├── enhanced.html              # Enhanced analytics dashboard
-│   ├── package.json               # NPM dependencies
-│   └── vite.config.js             # Vite configuration
-│
-├── docs/                          # Documentation
-├── deployment/                    # Deployment configs
-│   ├── Dockerfile
-│   ├── docker-compose.yml
-│   ├── render.yaml
-│   └── Procfile
-└── README.md                      # This file
+├── src/
+│   ├── core/
+│   │   ├── decision_engine.py     # Main risk scoring orchestrator
+│   │   ├── feature_enrichment.py  # Feature store lookups & enrichment
+│   │   └── model_scorer.py        # ML model inference
+│   ├── graph/
+│   │   └── entity_graph.py        # Entity relationships & ring detection
+│   ├── rules/
+│   │   ├── aml_rules.py           # AML/sanctions rules
+│   │   └── business_rules.py      # Custom thresholds & policies
+│   ├── actions/
+│   │   └── decision_actions.py    # Block/Allow/Review + escalation
+│   ├── monitoring/
+│   │   ├── metrics.py             # KPI logging & drift detection
+│   │   └── compliance_log.py      # Audit trail & FATF traceability
+│   └── api/
+│       └── transaction_handler.py # REST/gRPC endpoints
+├── config/
+│   ├── model_config.yaml          # Model thresholds, weights
+│   └── rules_config.yaml          # AML/business rule definitions
+├── tests/
+│   ├── test_decision_engine.py
+│   └── test_compliance.py
+├── notebooks/
+│   └── analysis.ipynb             # Monitoring & drift analysis
+├── requirements.txt
+├── package.json
+└── README.md
 ```
 
 ## Usage

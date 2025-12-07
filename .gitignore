@@ -108,3 +108,16 @@ data/sensitive/
 models/artifacts/
 transactions.log
 audit.log
+
+# Frontend build output
+frontend/dist/
+frontend/node_modules/
+
+# Backend Python cache
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.pytest_cache/
+backend/**/.pytest_cache/
+
+# Claude Code plans
+.claude/plans/

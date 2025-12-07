@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fintech-risk-agent"
+version = "1.0.0"
+description = "Real-time transaction scoring & fraud detection engine for fintech payments"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Fintech Risk Agent Team"}
+]
+keywords = ["fintech", "fraud-detection", "risk-scoring", "machine-learning", "fastapi"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Framework :: FastAPI",
+]
+
+dependencies = [
+    "fastapi>=0.100.0",
+    "uvicorn[standard]>=0.23.0",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "pyyaml>=6.0",
+    "python-multipart>=0.0.6",
+    "numpy>=1.24",
+    "pandas>=1.5",
+    "scikit-learn>=1.3",
+    "torch>=2.0",
+    "neo4j>=5.0",
+    "prometheus-client>=0.17",
+    "opentelemetry-api>=1.20",
+    "opentelemetry-sdk>=1.20",
+    "opentelemetry-exporter-jaeger>=1.20",
+    "python-json-logger>=2.0",
+    "python-dotenv>=1.0",
+    "cryptography>=41.0",
+    "pycryptodome>=3.18",
+    "httpx>=0.23",
+    "requests>=2.31",
+    "python-dateutil>=2.8",
+    "tqdm>=4.66",
+    "openpyxl>=3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "pytest-asyncio>=0.21",
+    "black>=23.0",
+    "flake8>=6.0",
+    "mypy>=1.4",
+    "pylint>=2.17",
+]
+
+[tool.setuptools]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+
+[tool.pylint]
+max-line-length = 100

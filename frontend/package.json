@@ -1,0 +1,18 @@
+{
+  "name": "fintech-risk-agent-frontend",
+  "version": "1.0.0",
+  "description": "Frontend dashboards for Fintech Risk Agent",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "chart.js": "^4.4.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
