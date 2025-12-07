@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Fraud Detection Analytics Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="./src/css/enhanced.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Advanced Fraud Detection Analytics</h1>
+            <p>Real-time transaction scoring, denial analysis, and comprehensive risk intelligence</p>
+        </header>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-content">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">
+                        <h3>Upload Transaction Data</h3>
+                        <p>Drag and drop CSV, JSON, Excel files or click to select</p>
+                        <p style="font-size: 0.9em; color: #999; margin-top: 10px;">Supported: CSV, JSON, JSONL, XLSX, XLS (Max 50MB)</p>
+                    </div>
+                </div>
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner"></div>
+                    <p>Analyzing transactions...</p>
+                </div>
+                <input type="file" id="fileInput" accept=".csv,.json,.jsonl,.xlsx,.xls">
+            </div>
+            <div id="errorMsg" class="error-message" style="display: none;"></div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" id="tabsContainer" style="display: none;">
+            <button class="tab-button active" data-tab="overview">Overview</button>
+            <button class="tab-button" data-tab="denials">Denial Analysis</button>
+            <button class="tab-button" data-tab="customers">Customer Analytics</button>
+            <button class="tab-button" data-tab="detailed">Detailed Reports</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="overview" class="tab-content active">
+            <!-- Key Metrics -->
+            <div class="metrics-grid" id="metricsGrid"></div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-title">Decision Distribution</div>
+                    <canvas id="decisionChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Risk Score Distribution</div>
+                    <canvas id="riskChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Top Denial Reasons</div>
+                    <canvas id="denialReasonsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Amount Distribution</div>
+                    <canvas id="amountChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Insights -->
+            <div class="insights-box">
+                <h3>Key Insights</h3>
+                <p id="insightsText">Load data to see insights...</p>
+            </div>
+        </div>
+
+        <!-- Denial Analysis Tab -->
+        <div id="denials" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #333;">Detailed Denial Analysis</h2>
+            <div id="denialsList"></div>
+        </div>
+
+        <!-- Customer Analytics Tab -->
+        <div id="customers" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #333;">Customer Risk Profiles</h2>
+            <div class="table-container">
+                <table id="customersTable">
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Total Transactions</th>
+                            <th>Approved</th>
+                            <th>Denied</th>
+                            <th>Denial Rate</th>
+                            <th>Avg Risk Score</th>
+                            <th>Risk Level</th>
+                            <th>Total Spend</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Detailed Reports Tab -->
+        <div id="detailed" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #333;">Comprehensive Analytics</h2>
+            <div id="detailedReportsContainer"></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons" id="actionButtons" style="display: none;">
+            <button class="btn-primary" onclick="downloadReport()">Download Report</button>
+            <button class="btn-secondary" onclick="clearResults()">Clear & Analyze New</button>
+            <button class="btn-success" onclick="exportCSV()">Export CSV</button>
+            <button class="btn-secondary" onclick="printResults()">Print</button>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Transaction Details</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script type="module" src="./src/js/enhanced.js"></script>
+</body>
+</html>

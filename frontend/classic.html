@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Decision Engine - Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="./src/css/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Risk Decision Engine</h1>
+            <p>Real-time Transaction Scoring & Fraud Detection</p>
+        </header>
+
+        <!-- Metrics Dashboard -->
+        <div class="dashboard" id="metricsContainer">
+            <div class="card">
+                <div class="metric-label">API Status</div>
+                <div class="status-badge status-healthy" id="statusBadge">HEALTHY</div>
+                <div style="color: #666; margin-top: 10px; font-size: 0.9em;" id="uptimeInfo">Uptime: --</div>
+            </div>
+            <div class="card">
+                <div class="metric-label">Total Transactions</div>
+                <div class="metric-value" id="totalTransactions">0</div>
+            </div>
+            <div class="card">
+                <div class="metric-label">Approval Rate</div>
+                <div class="metric-value"><span id="approvalRate">0</span><span class="metric-unit">%</span></div>
+            </div>
+            <div class="card">
+                <div class="metric-label">P95 Latency</div>
+                <div class="metric-value"><span id="p95Latency">0</span><span class="metric-unit">ms</span></div>
+            </div>
+            <div class="card">
+                <div class="metric-label">Avg Risk Score</div>
+                <div class="metric-value" id="avgRiskScore">0.0</div>
+            </div>
+            <div class="card">
+                <div class="metric-label">Block Rate</div>
+                <div class="metric-value"><span id="blockRate">0</span><span class="metric-unit">%</span></div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-container">
+                <canvas id="decisionChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="riskDistributionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Score a Transaction -->
+        <div class="form-container">
+            <h2>Test Transaction Scoring</h2>
+            <form id="scoreForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="txnId">Transaction ID</label>
+                        <input type="text" id="txnId" placeholder="e.g., txn_001" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount (USD)</label>
+                        <input type="number" id="amount" step="0.01" placeholder="e.g., 100.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userId">User ID</label>
+                        <input type="text" id="userId" placeholder="e.g., usr_123" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="merchantId">Merchant ID</label>
+                        <input type="text" id="merchantId" placeholder="e.g., mch_456" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deviceId">Device ID</label>
+                        <input type="text" id="deviceId" placeholder="e.g., dev_abc" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ipAddress">IP Address</label>
+                        <input type="text" id="ipAddress" placeholder="e.g., 192.168.1.1" required>
+                    </div>
+                </div>
+                <button type="submit">Score Transaction</button>
+            </form>
+
+            <div class="error" id="errorMessage"></div>
+            <div class="result-container" id="resultContainer">
+                <h3>Decision Result</h3>
+                <div id="resultContent"></div>
+            </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="form-container">
+            <h2>Transaction History</h2>
+            <table class="history-table" id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Decision</th>
+                        <th>Risk Score</th>
+                        <th>User ID</th>
+                        <th>Merchant ID</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody">
+                    <tr><td colspan="6" class="loading">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module" src="./src/js/dashboard.js"></script>
+</body>
+</html>
