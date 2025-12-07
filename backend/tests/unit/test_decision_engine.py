@@ -4,12 +4,12 @@ Unit tests for the decision engine and core components.
 
 import pytest
 from datetime import datetime
-from src.core.decision_engine import (
+from backend.app.core.decision_engine import (
     RiskDecisionEngine, DecisionType, RiskLevel
 )
-from src.graph.entity_graph import EntityGraph, EntityType, RelationType
-from src.rules.aml_rules import AMLRulesEngine, SanctionsListType
-from src.monitoring.metrics import MetricsCollector
+from backend.app.services.graph.entity_graph import EntityGraph, EntityType, RelationType
+from backend.app.services.rules.aml_rules import AMLRulesEngine, SanctionsListType
+from backend.app.services.monitoring.metrics import MetricsCollector
 
 
 class TestRiskDecisionEngine:

@@ -12,7 +12,12 @@ Provides:
 from fastapi import APIRouter, HTTPException
 from typing import Dict, List, Any, Optional
 from datetime import datetime
-from src.analytics import AdvancedAnalyticsEngine, DenialAnalysis
+from backend.app.services.analytics.advanced_analytics_engine import AdvancedAnalyticsEngine
+try:
+    from backend.app.services.analytics.advanced_analytics_engine import DenialAnalysis
+except ImportError:
+    # DenialAnalysis might not exist, create a placeholder
+    DenialAnalysis = None
 
 router = APIRouter(prefix="/analytics", tags=["Advanced Analytics"])
 
