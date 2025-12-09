@@ -1,0 +1,177 @@
+{
+  "merchants": {},
+  "categories": {
+    "shopping_net": 506,
+    "grocery_pos": 485,
+    "misc_net": 267,
+    "shopping_pos": 213,
+    "gas_transport": 154,
+    "misc_pos": 72,
+    "personal_care": 70,
+    "home": 67,
+    "kids_pets": 65,
+    "entertainment": 59,
+    "food_dining": 54,
+    "health_fitness": 52,
+    "grocery_net": 41,
+    "travel": 40
+  },
+  "amounts": {
+    "mean": 528.3564941724942,
+    "median": 371.94,
+    "distribution": {
+      "0-50": 462,
+      "50-100": 18,
+      "100-200": 54,
+      "200-500": 575,
+      "500-1000": 760,
+      "1000+": 276
+    }
+  },
+  "geography": {
+    "states": {
+      "NY": 175,
+      "PA": 114,
+      "TX": 113,
+      "IL": 76,
+      "CA": 76,
+      "VA": 75,
+      "IN": 75,
+      "MN": 73,
+      "MO": 71,
+      "IA": 69
+    },
+    "cities": {
+      "Camden": 27,
+      "Birmingham": 25,
+      "Burrton": 19,
+      "Clarks Mills": 18,
+      "Bradley": 16,
+      "Jay": 16,
+      "Reynolds": 16,
+      "Chatham": 16,
+      "Plymouth": 15,
+      "Whittemore": 15
+    }
+  },
+  "names": {
+    "first": {
+      "Christopher": 85,
+      "Mary": 54,
+      "David": 50,
+      "Lisa": 46,
+      "Stephanie": 44,
+      "John": 42,
+      "Michael": 38,
+      "Richard": 34,
+      "Laura": 33,
+      "Lauren": 33,
+      "Debbie": 30,
+      "Jeffrey": 30,
+      "Tyler": 29,
+      "Amanda": 28,
+      "Gina": 28,
+      "Amy": 28,
+      "Monica": 27,
+      "Brian": 27,
+      "Thomas": 27,
+      "Benjamin": 27
+    },
+    "last": {
+      "Williams": 71,
+      "Jones": 38,
+      "Johnson": 36,
+      "Lowe": 32,
+      "Johns": 31,
+      "Bell": 31,
+      "Miller": 30,
+      "Garcia": 29,
+      "Smith": 28,
+      "Anderson": 26,
+      "White": 25,
+      "Walker": 25,
+      "Robinson": 24,
+      "Bishop": 24,
+      "Allen": 21,
+      "Matthews": 20,
+      "Mills": 20,
+      "Fuller": 19,
+      "Tran": 19,
+      "Marshall": 19
+    }
+  },
+  "jobs": {
+    "Science writer": 30,
+    "Licensed conveyancer": 29,
+    "Systems developer": 29,
+    "Engineer, biomedical": 28,
+    "Therapist, occupational": 27,
+    "Colour technologist": 27,
+    "Counsellor": 26,
+    "Comptroller": 26,
+    "Research scientist (physical sciences)": 25,
+    "Commissioning editor": 24,
+    "Research officer, trade union": 23,
+    "Chemical engineer": 23,
+    "Sub": 22,
+    "Educational psychologist": 21,
+    "Clothing/textile technologist": 21,
+    "Amenity horticulturist": 21,
+    "Chief Strategy Officer": 21,
+    "Quantity surveyor": 21,
+    "Engineer, automotive": 20,
+    "Editor, commissioning": 19
+  },
+  "temporal": {
+    "hour": {
+      "0": 188,
+      "1": 169,
+      "2": 168,
+      "3": 194,
+      "4": 15,
+      "5": 20,
+      "6": 14,
+      "7": 16,
+      "8": 10,
+      "9": 14,
+      "10": 12,
+      "11": 17,
+      "12": 17,
+      "13": 14,
+      "14": 14,
+      "15": 21,
+      "16": 21,
+      "17": 16,
+      "18": 30,
+      "19": 24,
+      "20": 36,
+      "21": 27,
+      "22": 550,
+      "23": 538
+    },
+    "day_of_week": {
+      "0": 302,
+      "1": 331,
+      "2": 266,
+      "3": 309,
+      "4": 297,
+      "5": 266,
+      "6": 374
+    }
+  },
+  "velocity": {
+    "rapid_cards": 207,
+    "high_velocity_cards": 205
+  },
+  "distance": {
+    "mean": 76.4001637393592,
+    "median": 79.0344153766128,
+    "distribution": {
+      "<10km": 8,
+      "10-50km": 197,
+      "50-100km": 557,
+      "100-500km": 238,
+      "500+km": 0
+    }
+  }
+}

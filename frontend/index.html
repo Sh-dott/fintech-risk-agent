@@ -3,49 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Fraud Detection Platform</title>
+    <title>Advanced Fraud Ring Detection Platform</title>
+    <!-- Favicon (data URI to prevent 404) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%234FC3F7' width='100' height='100' rx='20'/><path fill='white' d='M50 20 L30 45 L40 45 L40 75 L60 75 L60 45 L70 45 Z'/></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- vis.js for Network Graph -->
+    <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.6/dist/vis-network.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/vis-network@9.1.6/dist/dist/vis-network.min.css" rel="stylesheet">
+    <!-- docx.js for Word generation -->
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.0.0/build/index.min.js"></script>
+    <!-- FileSaver for download -->
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
     <link rel="stylesheet" href="./src/css/modern.css">
 </head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="gradient-bg text-white shadow-lg">
+<body class="dark-body">
+    <!-- Animated Network Background -->
+    <canvas id="networkBackground" class="network-background"></canvas>
+
+    <!-- Dark Navigation -->
+    <nav class="dark-nav">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center font-bold text-purple-600">
-                    FD
+                <div class="nav-logo">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                        <defs>
+                            <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#60A5FA;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#93C5FD;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path stroke="url(#shieldGradient)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
                 </div>
-                <h1 class="text-2xl font-bold">Fraud Detection Platform</h1>
+                <h1 class="text-xl font-bold text-white">Fraud Ring Detection Platform</h1>
             </div>
-            <div class="text-sm opacity-90">Advanced Risk Analysis Engine</div>
+            <div class="flex items-center gap-4">
+                <div id="systemStatus" class="status-badge">
+                    <span class="status-dot"></span>
+                    System Active
+                </div>
+            </div>
         </div>
     </nav>
 
     <!-- Main Container -->
     <div class="max-w-7xl mx-auto px-6 py-8">
-        <!-- Upload Section -->
+        <!-- Upload Section with Dark Theme -->
         <div class="mb-8">
-            <div class="card-shadow rounded-xl bg-white p-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Upload Transaction Data</h2>
-                <p class="text-gray-600 mb-6">Upload a CSV, JSON, or Excel file to analyze for fraud patterns and risks</p>
+            <div class="dark-card">
+                <h2 class="text-2xl font-bold text-white mb-2">Upload Transaction Data</h2>
+                <p class="text-gray-400 mb-6">Upload CSV, JSON, or Excel files to detect fraud rings using advanced ML algorithms</p>
 
-                <div id="uploadArea" class="upload-area border-2 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer transition-all hover:border-purple-400">
+                <div id="uploadArea" class="upload-area-dark">
                     <input type="file" id="fileInput" accept=".csv,.json,.jsonl,.xlsx,.xls" style="display: none;">
                     <div id="uploadContent">
-                        <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <svg class="mx-auto h-16 w-16 text-indigo-400 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                             <path d="M28 8H12a4 4 0 00-4 4v20a4 4 0 004 4h24a4 4 0 004-4V20m-8-12v12m0 0l-3-3m3 3l3-3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Drag & Drop or Click to Upload</h3>
-                        <p class="text-gray-500 mb-4">Supported formats: CSV, JSON, Excel</p>
-                        <span class="inline-block px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                        <h3 class="text-xl font-semibold text-white mb-2">Drag & Drop or Click to Upload</h3>
+                        <p class="text-gray-400 mb-4">Supported formats: CSV, JSON, Excel</p>
+                        <span class="upload-btn">
                             Choose File
                         </span>
                     </div>
                     <div id="uploadingContent" style="display: none;">
-                        <div class="loading-spinner mx-auto mb-4"></div>
-                        <p class="text-gray-600">Uploading and analyzing...</p>
+                        <div class="loading-spinner-dark mx-auto mb-4"></div>
+                        <p class="text-white font-semibold mb-2">Analyzing Transaction Data...</p>
+                        <p class="text-sm text-gray-400">Running advanced fraud ring detection algorithms</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Format Guidelines -->
+        <div class="mb-8">
+            <div class="dark-card file-guidelines">
+                <div class="flex items-center justify-between cursor-pointer" id="guidelinesHeader">
+                    <div class="flex items-center gap-3">
+                        <div class="text-2xl">📋</div>
+                        <h3 class="text-lg font-bold text-white">File Format Guidelines</h3>
+                    </div>
+                    <svg id="guidelinesChevron" class="w-5 h-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+
+                <div id="guidelinesContent" class="mt-4" style="display: none;">
+                    <div class="bg-blue-900 bg-opacity-20 border border-blue-500 border-opacity-30 rounded-lg p-4 mb-4">
+                        <p class="text-blue-300 font-semibold mb-2">✅ SYSTEM AUTO-DETECTS columns from your file</p>
+                        <p class="text-gray-400 text-sm">The system intelligently maps column names to required fields</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Recommended Columns -->
+                        <div>
+                            <h4 class="text-white font-bold mb-3 flex items-center gap-2">
+                                <span class="text-green-400">●</span>
+                                RECOMMENDED COLUMNS (for best results)
+                            </h4>
+                            <ul class="space-y-2 text-gray-300 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">transaction_id</code> or <code class="text-blue-300">ORDER_ID</code></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">user_id</code> or <code class="text-blue-300">CUSTOMER_ID</code></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">amount</code> or <code class="text-blue-300">AMOUNT_EUR</code></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">timestamp</code> or <code class="text-blue-300">ORDER_DATE</code></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">billing_first_name</code> or <code class="text-blue-300">BILLING_FIRST_NAME</code></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">billing_last_name</code> or <code class="text-blue-300">BILLING_LAST_NAME</code></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">email</code> or <code class="text-blue-300">CUSTOMER_EMAIL</code></span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Nice to Have -->
+                        <div>
+                            <h4 class="text-white font-bold mb-3 flex items-center gap-2">
+                                <span class="text-yellow-400">●</span>
+                                NICE TO HAVE (enhanced detection)
+                            </h4>
+                            <ul class="space-y-2 text-gray-300 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">card_bin</code> or <code class="text-blue-300">BIN_NUMBER</code></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">card_country</code> or <code class="text-blue-300">BIN_COUNTRY_CODE</code></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">ip_address</code> or <code class="text-blue-300">CUSTOMER_IP</code></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">ip_country</code> or <code class="text-blue-300">IP_COUNTRY_CODE</code></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">merchant_id</code> or <code class="text-blue-300">MERCHANT_NAME</code></span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-400">•</span>
+                                    <span><code class="text-blue-300">device_fingerprint</code></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-gray-700">
+                        <p class="text-gray-400 text-sm">
+                            <strong class="text-white">Supported formats:</strong> CSV, JSON, JSONL, Excel (XLS/XLSX)
+                        </p>
                     </div>
                 </div>
             </div>
@@ -55,88 +184,289 @@
         <div id="resultsSection" style="display: none;">
             <!-- Control Buttons -->
             <div class="flex gap-4 mb-6">
-                <button id="clearBtn" class="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition">
+                <button id="clearBtn" class="btn-danger">
                     Clear Results
                 </button>
-                <button id="downloadBtn" class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition">
+                <button id="downloadBtn" class="btn-success">
                     Download Report
                 </button>
             </div>
 
-            <!-- Summary Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div class="card-shadow rounded-lg bg-white p-6">
-                    <div class="text-gray-500 text-sm font-semibold mb-2">Total Transactions</div>
-                    <div class="text-4xl font-bold text-gray-800" id="totalTxns">0</div>
+            <!-- LIVE INSIGHTS DASHBOARD -->
+            <div id="liveInsightsDashboard" style="display: none;" class="mb-8">
+                <h2 class="text-2xl font-bold text-white mb-4">Live Fraud Intelligence</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Animated Counter: Total Fraud Rings -->
+                    <div class="insight-card">
+                        <div class="insight-icon">🎯</div>
+                        <div class="counter-value" id="counterFraudRings" data-target="0">0</div>
+                        <div class="counter-label">Fraud Rings Detected</div>
+                    </div>
+
+                    <!-- Animated Counter: Total Fraud Amount -->
+                    <div class="insight-card">
+                        <div class="insight-icon">💰</div>
+                        <div class="counter-value" id="counterFraudAmount" data-target="0">€0</div>
+                        <div class="counter-label">Total Fraud Exposure</div>
+                    </div>
+
+                    <!-- Animated Counter: Total Members -->
+                    <div class="insight-card">
+                        <div class="insight-icon">👥</div>
+                        <div class="counter-value" id="counterFraudMembers" data-target="0">0</div>
+                        <div class="counter-label">Fraudulent Accounts</div>
+                    </div>
                 </div>
-                <div class="card-shadow rounded-lg bg-white p-6">
-                    <div class="text-gray-500 text-sm font-semibold mb-2">High Risk Entities</div>
-                    <div class="text-4xl font-bold risk-high" id="highRisk">0</div>
-                </div>
-                <div class="card-shadow rounded-lg bg-white p-6">
-                    <div class="text-gray-500 text-sm font-semibold mb-2">Anomalies Detected</div>
-                    <div class="text-4xl font-bold risk-medium" id="anomaliesCount">0</div>
-                </div>
-                <div class="card-shadow rounded-lg bg-white p-6">
-                    <div class="text-gray-500 text-sm font-semibold mb-2">ML Patterns Found</div>
-                    <div class="text-4xl font-bold risk-low" id="patternsCount">0</div>
+
+                <!-- Risk Gauge and Progress Rings -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <!-- Risk Gauge (Speedometer) -->
+                    <div class="insight-card">
+                        <h3 class="text-lg font-bold text-white mb-4 text-center">Overall Risk Level</h3>
+                        <div class="flex flex-col items-center">
+                            <svg id="riskGauge" width="280" height="180" viewBox="0 0 280 180">
+                                <!-- Background arc -->
+                                <path id="gaugeBackground" d="M 40 140 A 100 100 0 0 1 240 140"
+                                      fill="none" stroke="#1B263B" stroke-width="20" stroke-linecap="round"/>
+                                <!-- Colored arc (will be animated) -->
+                                <path id="gaugeForeground" d="M 40 140 A 100 100 0 0 1 240 140"
+                                      fill="none" stroke="#DC2626" stroke-width="20" stroke-linecap="round"
+                                      stroke-dasharray="314" stroke-dashoffset="314"/>
+                                <!-- Center text -->
+                                <text x="140" y="120" text-anchor="middle" class="gauge-value" id="gaugeValue">0%</text>
+                                <text x="140" y="150" text-anchor="middle" class="gauge-label" id="gaugeLabel">LOADING</text>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Progress Rings (Severity Distribution) -->
+                    <div class="insight-card">
+                        <h3 class="text-lg font-bold text-white mb-4 text-center">Severity Distribution</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- CRITICAL Ring -->
+                            <div class="progress-ring-container">
+                                <svg class="progress-ring" width="120" height="120">
+                                    <circle class="progress-ring-bg" cx="60" cy="60" r="50"
+                                            fill="none" stroke="#1B263B" stroke-width="10"/>
+                                    <circle class="progress-ring-bar" id="ringCritical" cx="60" cy="60" r="50"
+                                            fill="none" stroke="#DC2626" stroke-width="10"
+                                            stroke-dasharray="314" stroke-dashoffset="314"
+                                            transform="rotate(-90 60 60)"/>
+                                    <text x="60" y="55" text-anchor="middle" class="progress-ring-value" id="ringCriticalValue">0</text>
+                                    <text x="60" y="75" text-anchor="middle" class="progress-ring-label">CRITICAL</text>
+                                </svg>
+                            </div>
+
+                            <!-- HIGH Ring -->
+                            <div class="progress-ring-container">
+                                <svg class="progress-ring" width="120" height="120">
+                                    <circle class="progress-ring-bg" cx="60" cy="60" r="50"
+                                            fill="none" stroke="#1B263B" stroke-width="10"/>
+                                    <circle class="progress-ring-bar" id="ringHigh" cx="60" cy="60" r="50"
+                                            fill="none" stroke="#EA580C" stroke-width="10"
+                                            stroke-dasharray="314" stroke-dashoffset="314"
+                                            transform="rotate(-90 60 60)"/>
+                                    <text x="60" y="55" text-anchor="middle" class="progress-ring-value" id="ringHighValue">0</text>
+                                    <text x="60" y="75" text-anchor="middle" class="progress-ring-label">HIGH</text>
+                                </svg>
+                            </div>
+
+                            <!-- MEDIUM Ring -->
+                            <div class="progress-ring-container">
+                                <svg class="progress-ring" width="120" height="120">
+                                    <circle class="progress-ring-bg" cx="60" cy="60" r="50"
+                                            fill="none" stroke="#1B263B" stroke-width="10"/>
+                                    <circle class="progress-ring-bar" id="ringMedium" cx="60" cy="60" r="50"
+                                            fill="none" stroke="#CA8A04" stroke-width="10"
+                                            stroke-dasharray="314" stroke-dashoffset="314"
+                                            transform="rotate(-90 60 60)"/>
+                                    <text x="60" y="55" text-anchor="middle" class="progress-ring-value" id="ringMediumValue">0</text>
+                                    <text x="60" y="75" text-anchor="middle" class="progress-ring-label">MEDIUM</text>
+                                </svg>
+                            </div>
+
+                            <!-- LOW Ring -->
+                            <div class="progress-ring-container">
+                                <svg class="progress-ring" width="120" height="120">
+                                    <circle class="progress-ring-bg" cx="60" cy="60" r="50"
+                                            fill="none" stroke="#1B263B" stroke-width="10"/>
+                                    <circle class="progress-ring-bar" id="ringLow" cx="60" cy="60" r="50"
+                                            fill="none" stroke="#16A34A" stroke-width="10"
+                                            stroke-dasharray="314" stroke-dashoffset="314"
+                                            transform="rotate(-90 60 60)"/>
+                                    <text x="60" y="55" text-anchor="middle" class="progress-ring-value" id="ringLowValue">0</text>
+                                    <text x="60" y="75" text-anchor="middle" class="progress-ring-label">LOW</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Risk Distribution Chart -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div class="card-shadow rounded-lg bg-white p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Risk Distribution</h3>
-                    <canvas id="riskChart"></canvas>
-                </div>
-
-                <div class="card-shadow rounded-lg bg-white p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Detected Patterns</h3>
-                    <div id="patternsInfo" class="space-y-3"></div>
-                </div>
-            </div>
-
-            <!-- Risk Profiles Table -->
-            <div class="card-shadow rounded-lg bg-white p-6 mb-8">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">Entity Risk Profiles</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-50 border-b">
-                            <tr>
-                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Entity ID</th>
-                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Risk Score</th>
-                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Risk Level</th>
-                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Risk Factors</th>
-                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Red Flags</th>
-                            </tr>
-                        </thead>
-                        <tbody id="profilesTable">
-                        </tbody>
-                    </table>
+            <!-- CRITICAL EXECUTIVE ALERT BANNER (Fraud Rings Detected) -->
+            <div id="fraudRingAlertBanner" style="display: none;" class="fraud-alert-gradient">
+                <div class="flex items-center gap-4">
+                    <div class="text-6xl">🚨</div>
+                    <div>
+                        <h2 class="text-3xl font-bold mb-2 text-white">Critical: Fraud Rings Detected</h2>
+                        <p class="text-xl opacity-90 text-white">
+                            <span id="totalFraudRings">0</span> fraud rings identified across
+                            <span id="totalFraudMembers">0</span> users. Immediate action required.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Anomalies Section -->
-            <div id="anomaliesSection" style="display: none;">
-                <div class="card-shadow rounded-lg bg-white p-6 mb-8">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Detected Anomalies</h3>
-                    <div id="anomaliesList" class="space-y-3"></div>
+            <!-- FRAUD RING SUMMARY CARDS (5 Ring Types) -->
+            <div id="fraudRingSummarySection" style="display: none;" class="mb-8">
+                <h2 class="text-2xl font-bold text-white mb-4">Fraud Ring Summary</h2>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <!-- High Velocity Ring -->
+                    <div class="ring-summary-card" data-ring-type="HIGH_VELOCITY">
+                        <div class="ring-icon">⚡</div>
+                        <div class="ring-count" id="velocityRingCount">0</div>
+                        <div class="ring-label">High Velocity</div>
+                        <div class="ring-sublabel">Rapid transactions</div>
+                    </div>
+                    <!-- Cross-Border Ring -->
+                    <div class="ring-summary-card" data-ring-type="CROSS_BORDER">
+                        <div class="ring-icon">🌍</div>
+                        <div class="ring-count" id="crossBorderRingCount">0</div>
+                        <div class="ring-label">Cross-Border</div>
+                        <div class="ring-sublabel">Geographic anomalies</div>
+                    </div>
+                    <!-- Merchant Cycling Ring -->
+                    <div class="ring-summary-card" data-ring-type="MERCHANT_CYCLING">
+                        <div class="ring-icon">🔄</div>
+                        <div class="ring-count" id="merchantCyclingRingCount">0</div>
+                        <div class="ring-label">Merchant Cycling</div>
+                        <div class="ring-sublabel">Card testing</div>
+                    </div>
+                    <!-- Temporal Clustering Ring -->
+                    <div class="ring-summary-card" data-ring-type="TEMPORAL_CLUSTERING">
+                        <div class="ring-icon">⏰</div>
+                        <div class="ring-count" id="temporalRingCount">0</div>
+                        <div class="ring-label">Temporal Clustering</div>
+                        <div class="ring-sublabel">Bot activity</div>
+                    </div>
+                    <!-- High Value Ring -->
+                    <div class="ring-summary-card" data-ring-type="HIGH_VALUE">
+                        <div class="ring-icon">💰</div>
+                        <div class="ring-count" id="highValueRingCount">0</div>
+                        <div class="ring-label">High Value</div>
+                        <div class="ring-sublabel">Large amounts</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Fraud Networks Section -->
-            <div id="networkSection" style="display: none;">
-                <div class="card-shadow rounded-lg bg-white p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Fraud Network Analysis</h3>
-                    <div id="networkInfo" class="space-y-2 text-sm text-gray-700"></div>
+            <!-- NETWORK VISUALIZATION -->
+            <div id="networkVisualizationSection" style="display: none;" class="mb-8">
+                <div class="dark-card">
+                    <h3 class="text-2xl font-bold text-white mb-4">Fraud Ring Network Graph</h3>
+                    <p class="text-gray-400 mb-6">Visual representation of detected fraud ring connections</p>
+                    <div id="networkGraph" class="network-graph-container" style="height: 600px;">
+                        <!-- Network visualization will be rendered here -->
+                    </div>
                 </div>
             </div>
+
+            <!-- AI RECOMMENDATIONS SECTION -->
+            <div id="aiRecommendationsSection" style="display: none;" class="mb-8">
+                <h2 class="text-2xl font-bold text-white mb-4">🧠 AI-Powered Fraud Prevention Intelligence</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Prevention Tips -->
+                    <div class="dark-card">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-3xl">🛡️</div>
+                            <h3 class="text-xl font-bold text-white">How to Prevent Future Attacks</h3>
+                        </div>
+                        <ul id="preventionTipsList" class="space-y-3 text-gray-300">
+                            <!-- Dynamic prevention tips will be inserted here -->
+                        </ul>
+                    </div>
+
+                    <!-- Detection Tips -->
+                    <div class="dark-card">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-3xl">🔍</div>
+                            <h3 class="text-xl font-bold text-white">Smart Detection Tips</h3>
+                        </div>
+                        <ul id="detectionTipsList" class="space-y-3 text-gray-300">
+                            <!-- Dynamic detection tips will be inserted here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FRAUD RING DETAIL CARDS -->
+            <div id="fraudRingDetailsSection" style="display: none;" class="mb-8">
+                <h2 class="text-2xl font-bold text-white mb-4">Fraud Ring Details</h2>
+                <div id="fraudRingCardsList" class="space-y-4">
+                    <!-- Fraud ring cards will be inserted here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- FRAUD INTELLIGENCE SECTION (existing patterns detection) -->
+            <div id="fraudInsightsSection" style="display: none;">
+                <!-- High Alert Banner (shown when high-severity patterns exist) -->
+                <div id="fraudAlertBanner" style="display: none;" class="fraud-alert-banner-secondary">
+                    <div class="flex items-center gap-4">
+                        <div class="text-5xl">⚠️</div>
+                        <div>
+                            <h2 class="text-2xl font-bold mb-2 text-white">Additional Fraud Patterns Detected</h2>
+                            <p class="text-lg opacity-90 text-white">
+                                <span id="highSeverityCount">0</span> high-severity patterns require attention.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Fraud Insights Summary -->
+                <div id="fraudSummary" class="dark-card mb-6" style="display: none;">
+                    <h2 class="text-2xl font-bold text-white mb-4">
+                        🔍 Additional Fraud Intelligence
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="stat-card stat-critical">
+                            <div class="stat-value" id="fraudHighCount">0</div>
+                            <div class="stat-label">High Severity</div>
+                        </div>
+                        <div class="stat-card stat-high">
+                            <div class="stat-value" id="fraudMediumCount">0</div>
+                            <div class="stat-label">Medium Severity</div>
+                        </div>
+                        <div class="stat-card stat-medium">
+                            <div class="stat-value" id="fraudLowCount">0</div>
+                            <div class="stat-label">Low Severity</div>
+                        </div>
+                        <div class="stat-card stat-neutral">
+                            <div class="stat-value" id="fraudTotalCount">0</div>
+                            <div class="stat-label">Total Patterns</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fraud Patterns List -->
+                <div id="fraudPatternsContainer" class="mb-8" style="display: none;">
+                    <h2 class="text-2xl font-bold text-white mb-4">
+                        📊 Detected Fraud Patterns
+                    </h2>
+                    <div id="fraudPatternsList" class="space-y-3">
+                        <!-- Pattern cards will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+
+
+
         </div>
 
         <!-- Error Message -->
-        <div id="errorMsg" style="display: none;" class="card-shadow rounded-lg bg-red-50 border border-red-200 p-6 mb-6">
-            <h3 class="text-lg font-semibold text-red-800 mb-2">Error</h3>
-            <p id="errorText" class="text-red-700"></p>
+        <div id="errorMsg" style="display: none;" class="error-card">
+            <h3 class="text-lg font-semibold text-red-300 mb-2">Error</h3>
+            <p id="errorText" class="text-red-200"></p>
         </div>
     </div>
 

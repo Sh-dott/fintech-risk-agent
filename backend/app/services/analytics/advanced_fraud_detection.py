@@ -66,23 +66,42 @@ class AdvancedFraudDetectionEngine:
             return
 
         # Convert to numeric where possible
-        self.df['amount'] = pd.to_numeric(self.df.get('amount', 0))
-        self.df['risk_score'] = pd.to_numeric(self.df.get('risk_score', 0))
+        self.df['amount'] = pd.to_numeric(self.df.get('amount', 0), errors='coerce')
+        self.df['risk_score'] = pd.to_numeric(self.df.get('risk_score', 0), errors='coerce')
 
         # Feature engineering
-        self.df['amount_log'] = np.log1p(self.df['amount'])
-        self.df['hour'] = pd.to_datetime(self.df.get('timestamp', datetime.now()),
-                                         errors='coerce').dt.hour
-        self.df['day_of_week'] = pd.to_datetime(self.df.get('timestamp', datetime.now()),
-                                                errors='coerce').dt.dayofweek
+        self.df['amount_log'] = np.log1p(self.df['amount'].fillna(0))
 
-        # Aggregate statistics
-        self.df['user_transaction_count'] = self.df.groupby('user_id').size().reindex(
-            self.df['user_id']).values
-        self.df['merchant_transaction_count'] = self.df.groupby('merchant_id').size().reindex(
-            self.df['merchant_id']).values
-        self.df['device_transaction_count'] = self.df.groupby('device_id').size().reindex(
-            self.df['device_id']).values
+        # Handle timestamp column flexibly
+        if 'timestamp' in self.df.columns:
+            # Convert timestamp to datetime (handles both strings and datetime objects)
+            timestamp_series = pd.to_datetime(self.df['timestamp'], errors='coerce')
+            self.df['hour'] = timestamp_series.dt.hour
+            self.df['day_of_week'] = timestamp_series.dt.dayofweek
+        else:
+            # If no timestamp, use current time
+            now = datetime.now()
+            self.df['hour'] = now.hour
+            self.df['day_of_week'] = now.weekday()
+
+        # Aggregate statistics (with defensive checks)
+        if 'user_id' in self.df.columns:
+            self.df['user_transaction_count'] = self.df.groupby('user_id').size().reindex(
+                self.df['user_id']).values
+        else:
+            self.df['user_transaction_count'] = 1
+
+        if 'merchant_id' in self.df.columns:
+            self.df['merchant_transaction_count'] = self.df.groupby('merchant_id').size().reindex(
+                self.df['merchant_id']).values
+        else:
+            self.df['merchant_transaction_count'] = 1
+
+        if 'device_id' in self.df.columns:
+            self.df['device_transaction_count'] = self.df.groupby('device_id').size().reindex(
+                self.df['device_id']).values
+        else:
+            self.df['device_transaction_count'] = 1
 
     def detect_anomalies(self) -> List[Dict[str, Any]]:
         """Detect statistical anomalies using multiple methods."""
@@ -202,6 +221,10 @@ class AdvancedFraudDetectionEngine:
 
         patterns = []
 
+        # Check if required columns exist
+        if 'user_id' not in self.df.columns or 'amount' not in self.df.columns:
+            return patterns
+
         # 1. Structuring (multiple small transactions)
         user_patterns = self.df.groupby('user_id').agg({
             'amount': ['sum', 'count', 'mean', 'std']
@@ -227,6 +250,11 @@ class AdvancedFraudDetectionEngine:
                 })
 
         # 2. Circular transactions (A->B->C->A)
+        # Only proceed if merchant_id column exists
+        if 'merchant_id' not in self.df.columns:
+            self.money_laundering_patterns = patterns
+            return patterns
+
         user_merchant_pairs = self.df[['user_id', 'merchant_id']].drop_duplicates()
 
         for user_id in self.df['user_id'].unique():
@@ -257,9 +285,22 @@ class AdvancedFraudDetectionEngine:
 
         risk_profiles = {}
 
+        # Check if user_id exists, otherwise create generic profiles
+        if 'user_id' not in self.df.columns:
+            # Create a generic risk profile for all transactions
+            user_id = 'unknown_user'
+            user_txns = self.df
+        else:
+            user_txns = None  # Will be set in loop
+
         # Analyze users
-        for user_id in self.df['user_id'].unique():
-            user_txns = self.df[self.df['user_id'] == user_id]
+        entity_ids = self.df['user_id'].unique() if 'user_id' in self.df.columns else ['unknown_user']
+
+        for user_id in entity_ids:
+            if 'user_id' in self.df.columns:
+                user_txns = self.df[self.df['user_id'] == user_id]
+            else:
+                user_txns = self.df  # Use all transactions if no user_id column
 
             # Base risk (from existing scores)
             base_risk = user_txns['risk_score'].mean() if 'risk_score' in user_txns else 0.5

@@ -103,6 +103,34 @@ class RiskProfileResponse(BaseModel):
     confidence_score: float
 
 
+class FraudRingResponse(BaseModel):
+    """Response model for individual fraud ring detection."""
+    ring_type: str = Field(..., description="Type of fraud ring (e.g., HIGH_VELOCITY, CROSS_BORDER)")
+    ring_name: str = Field(..., description="Human-readable name of the fraud ring")
+    severity: str = Field(..., description="Severity level: CRITICAL, HIGH, or MEDIUM")
+    members: List[str] = Field(..., description="List of user IDs in the fraud ring")
+    member_count: int = Field(..., description="Number of members in the ring")
+    detection_method: str = Field(..., description="Method used to detect this ring")
+    evidence: Dict[str, Any] = Field(..., description="Evidence supporting the detection")
+    sample_transactions: List[Dict[str, Any]] = Field(..., description="Sample transactions from ring members")
+    risk_score: float = Field(..., description="Risk score (0.0 to 1.0)")
+    explanation: str = Field(..., description="Detailed explanation of the fraud pattern")
+    recommendations: List[str] = Field(..., description="Actionable recommendations")
+    network_data: Optional[Dict[str, Any]] = Field(default=None, description="Network graph data for visualization")
+
+
+class FraudRingsReport(BaseModel):
+    """Complete fraud rings detection report."""
+    total_rings_detected: int = Field(..., description="Total number of fraud rings detected")
+    critical_count: int = Field(..., description="Number of critical severity rings")
+    high_count: int = Field(..., description="Number of high severity rings")
+    medium_count: int = Field(..., description="Number of medium severity rings")
+    rings: List[FraudRingResponse] = Field(default_factory=list, description="Detected fraud rings")
+    overall_risk_level: str = Field(..., description="Overall risk level: CRITICAL, HIGH, MEDIUM, or LOW")
+    executive_summary: str = Field(..., description="Executive summary of fraud ring detections")
+    detection_timestamp: str = Field(..., description="Timestamp of detection")
+
+
 class AdvancedAnalysisResponse(BaseModel):
     """Advanced fraud detection analysis response."""
     status: str
@@ -114,3 +142,19 @@ class AdvancedAnalysisResponse(BaseModel):
     fraud_networks: Dict[str, Any]
     money_laundering_patterns: List[Dict[str, Any]]
     risk_profiles: List[RiskProfileResponse]
+    fraud_insights: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Fraud intelligence insights with explainable patterns"
+    )
+    fraud_rings: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Detected fraud rings with targeted detection methods"
+    )
+    organized_fraud: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Organized fraud rings (fake identity, email, geographic mismatches)"
+    )
+    data_driven_fraud_rings: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Data-driven fraud ring detection based on discovered patterns"
+    )

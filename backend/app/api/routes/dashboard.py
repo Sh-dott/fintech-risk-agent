@@ -8,15 +8,15 @@ from pathlib import Path
 
 router = APIRouter(tags=["Dashboard"])
 
-# Path to frontend dist files (will be updated after frontend build)
-FRONTEND_DIST = Path(__file__).parent.parent.parent.parent.parent / "frontend" / "dist"
+# Path to frontend files (serving directly, not from dist)
+FRONTEND_DIR = Path(__file__).parent.parent.parent.parent.parent / "frontend"
 
 
 @router.get("/", include_in_schema=False)
 async def root():
     """Serve the modern fraud detection dashboard."""
     return FileResponse(
-        FRONTEND_DIST / "index.html",
+        FRONTEND_DIR / "index.html",
         media_type="text/html"
     )
 
@@ -25,7 +25,7 @@ async def root():
 async def get_dashboard():
     """Get the modern interactive web dashboard."""
     return FileResponse(
-        FRONTEND_DIST / "index.html",
+        FRONTEND_DIR / "index.html",
         media_type="text/html"
     )
 

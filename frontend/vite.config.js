@@ -17,14 +17,16 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '/health': 'http://localhost:8000',
-      '/score': 'http://localhost:8000',
-      '/batch-score': 'http://localhost:8000',
-      '/metrics': 'http://localhost:8000',
-      '/history': 'http://localhost:8000',
-      '/analytics': 'http://localhost:8000',
-      '/upload-and-analyze': 'http://localhost:8000',
-      '/analyze-transactions': 'http://localhost:8000',
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      // Proxy all API endpoints to backend
+      '^/(health|score|batch-score|metrics|history|analytics|upload-and-analyze|analyze-transactions)': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
     },
   },
 })

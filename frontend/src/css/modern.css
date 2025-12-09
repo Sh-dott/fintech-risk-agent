@@ -1,55 +1,1060 @@
-.gradient-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* ============================================================================
+   DARK BLUE WITH WHITE GRADIENT THEME - Deep & Elegant
+   Color Palette: Deep Blue, Navy, White Gradients
+   ============================================================================ */
+
+:root {
+    /* Dark Blue Backgrounds */
+    --bg-primary: #0D1B2A;          /* Deep Navy */
+    --bg-secondary: #1B263B;        /* Dark Blue */
+    --bg-tertiary: #415A77;         /* Medium Blue */
+    --bg-card: rgba(27, 38, 59, 0.95);
+    --bg-card-hover: rgba(65, 90, 119, 0.95);
+
+    /* Blue & White Accents */
+    --accent-primary: #3B82F6;      /* Blue 500 */
+    --accent-secondary: #60A5FA;    /* Blue 400 */
+    --accent-tertiary: #93C5FD;     /* Blue 300 */
+    --accent-light: #DBEAFE;        /* Blue 100 */
+    --accent-white: #FFFFFF;
+    --accent-gradient: linear-gradient(135deg, #3B82F6 0%, #60A5FA 50%, #FFFFFF 100%);
+    --white-gradient: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+
+    /* Text Colors - Light on Dark */
+    --text-primary: #F8FAFC;        /* Slate 50 */
+    --text-secondary: #CBD5E1;      /* Slate 300 */
+    --text-tertiary: #94A3B8;       /* Slate 400 */
+    --text-muted: #64748B;          /* Slate 500 */
+
+    /* Border Colors */
+    --border-primary: rgba(59, 130, 246, 0.2);
+    --border-secondary: rgba(96, 165, 250, 0.3);
+    --border-accent: rgba(147, 197, 253, 0.4);
+    --border-white: rgba(255, 255, 255, 0.1);
+
+    /* Severity Colors - Bright on Dark */
+    --severity-critical: #EF4444;   /* Red 500 */
+    --severity-high: #F97316;       /* Orange 500 */
+    --severity-medium: #F59E0B;     /* Amber 500 */
+    --severity-low: #10B981;        /* Emerald 500 */
+
+    /* Shadows - Deep Blue with Glow */
+    --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px 0 rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.3);
 }
-.card-shadow {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+/* ============================================================================
+   GLOBAL STYLES
+   ============================================================================ */
+
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
-.risk-high { color: #ef4444; }
-.risk-medium { color: #f97316; }
-.risk-low { color: #22c55e; }
-.upload-area {
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.dark-body {
+    background: linear-gradient(180deg,
+        #0A1628 0%,
+        #0D1B2A 20%,
+        #1B263B 50%,
+        #0D1B2A 80%,
+        #0A1628 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Subtle white gradient overlay effect */
+.dark-body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        radial-gradient(circle at 10% 20%, rgba(255,255,255,0.08) 0%, transparent 25%),
+        radial-gradient(circle at 90% 30%, rgba(59,130,246,0.15) 0%, transparent 30%),
+        radial-gradient(circle at 50% 70%, rgba(255,255,255,0.05) 0%, transparent 35%),
+        radial-gradient(circle at 80% 80%, rgba(96,165,250,0.1) 0%, transparent 25%);
+    pointer-events: none;
+    animation: shimmerEffect 30s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes shimmerEffect {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.9; }
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.3;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Ensure content is above background effects */
+nav, .max-w-7xl {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================================================
+   NAVIGATION - Dark Blue with White Gradient
+   ============================================================================ */
+
+.dark-nav {
+    background: linear-gradient(135deg,
+        rgba(13, 27, 42, 0.95) 0%,
+        rgba(27, 38, 59, 0.95) 50%,
+        rgba(13, 27, 42, 0.95) 100%);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--border-white);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+}
+
+.nav-logo {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--severity-low);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--severity-low);
+    border-radius: 50%;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    box-shadow: 0 0 10px var(--severity-low);
+}
+
+/* ============================================================================
+   CARDS - Dark Blue with White Gradient Borders
+   ============================================================================ */
+
+.dark-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-primary);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.dark-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1.5rem;
+    padding: 2px;
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.1) 0%,
+        rgba(59,130,246,0.2) 50%,
+        rgba(255,255,255,0.1) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.dark-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-accent);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    transform: translateY(-2px);
+}
+
+.dark-card:hover::before {
+    opacity: 1;
+}
+
+/* ============================================================================
+   UPLOAD AREA - Dark Blue
+   ============================================================================ */
+
+.upload-area-dark {
+    border: 3px dashed var(--border-secondary);
+    border-radius: 1.5rem;
+    padding: 3rem;
+    text-align: center;
+    cursor: pointer;
     transition: all 0.3s ease;
+    background: linear-gradient(135deg,
+        rgba(27, 38, 59, 0.8) 0%,
+        rgba(65, 90, 119, 0.6) 100%);
+    backdrop-filter: blur(10px);
 }
-.upload-area.dragover {
-    background-color: #e0e7ff;
-    border-color: #667eea;
+
+.upload-area-dark:hover,
+.upload-area-dark.dragover {
+    border-color: var(--accent-primary);
+    background: linear-gradient(135deg,
+        rgba(27, 38, 59, 0.9) 0%,
+        rgba(59, 130, 246, 0.2) 100%);
     transform: scale(1.02);
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
 }
-.loading-spinner {
-    border: 4px solid #f3f4f6;
-    border-top: 4px solid #667eea;
+
+.upload-btn {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 50%, rgba(255,255,255,0.9) 100%);
+    color: #0D1B2A;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+}
+
+.loading-spinner-dark {
+    border: 4px solid rgba(59, 130, 246, 0.2);
+    border-top: 4px solid var(--accent-primary);
     border-radius: 50%;
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
 }
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-.pulse-animation {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+/* ============================================================================
+   FRAUD RING ALERT BANNER
+   ============================================================================ */
+
+.fraud-alert-gradient {
+    background: linear-gradient(135deg,
+        var(--severity-critical) 0%,
+        #DC2626 50%,
+        #B91C1C 100%);
+    color: white;
+    padding: 2.5rem 3rem;
+    border-radius: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow:
+        0 20px 40px rgba(239, 68, 68, 0.4),
+        0 0 60px rgba(239, 68, 68, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+    animation: alertPulse 3s ease-in-out infinite;
 }
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+
+.fraud-alert-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255,255,255,0.9) 50%,
+        transparent 100%);
+    animation: shimmer 3s linear infinite;
 }
-.badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
+
+@keyframes alertPulse {
+    0%, 100% {
+        box-shadow:
+            0 20px 40px rgba(239, 68, 68, 0.4),
+            0 0 60px rgba(239, 68, 68, 0.3);
+    }
+    50% {
+        box-shadow:
+            0 20px 40px rgba(239, 68, 68, 0.6),
+            0 0 80px rgba(239, 68, 68, 0.5);
+    }
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 200%; }
+}
+
+.fraud-alert-banner-secondary {
+    background: linear-gradient(135deg,
+        var(--severity-high) 0%,
+        #EA580C 50%,
+        #C2410C 100%);
+    color: white;
+    padding: 2rem 2.5rem;
+    border-radius: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 20px 40px rgba(249, 115, 22, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================================================
+   FRAUD RING SUMMARY CARDS
+   ============================================================================ */
+
+.ring-summary-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-primary);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+}
+
+.ring-summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg,
+        #3B82F6 0%,
+        #60A5FA 50%,
+        rgba(255,255,255,0.8) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.ring-summary-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--accent-primary);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+.ring-summary-card:hover::before {
+    opacity: 1;
+}
+
+.ring-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.5));
+}
+
+.ring-count {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 50%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+}
+
+.ring-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.ring-sublabel {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+   NETWORK GRAPH VISUALIZATION
+   ============================================================================ */
+
+.network-graph-container {
+    background: linear-gradient(135deg,
+        rgba(27, 38, 59, 0.9) 0%,
+        rgba(65, 90, 119, 0.8) 100%);
+    border: 2px solid var(--border-primary);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(10px);
+}
+
+.network-graph-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+/* ============================================================================
+   FRAUD RING DETAIL CARDS
+   ============================================================================ */
+
+.fraud-ring-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-primary);
+    border-left: 5px solid var(--accent-primary);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+}
+
+.fraud-ring-card:hover {
+    background: var(--bg-card-hover);
+    border-left-color: var(--accent-secondary);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    transform: translateX(4px);
+}
+
+.fraud-ring-card.severity-critical {
+    border-left-color: var(--severity-critical);
+    background: linear-gradient(to right,
+        rgba(239, 68, 68, 0.1) 0%,
+        var(--bg-card) 10%);
+}
+
+.fraud-ring-card.severity-high {
+    border-left-color: var(--severity-high);
+    background: linear-gradient(to right,
+        rgba(249, 115, 22, 0.1) 0%,
+        var(--bg-card) 10%);
+}
+
+.fraud-ring-card.severity-medium {
+    border-left-color: var(--severity-medium);
+    background: linear-gradient(to right,
+        rgba(245, 158, 11, 0.1) 0%,
+        var(--bg-card) 10%);
+}
+
+.fraud-ring-card.expanded {
+    border-color: var(--border-accent);
+}
+
+.fraud-ring-details {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border-primary);
+    display: none;
+}
+
+.fraud-ring-card.expanded .fraud-ring-details {
+    display: block;
+    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.expand-icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-secondary);
+}
+
+.fraud-ring-card.expanded .expand-icon {
+    transform: rotate(180deg);
+    color: var(--accent-primary);
+}
+
+/* ============================================================================
+   MEMBER CHIPS
+   ============================================================================ */
+
+.member-chip {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--accent-tertiary);
+    padding: 0.375rem 0.875rem;
     border-radius: 9999px;
     font-size: 0.75rem;
     font-weight: 600;
+    margin: 0.25rem;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    transition: all 0.2s ease;
+    letter-spacing: 0.025em;
+    font-family: 'Courier New', monospace;
 }
+
+.member-chip:hover {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* ============================================================================
+   STAT CARDS
+   ============================================================================ */
+
+.stat-card {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 2px solid var(--border-primary);
+    transition: all 0.2s ease;
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+}
+
+.stat-card:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md), var(--shadow-glow);
+}
+
+.stat-card.stat-critical {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.stat-card.stat-high {
+    background: rgba(249, 115, 22, 0.1);
+    border-color: rgba(249, 115, 22, 0.3);
+}
+
+.stat-card.stat-medium {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.stat-card.stat-neutral {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card.stat-critical .stat-value {
+    color: var(--severity-critical);
+}
+
+.stat-card.stat-high .stat-value {
+    color: var(--severity-high);
+}
+
+.stat-card.stat-medium .stat-value {
+    color: var(--severity-medium);
+}
+
+.stat-card.stat-neutral .stat-value {
+    color: var(--accent-primary);
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.stat-label-small {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-value-large {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+
+.btn-danger {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--severity-critical) 0%, #B91C1C 100%);
+    color: white;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+}
+
+.btn-success {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--severity-low) 0%, #059669 100%);
+    color: white;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+}
+
+/* ============================================================================
+   TABLE
+   ============================================================================ */
+
+.dark-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.dark-table thead tr {
+    background: rgba(59, 130, 246, 0.15);
+    border-bottom: 2px solid var(--border-accent);
+}
+
+.dark-table tbody tr {
+    border-bottom: 1px solid var(--border-primary);
+    transition: background-color 0.15s ease;
+}
+
+.dark-table tbody tr:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.dark-table th,
+.dark-table td {
+    color: var(--text-primary);
+}
+
+/* ============================================================================
+   RISK COLORS
+   ============================================================================ */
+
+.risk-high {
+    color: var(--severity-critical);
+    font-weight: 700;
+}
+
+.risk-medium {
+    color: var(--severity-high);
+    font-weight: 700;
+}
+
+.risk-low {
+    color: var(--severity-low);
+    font-weight: 700;
+}
+
+/* ============================================================================
+   BADGES
+   ============================================================================ */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid;
+}
+
 .badge-high {
-    background-color: #fee2e2;
-    color: #7f1d1d;
+    background: rgba(239, 68, 68, 0.2);
+    color: #FCA5A5;
+    border-color: rgba(239, 68, 68, 0.4);
 }
+
 .badge-medium {
-    background-color: #fed7aa;
-    color: #7c2d12;
+    background: rgba(249, 115, 22, 0.2);
+    color: #FDBA74;
+    border-color: rgba(249, 115, 22, 0.4);
 }
+
 .badge-low {
-    background-color: #dcfce7;
-    color: #166534;
+    background: rgba(245, 158, 11, 0.2);
+    color: #FCD34D;
+    border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* ============================================================================
+   ERROR CARD
+   ============================================================================ */
+
+.error-card {
+    background: rgba(239, 68, 68, 0.15);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    animation: fadeIn 0.3s ease-out, shake 0.5s ease-in-out;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+/* ============================================================================
+   SCROLLBAR - Dark Blue with White Gradient
+   ============================================================================ */
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #3B82F6 0%, #60A5FA 50%, rgba(255,255,255,0.5) 100%);
+    border-radius: 5px;
+    border: 2px solid var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, #60A5FA 50%, #3B82F6 100%);
+}
+
+/* ============================================================================
+   SELECTION
+   ============================================================================ */
+
+::selection {
+    background: linear-gradient(135deg, #3B82F6 0%, rgba(255,255,255,0.8) 100%);
+    color: var(--bg-primary);
+}
+
+::-moz-selection {
+    background: linear-gradient(135deg, #3B82F6 0%, rgba(255,255,255,0.8) 100%);
+    color: var(--bg-primary);
+}
+
+/* ============================================================================
+   FOCUS STATES
+   ============================================================================ */
+
+button:focus,
+input:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .dark-card {
+        padding: 1.5rem;
+    }
+
+    .fraud-alert-gradient {
+        padding: 1.5rem 2rem;
+    }
+
+    .ring-summary-card {
+        padding: 1.25rem;
+    }
+
+    .ring-icon {
+        font-size: 2rem;
+    }
+
+    .ring-count {
+        font-size: 2rem;
+    }
+
+    .stat-value-large {
+        font-size: 2.25rem;
+    }
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+
+@media print {
+    .dark-nav,
+    button,
+    #uploadArea {
+        display: none;
+    }
+
+    .dark-body {
+        background: white;
+    }
+
+    .dark-card {
+        border: 1px solid #000;
+        box-shadow: none;
+    }
+
+    .fraud-ring-details {
+        display: block !important;
+    }
+}
+
+/* ============================================================================
+   LIVE INSIGHTS DASHBOARD STYLES
+   ============================================================================ */
+
+/* Insight Cards */
+.insight-card {
+    background: linear-gradient(135deg, #1B263B 0%, #0D1B2A 100%);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.insight-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3B82F6, #60A5FA, #93C5FD);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.insight-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(59, 130, 246, 0.6);
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+}
+
+.insight-card:hover::before {
+    opacity: 1;
+}
+
+.insight-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Animated Counters */
+.counter-value {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #60A5FA, #93C5FD, #FFFFFF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+}
+
+.counter-label {
+    color: #94A3B8;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Risk Gauge Styles */
+.gauge-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    fill: #FFFFFF;
+}
+
+.gauge-label {
+    font-size: 1.25rem;
+    font-weight: 600;
+    fill: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+#gaugeForeground {
+    transition: stroke-dashoffset 1.5s ease, stroke 1s ease;
+}
+
+/* Progress Rings */
+.progress-ring-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.progress-ring {
+    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.3));
+}
+
+.progress-ring-bar {
+    transition: stroke-dashoffset 1.5s ease;
+    stroke-linecap: round;
+}
+
+.progress-ring-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    fill: #FFFFFF;
+}
+
+.progress-ring-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    fill: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Animation for counters */
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.counter-value.animating {
+    animation: countUp 0.5s ease-out;
+}
+
+/* Fade in animation for dashboard */
+#liveInsightsDashboard {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================================
+   ANIMATED NETWORK BACKGROUND
+   ============================================================================ */
+
+.network-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.15;
 }

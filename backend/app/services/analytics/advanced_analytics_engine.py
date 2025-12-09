@@ -120,16 +120,25 @@ class AdvancedAnalyticsEngine:
 
         if 'timestamp' in self.df.columns:
             self.df['timestamp'] = pd.to_datetime(self.df['timestamp'], errors='coerce')
+            self.df['hour'] = self.df['timestamp'].dt.hour
+            self.df['day_of_week'] = self.df['timestamp'].dt.day_name()
         else:
-            self.df['timestamp'] = datetime.utcnow()
-
-        self.df['hour'] = self.df['timestamp'].dt.hour
-        self.df['day_of_week'] = self.df['timestamp'].dt.day_name()
+            # If no timestamp, use current time for all records
+            now = datetime.utcnow()
+            self.df['timestamp'] = now
+            self.df['hour'] = now.hour
+            self.df['day_of_week'] = now.strftime('%A')
         self.df['amount_log'] = np.log1p(pd.to_numeric(self.df['amount'], errors='coerce'))
 
-        self.df['is_denied'] = self.df['decision'].str.lower() == 'block'
-        self.df['is_approved'] = self.df['decision'].str.lower() == 'allow'
-        self.df['is_review'] = self.df['decision'].str.lower() == 'review'
+        # Handle decision column if it exists
+        if 'decision' in self.df.columns:
+            self.df['is_denied'] = self.df['decision'].str.lower() == 'block'
+            self.df['is_approved'] = self.df['decision'].str.lower() == 'allow'
+            self.df['is_review'] = self.df['decision'].str.lower() == 'review'
+        else:
+            self.df['is_denied'] = False
+            self.df['is_approved'] = True
+            self.df['is_review'] = False
 
     def _compute_metrics(self) -> None:
         """Compute real-time transaction metrics"""

@@ -151,42 +151,122 @@ class FileProcessor:
             raise ValueError(f"Error processing Excel file: {str(e)}")
 
     @staticmethod
-    def validate_transactions(transactions: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Validate transaction data quality."""
-        report = {
-            "total_records": len(transactions),
-            "valid_records": 0,
-            "invalid_records": 0,
-            "missing_fields": [],
-            "data_quality_score": 0.0,
-            "issues": []
+    def normalize_columns(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Intelligently map columns to standard fields.
+        Works with ANY column names and creates standardized fields.
+        """
+        if not transactions:
+            return transactions
+
+        normalized = []
+
+        # Column mapping patterns (case-insensitive)
+        column_patterns = {
+            'transaction_id': ['transaction_id', 'txn_id', 'trans_id', 'id', 'transaction', 'txn', 'order_id', 'payment_id'],
+            'amount': ['amount', 'value', 'total', 'sum', 'price', 'payment_amount', 'transaction_amount'],
+            'user_id': ['user_id', 'customer_id', 'client_id', 'userid', 'customerid', 'user', 'customer'],
+            'merchant_id': ['merchant_id', 'seller_id', 'vendor_id', 'merchantid', 'merchant', 'seller', 'store_id'],
+            'timestamp': ['timestamp', 'time', 'date', 'datetime', 'created_at', 'transaction_time', 'trans_time'],
+            'currency': ['currency', 'curr', 'currency_code'],
+            'country': ['country', 'nation', 'country_code', 'location'],
+            'device_id': ['device_id', 'deviceid', 'device'],
+            'ip_address': ['ip_address', 'ip', 'ipaddress', 'client_ip']
         }
 
-        required_fields = [
-            'transaction_id',
-            'amount',
-            'user_id',
-            'merchant_id'
-        ]
+        for txn in transactions:
+            normalized_txn = {}
 
-        valid_count = 0
+            # Get all column names from the transaction (case-insensitive)
+            columns_lower = {k.lower(): k for k in txn.keys()}
 
-        for i, txn in enumerate(transactions):
-            missing = [f for f in required_fields if f not in txn or txn[f] is None]
+            # Try to map each standard field
+            for standard_field, patterns in column_patterns.items():
+                mapped = False
+                for pattern in patterns:
+                    if pattern.lower() in columns_lower:
+                        original_key = columns_lower[pattern.lower()]
+                        normalized_txn[standard_field] = txn[original_key]
+                        mapped = True
+                        break
 
-            if not missing:
-                valid_count += 1
+                # If not mapped, check for partial matches
+                if not mapped:
+                    for col_lower, col_original in columns_lower.items():
+                        for pattern in patterns:
+                            if pattern.lower() in col_lower or col_lower in pattern.lower():
+                                normalized_txn[standard_field] = txn[col_original]
+                                mapped = True
+                                break
+                        if mapped:
+                            break
+
+            # Generate IDs if missing
+            if 'transaction_id' not in normalized_txn:
+                # Use first column value or generate ID
+                first_value = next(iter(txn.values())) if txn else None
+                normalized_txn['transaction_id'] = str(first_value) if first_value else f'txn_{hash(str(txn))}'
+
+            # Copy any unmapped fields as-is
+            for key, value in txn.items():
+                if key not in normalized_txn:
+                    normalized_txn[key] = value
+
+            normalized.append(normalized_txn)
+
+        return normalized
+
+    @staticmethod
+    def validate_transactions(transactions: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Flexible validation - accepts ANY data format.
+        Quality score based on available data, not strict requirements.
+        """
+        report = {
+            "total_records": len(transactions),
+            "valid_records": len(transactions),  # All records are valid now
+            "invalid_records": 0,
+            "missing_fields": [],
+            "data_quality_score": 100.0,  # Start with 100%
+            "issues": [],
+            "detected_columns": [],
+            "suggestions": []
+        }
+
+        if not transactions:
+            report["data_quality_score"] = 0.0
+            report["suggestions"].append("No data found in file")
+            return report
+
+        # Detect what columns are available
+        if transactions:
+            sample_txn = transactions[0]
+            report["detected_columns"] = list(sample_txn.keys())
+
+        # Check for common useful fields (but don't require them)
+        useful_fields = ['transaction_id', 'amount', 'user_id', 'merchant_id', 'timestamp']
+        found_fields = []
+        missing_fields = []
+
+        for field in useful_fields:
+            field_found = False
+            for txn in transactions[:10]:  # Check first 10 records
+                if field in txn and txn[field] is not None:
+                    field_found = True
+                    break
+
+            if field_found:
+                found_fields.append(field)
             else:
-                report["invalid_records"] += 1
-                report["issues"].append({
-                    "record": i,
-                    "missing_fields": missing
-                })
+                missing_fields.append(field)
 
-        report["valid_records"] = valid_count
+        # Calculate quality based on found fields (but minimum 50%)
+        field_coverage = len(found_fields) / len(useful_fields) if useful_fields else 1.0
+        report["data_quality_score"] = max(50.0, field_coverage * 100)
 
-        # Calculate quality score
-        if len(transactions) > 0:
-            report["data_quality_score"] = (valid_count / len(transactions)) * 100
+        if missing_fields:
+            report["suggestions"].append(f"Consider adding these fields for better analysis: {', '.join(missing_fields)}")
+
+        report["missing_fields"] = missing_fields
 
         return report

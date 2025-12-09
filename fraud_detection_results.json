@@ -1,0 +1,797 @@
+{
+  "graph_detection": {
+    "detection_timestamp": "2025-12-08T18:39:12.169739",
+    "total_transactions_analyzed": 100,
+    "total_fraud_rings_detected": 1,
+    "fraud_rings": [
+      {
+        "ring_id": "CROSS_BORDER",
+        "members": [
+          "user_0001",
+          "user_0002",
+          "user_0005",
+          "user_0006",
+          "user_0009",
+          "user_0010",
+          "user_0013",
+          "user_0014",
+          "user_0018",
+          "user_0026",
+          "user_0028",
+          "user_0031",
+          "user_0037",
+          "user_0038",
+          "user_0046",
+          "user_0049",
+          "user_0050"
+        ],
+        "size": 17,
+        "risk_score": 0.7,
+        "detection_method": "Cross-Border Pattern",
+        "shared_resources": {},
+        "temporal_patterns": {},
+        "behavioral_signals": [
+          "cross_border",
+          "geographic_impossibility",
+          "credential_compromise"
+        ],
+        "confidence": 0.7,
+        "evidence_count": 1,
+        "severity": "HIGH"
+      }
+    ],
+    "velocity_violations": [],
+    "suspicious_patterns": [
+      {
+        "type": "TEMPORAL_CLUSTERING",
+        "description": "100% of transactions at hour 19",
+        "risk_score": 1.0,
+        "indicator": "Synthetic data or coordinated bot attack",
+        "affected_transactions": 100
+      }
+    ],
+    "summary": {
+      "critical_rings": 0,
+      "high_risk_rings": 1,
+      "medium_risk_rings": 0,
+      "velocity_violations": 0,
+      "temporal_anomalies": 1,
+      "avg_ring_size": 17.0,
+      "max_ring_size": 17,
+      "total_users_in_rings": 17
+    },
+    "recommendations": [
+      "Temporal clustering detected. Possible bot/script activity. Enable CAPTCHA verification.",
+      "1 rings show cross-border activity. Enable geo-velocity checks.",
+      "Review and update fraud detection thresholds based on these findings.",
+      "Implement continuous monitoring with real-time alerts for new ring formations."
+    ]
+  },
+  "cluster_detection": {
+    "detection_method": "HDBSCAN Clustering",
+    "total_clusters_detected": 0,
+    "clusters": [],
+    "summary": {
+      "high_risk_clusters": 0,
+      "medium_risk_clusters": 0,
+      "low_risk_clusters": 0,
+      "total_users_in_clusters": 0
+    }
+  },
+  "ml_detection": {
+    "timestamp": "2025-12-08T18:39:12.797556",
+    "total_transactions": 100,
+    "anomalies_detected": 18,
+    "fraud_networks": {
+      "networks": [],
+      "cliques": [],
+      "total_nodes": 265,
+      "total_edges": 395,
+      "graph_density": 0.011292166952544312
+    },
+    "money_laundering_patterns": [],
+    "risk_profiles": {
+      "user_0030": {
+        "entity_id": "user_0030",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.15,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.045,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.2
+      },
+      "user_0045": {
+        "entity_id": "user_0045",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0010": {
+        "entity_id": "user_0010",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.06,
+        "behavioral_risk_score": 0.2,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.05800000000000001,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts",
+          "Multiple devices used"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.5
+      },
+      "user_0001": {
+        "entity_id": "user_0001",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0014": {
+        "entity_id": "user_0014",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0017": {
+        "entity_id": "user_0017",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.15,
+        "behavioral_risk_score": 0.2,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.085,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.2
+      },
+      "user_0006": {
+        "entity_id": "user_0006",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0039": {
+        "entity_id": "user_0039",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0021": {
+        "entity_id": "user_0021",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0042": {
+        "entity_id": "user_0042",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.15,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.045,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.2
+      },
+      "user_0046": {
+        "entity_id": "user_0046",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0009": {
+        "entity_id": "user_0009",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.075,
+        "behavioral_risk_score": 0.2,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0625,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts",
+          "Multiple devices used"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.4
+      },
+      "user_0037": {
+        "entity_id": "user_0037",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0050": {
+        "entity_id": "user_0050",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.075,
+        "behavioral_risk_score": 0.4,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.10250000000000001,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts",
+          "Multiple devices used"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.4
+      },
+      "user_0031": {
+        "entity_id": "user_0031",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.06,
+        "behavioral_risk_score": 0.2,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.05800000000000001,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts",
+          "Multiple devices used"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.5
+      },
+      "user_0002": {
+        "entity_id": "user_0002",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.075,
+        "behavioral_risk_score": 0.2,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0625,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts",
+          "Multiple devices used"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.4
+      },
+      "user_0005": {
+        "entity_id": "user_0005",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.075,
+        "behavioral_risk_score": 0.2,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0625,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts",
+          "Multiple devices used"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.4
+      },
+      "user_0035": {
+        "entity_id": "user_0035",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.15,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.045,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.2
+      },
+      "user_0044": {
+        "entity_id": "user_0044",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.15,
+        "behavioral_risk_score": 0.2,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.085,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.2
+      },
+      "user_0028": {
+        "entity_id": "user_0028",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.2,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.07,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0038": {
+        "entity_id": "user_0038",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0015": {
+        "entity_id": "user_0015",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0032": {
+        "entity_id": "user_0032",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0008": {
+        "entity_id": "user_0008",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.15,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.045,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.2
+      },
+      "user_0013": {
+        "entity_id": "user_0013",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0049": {
+        "entity_id": "user_0049",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0022": {
+        "entity_id": "user_0022",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0047": {
+        "entity_id": "user_0047",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0025": {
+        "entity_id": "user_0025",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.15,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.045,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.2
+      },
+      "user_0040": {
+        "entity_id": "user_0040",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0018": {
+        "entity_id": "user_0018",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0020": {
+        "entity_id": "user_0020",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.15,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.045,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.2
+      },
+      "user_0026": {
+        "entity_id": "user_0026",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.09999999999999999,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.029999999999999995,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.3
+      },
+      "user_0023": {
+        "entity_id": "user_0023",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0033": {
+        "entity_id": "user_0033",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0003": {
+        "entity_id": "user_0003",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0019": {
+        "entity_id": "user_0019",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0041": {
+        "entity_id": "user_0041",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0043": {
+        "entity_id": "user_0043",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0024": {
+        "entity_id": "user_0024",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0016": {
+        "entity_id": "user_0016",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0012": {
+        "entity_id": "user_0012",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.15,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.045,
+        "risk_level": "LOW",
+        "risk_factors": [
+          "Unusually high transaction amounts"
+        ],
+        "red_flags": [],
+        "confidence_score": 0.2
+      },
+      "user_0007": {
+        "entity_id": "user_0007",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0034": {
+        "entity_id": "user_0034",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      },
+      "user_0011": {
+        "entity_id": "user_0011",
+        "entity_type": "user",
+        "base_risk_score": 0.0,
+        "ml_risk_score": 0.0,
+        "behavioral_risk_score": 0.0,
+        "network_risk_score": 0.0,
+        "anomaly_score": 0.0,
+        "final_risk_score": 0.0,
+        "risk_level": "LOW",
+        "risk_factors": [],
+        "red_flags": [],
+        "confidence_score": 0.1
+      }
+    },
+    "summary": {
+      "high_risk_entities": 0,
+      "medium_risk_entities": 0,
+      "low_risk_entities": 45,
+      "avg_risk_score": 0.029355555555555555,
+      "suspicious_networks": 0,
+      "ml_anomalies": 18,
+      "potential_moneylaundering_cases": 0
+    }
+  }
+}

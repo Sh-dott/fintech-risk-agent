@@ -121,3 +121,4 @@ backend/**/.pytest_cache/
 
 # Claude Code plans
 .claude/plans/
+nul

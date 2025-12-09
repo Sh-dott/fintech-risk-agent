@@ -1,0 +1,3538 @@
+{
+  "status": "success",
+  "file_name": "sample_transactions.xlsx",
+  "records_processed": 100,
+  "timestamp": "2025-12-08T20:51:15.680749",
+  "summary": {
+    "high_risk_entities": 0,
+    "medium_risk_entities": 0,
+    "low_risk_entities": 45,
+    "avg_risk_score": 0.028249206349206347,
+    "suspicious_networks": 0,
+    "ml_anomalies": 16,
+    "potential_moneylaundering_cases": 0
+  },
+  "anomalies": [
+    {
+      "index": 0,
+      "method": "Isolation Forest",
+      "anomaly_score": 0.7032649900215915,
+      "transaction_id": "txn_00001",
+      "reason": "Statistical outlier detected"
+    },
+    {
+      "index": 4,
+      "method": "Isolation Forest",
+      "anomaly_score": 0.620995811542231,
+      "transaction_id": "txn_00005",
+      "reason": "Statistical outlier detected"
+    },
+    {
+      "index": 16,
+      "method": "Isolation Forest",
+      "anomaly_score": 0.6008526791414261,
+      "transaction_id": "txn_00017",
+      "reason": "Statistical outlier detected"
+    },
+    {
+      "index": 29,
+      "method": "Isolation Forest",
+      "anomaly_score": 0.6836436095114443,
+      "transaction_id": "txn_00030",
+      "reason": "Statistical outlier detected"
+    },
+    {
+      "index": 43,
+      "method": "Isolation Forest",
+      "anomaly_score": 0.6329233307152692,
+      "transaction_id": "txn_00044",
+      "reason": "Statistical outlier detected"
+    },
+    {
+      "index": 48,
+      "method": "Isolation Forest",
+      "anomaly_score": 0.6228612935563593,
+      "transaction_id": "txn_00049",
+      "reason": "Statistical outlier detected"
+    },
+    {
+      "index": 60,
+      "method": "Isolation Forest",
+      "anomaly_score": 0.6498287952355155,
+      "transaction_id": "txn_00061",
+      "reason": "Statistical outlier detected"
+    },
+    {
+      "index": 64,
+      "method": "Isolation Forest",
+      "anomaly_score": 0.6133428265241786,
+      "transaction_id": "txn_00065",
+      "reason": "Statistical outlier detected"
+    },
+    {
+      "index": 74,
+      "method": "Isolation Forest",
+      "anomaly_score": 0.6259473049453833,
+      "transaction_id": "txn_00075",
+      "reason": "Statistical outlier detected"
+    },
+    {
+      "index": 99,
+      "method": "Isolation Forest",
+      "anomaly_score": 0.6298815554479233,
+      "transaction_id": "txn_00100",
+      "reason": "Statistical outlier detected"
+    },
+    {
+      "index": 9,
+      "method": "Local Outlier Factor",
+      "anomaly_score": 2.1784666496085388,
+      "transaction_id": "txn_00010",
+      "reason": "Density-based outlier detected"
+    },
+    {
+      "index": 25,
+      "method": "Local Outlier Factor",
+      "anomaly_score": 1.9070864807787147,
+      "transaction_id": "txn_00026",
+      "reason": "Density-based outlier detected"
+    },
+    {
+      "index": 59,
+      "method": "Local Outlier Factor",
+      "anomaly_score": 1.677768542462737,
+      "transaction_id": "txn_00060",
+      "reason": "Density-based outlier detected"
+    },
+    {
+      "index": 72,
+      "method": "Local Outlier Factor",
+      "anomaly_score": 1.785715595800746,
+      "transaction_id": "txn_00073",
+      "reason": "Density-based outlier detected"
+    },
+    {
+      "index": 77,
+      "method": "Local Outlier Factor",
+      "anomaly_score": 1.8767653629145915,
+      "transaction_id": "txn_00078",
+      "reason": "Density-based outlier detected"
+    },
+    {
+      "index": 80,
+      "method": "Local Outlier Factor",
+      "anomaly_score": 1.9110824430991642,
+      "transaction_id": "txn_00081",
+      "reason": "Density-based outlier detected"
+    }
+  ],
+  "fraud_networks": {
+    "networks": [],
+    "cliques": [],
+    "total_nodes": 265,
+    "total_edges": 396,
+    "graph_density": 0.011320754716981131
+  },
+  "money_laundering_patterns": [],
+  "risk_profiles": [
+    {
+      "entity_id": "user_0045",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.075,
+      "behavioral_risk_score": 0.2,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0625,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts",
+        "Multiple devices used"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.4
+    },
+    {
+      "entity_id": "user_0016",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0027",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0038",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0021",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0857142857142857,
+      "behavioral_risk_score": 0.5,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.12571428571428572,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts",
+        "Multiple devices used"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.7
+    },
+    {
+      "entity_id": "user_0029",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0014",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0050",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0043",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0031",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.075,
+      "behavioral_risk_score": 0.2,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0625,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts",
+        "Multiple devices used"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.4
+    },
+    {
+      "entity_id": "user_0030",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0048",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0044",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0013",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0022",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.075,
+      "behavioral_risk_score": 0.2,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0625,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts",
+        "Multiple devices used"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.4
+    },
+    {
+      "entity_id": "user_0039",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0006",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0010",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0023",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0001",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.06,
+      "behavioral_risk_score": 0.2,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.05800000000000001,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts",
+        "Multiple devices used"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.5
+    },
+    {
+      "entity_id": "user_0034",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0018",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0047",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0046",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0032",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0002",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0019",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0026",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0020",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0041",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0012",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0004",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0025",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0017",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0003",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0015",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0024",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0042",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0007",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0005",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0049",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.09999999999999999,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.029999999999999995,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.3
+    },
+    {
+      "entity_id": "user_0008",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0035",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.15,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.045,
+      "risk_level": "LOW",
+      "risk_factors": [
+        "Unusually high transaction amounts"
+      ],
+      "red_flags": [],
+      "confidence_score": 0.2
+    },
+    {
+      "entity_id": "user_0033",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    },
+    {
+      "entity_id": "user_0036",
+      "entity_type": "user",
+      "base_risk_score": 0.0,
+      "ml_risk_score": 0.0,
+      "behavioral_risk_score": 0.0,
+      "network_risk_score": 0.0,
+      "anomaly_score": 0.0,
+      "final_risk_score": 0.0,
+      "risk_level": "LOW",
+      "risk_factors": [],
+      "red_flags": [],
+      "confidence_score": 0.1
+    }
+  ],
+  "fraud_insights": {
+    "total_patterns": 41,
+    "high_severity_count": 14,
+    "medium_severity_count": 26,
+    "low_severity_count": 1,
+    "patterns": [
+      {
+        "pattern_id": "HIGH_VELOCITY_USER",
+        "title": "High Transaction Velocity Detected",
+        "severity": "MEDIUM",
+        "explanation": "User user_0001 completed 5 transactions within the analyzed period. This velocity is 2.2x above average (2.2) and may indicate automated bot activity, account takeover, or rapid fund movement typical of money laundering structuring. Legitimate users typically make 1-3 transactions in similar timeframes.",
+        "affected_entities": [
+          "user_0001"
+        ],
+        "affected_count": 5,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00023",
+            "amount": 1514.66,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "AUD",
+            "country": "JP",
+            "device_id": "device_1779",
+            "ip_address": "192.168.243.175"
+          },
+          {
+            "transaction_id": "txn_00030",
+            "amount": 15.41,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "GBP",
+            "country": "UK",
+            "device_id": "device_7612",
+            "ip_address": "192.168.115.60"
+          },
+          {
+            "transaction_id": "txn_00045",
+            "amount": 2855.73,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-12-04T19:18:47",
+            "currency": "GBP",
+            "country": "AU",
+            "device_id": "device_6430",
+            "ip_address": "192.168.175.28"
+          }
+        ],
+        "metadata": {
+          "threshold": 4,
+          "actual_value": 5,
+          "risk_multiplier": 2.25,
+          "average_velocity": 2.2222222222222223
+        }
+      },
+      {
+        "pattern_id": "HIGH_VELOCITY_USER",
+        "title": "High Transaction Velocity Detected",
+        "severity": "HIGH",
+        "explanation": "User user_0021 completed 7 transactions within the analyzed period. This velocity is 3.1x above average (2.2) and may indicate automated bot activity, account takeover, or rapid fund movement typical of money laundering structuring. Legitimate users typically make 1-3 transactions in similar timeframes.",
+        "affected_entities": [
+          "user_0021"
+        ],
+        "affected_count": 7,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00005",
+            "amount": 4523.83,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "GBP",
+            "country": "CA",
+            "device_id": "device_7406",
+            "ip_address": "192.168.39.201"
+          },
+          {
+            "transaction_id": "txn_00006",
+            "amount": 1162.98,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_010",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "JPY",
+            "country": "JP",
+            "device_id": "device_9954",
+            "ip_address": "192.168.142.212"
+          },
+          {
+            "transaction_id": "txn_00017",
+            "amount": 529.32,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_012",
+            "timestamp": "2025-11-30T19:18:47",
+            "currency": "JPY",
+            "country": "FR",
+            "device_id": "device_7216",
+            "ip_address": "192.168.134.181"
+          }
+        ],
+        "metadata": {
+          "threshold": 4,
+          "actual_value": 7,
+          "risk_multiplier": 3.15,
+          "average_velocity": 2.2222222222222223
+        }
+      },
+      {
+        "pattern_id": "HIGH_VELOCITY_USER",
+        "title": "High Transaction Velocity Detected",
+        "severity": "MEDIUM",
+        "explanation": "User user_0022 completed 4 transactions within the analyzed period. This velocity is 1.8x above average (2.2) and may indicate automated bot activity, account takeover, or rapid fund movement typical of money laundering structuring. Legitimate users typically make 1-3 transactions in similar timeframes.",
+        "affected_entities": [
+          "user_0022"
+        ],
+        "affected_count": 4,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00016",
+            "amount": 4076.72,
+            "user_id": "user_0022",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-17T19:18:47",
+            "currency": "EUR",
+            "country": "US",
+            "device_id": "device_2623",
+            "ip_address": "192.168.158.213"
+          },
+          {
+            "transaction_id": "txn_00064",
+            "amount": 2555.69,
+            "user_id": "user_0022",
+            "merchant_id": "merchant_008",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "USD",
+            "country": "US",
+            "device_id": "device_3762",
+            "ip_address": "192.168.19.25"
+          },
+          {
+            "transaction_id": "txn_00065",
+            "amount": 182.6,
+            "user_id": "user_0022",
+            "merchant_id": "merchant_020",
+            "timestamp": "2025-11-16T19:18:47",
+            "currency": "JPY",
+            "country": "FR",
+            "device_id": "device_7933",
+            "ip_address": "192.168.19.40"
+          }
+        ],
+        "metadata": {
+          "threshold": 4,
+          "actual_value": 4,
+          "risk_multiplier": 1.7999999999999998,
+          "average_velocity": 2.2222222222222223
+        }
+      },
+      {
+        "pattern_id": "HIGH_VELOCITY_USER",
+        "title": "High Transaction Velocity Detected",
+        "severity": "MEDIUM",
+        "explanation": "User user_0031 completed 4 transactions within the analyzed period. This velocity is 1.8x above average (2.2) and may indicate automated bot activity, account takeover, or rapid fund movement typical of money laundering structuring. Legitimate users typically make 1-3 transactions in similar timeframes.",
+        "affected_entities": [
+          "user_0031"
+        ],
+        "affected_count": 4,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00011",
+            "amount": 4169.05,
+            "user_id": "user_0031",
+            "merchant_id": "merchant_016",
+            "timestamp": "2025-12-04T19:18:47",
+            "currency": "AUD",
+            "country": "DE",
+            "device_id": "device_2055",
+            "ip_address": "192.168.227.95"
+          },
+          {
+            "transaction_id": "txn_00031",
+            "amount": 4296.77,
+            "user_id": "user_0031",
+            "merchant_id": "merchant_018",
+            "timestamp": "2025-11-26T19:18:47",
+            "currency": "USD",
+            "country": "US",
+            "device_id": "device_6313",
+            "ip_address": "192.168.85.92"
+          },
+          {
+            "transaction_id": "txn_00036",
+            "amount": 2120.38,
+            "user_id": "user_0031",
+            "merchant_id": "merchant_008",
+            "timestamp": "2025-11-15T19:18:47",
+            "currency": "JPY",
+            "country": "UK",
+            "device_id": "device_4729",
+            "ip_address": "192.168.164.79"
+          }
+        ],
+        "metadata": {
+          "threshold": 4,
+          "actual_value": 4,
+          "risk_multiplier": 1.7999999999999998,
+          "average_velocity": 2.2222222222222223
+        }
+      },
+      {
+        "pattern_id": "HIGH_VELOCITY_USER",
+        "title": "High Transaction Velocity Detected",
+        "severity": "MEDIUM",
+        "explanation": "User user_0045 completed 4 transactions within the analyzed period. This velocity is 1.8x above average (2.2) and may indicate automated bot activity, account takeover, or rapid fund movement typical of money laundering structuring. Legitimate users typically make 1-3 transactions in similar timeframes.",
+        "affected_entities": [
+          "user_0045"
+        ],
+        "affected_count": 4,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00001",
+            "amount": 21.47,
+            "user_id": "user_0045",
+            "merchant_id": "merchant_003",
+            "timestamp": "2025-12-02T19:18:47",
+            "currency": "EUR",
+            "country": "UK",
+            "device_id": "device_5379",
+            "ip_address": "192.168.148.201"
+          },
+          {
+            "transaction_id": "txn_00026",
+            "amount": 4077.32,
+            "user_id": "user_0045",
+            "merchant_id": "merchant_005",
+            "timestamp": "2025-12-03T19:18:47",
+            "currency": "AUD",
+            "country": "UK",
+            "device_id": "device_1247",
+            "ip_address": "192.168.55.240"
+          },
+          {
+            "transaction_id": "txn_00033",
+            "amount": 1979.03,
+            "user_id": "user_0045",
+            "merchant_id": "merchant_018",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "USD",
+            "country": "JP",
+            "device_id": "device_1060",
+            "ip_address": "192.168.145.44"
+          }
+        ],
+        "metadata": {
+          "threshold": 4,
+          "actual_value": 4,
+          "risk_multiplier": 1.7999999999999998,
+          "average_velocity": 2.2222222222222223
+        }
+      },
+      {
+        "pattern_id": "MERCHANT_CYCLING",
+        "title": "Suspicious Merchant Diversity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0001 transacted with 5 different merchants (merchant_007, merchant_002, merchant_009, merchant_013, merchant_010). This behavior resembles card testing where fraudsters validate stolen credentials across multiple merchant accounts before making larger purchases, or 'merchant hopping' to stay under individual merchant fraud thresholds.",
+        "affected_entities": [
+          "user_0001"
+        ],
+        "affected_count": 5,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00023",
+            "amount": 1514.66,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "AUD",
+            "country": "JP",
+            "device_id": "device_1779",
+            "ip_address": "192.168.243.175"
+          },
+          {
+            "transaction_id": "txn_00030",
+            "amount": 15.41,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "GBP",
+            "country": "UK",
+            "device_id": "device_7612",
+            "ip_address": "192.168.115.60"
+          },
+          {
+            "transaction_id": "txn_00045",
+            "amount": 2855.73,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-12-04T19:18:47",
+            "currency": "GBP",
+            "country": "AU",
+            "device_id": "device_6430",
+            "ip_address": "192.168.175.28"
+          }
+        ],
+        "metadata": {
+          "threshold": 5,
+          "merchant_count": 5,
+          "merchants": [
+            "merchant_007",
+            "merchant_002",
+            "merchant_009",
+            "merchant_013",
+            "merchant_010"
+          ]
+        }
+      },
+      {
+        "pattern_id": "MERCHANT_CYCLING",
+        "title": "Suspicious Merchant Diversity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0021 transacted with 7 different merchants (merchant_009, merchant_010, merchant_012, merchant_004, merchant_006...). This behavior resembles card testing where fraudsters validate stolen credentials across multiple merchant accounts before making larger purchases, or 'merchant hopping' to stay under individual merchant fraud thresholds.",
+        "affected_entities": [
+          "user_0021"
+        ],
+        "affected_count": 7,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00005",
+            "amount": 4523.83,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "GBP",
+            "country": "CA",
+            "device_id": "device_7406",
+            "ip_address": "192.168.39.201"
+          },
+          {
+            "transaction_id": "txn_00006",
+            "amount": 1162.98,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_010",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "JPY",
+            "country": "JP",
+            "device_id": "device_9954",
+            "ip_address": "192.168.142.212"
+          },
+          {
+            "transaction_id": "txn_00017",
+            "amount": 529.32,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_012",
+            "timestamp": "2025-11-30T19:18:47",
+            "currency": "JPY",
+            "country": "FR",
+            "device_id": "device_7216",
+            "ip_address": "192.168.134.181"
+          }
+        ],
+        "metadata": {
+          "threshold": 5,
+          "merchant_count": 7,
+          "merchants": [
+            "merchant_009",
+            "merchant_010",
+            "merchant_012",
+            "merchant_004",
+            "merchant_006",
+            "merchant_015",
+            "merchant_008"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0001 made transactions from 4 different countries (JP, UK, AU, US). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0001"
+        ],
+        "affected_count": 4,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00023",
+            "amount": 1514.66,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "AUD",
+            "country": "JP",
+            "device_id": "device_1779",
+            "ip_address": "192.168.243.175"
+          },
+          {
+            "transaction_id": "txn_00030",
+            "amount": 15.41,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "GBP",
+            "country": "UK",
+            "device_id": "device_7612",
+            "ip_address": "192.168.115.60"
+          },
+          {
+            "transaction_id": "txn_00045",
+            "amount": 2855.73,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-12-04T19:18:47",
+            "currency": "GBP",
+            "country": "AU",
+            "device_id": "device_6430",
+            "ip_address": "192.168.175.28"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 4,
+          "countries": [
+            "JP",
+            "UK",
+            "AU",
+            "US"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0006 made transactions from 3 different countries (US, AU, UK). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0006"
+        ],
+        "affected_count": 3,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00019",
+            "amount": 571.32,
+            "user_id": "user_0006",
+            "merchant_id": "merchant_014",
+            "timestamp": "2025-11-12T19:18:47",
+            "currency": "GBP",
+            "country": "US",
+            "device_id": "device_4313",
+            "ip_address": "192.168.112.166"
+          },
+          {
+            "transaction_id": "txn_00052",
+            "amount": 3773.48,
+            "user_id": "user_0006",
+            "merchant_id": "merchant_001",
+            "timestamp": "2025-11-15T19:18:47",
+            "currency": "GBP",
+            "country": "AU",
+            "device_id": "device_9243",
+            "ip_address": "192.168.151.151"
+          },
+          {
+            "transaction_id": "txn_00078",
+            "amount": 3315.22,
+            "user_id": "user_0006",
+            "merchant_id": "merchant_010",
+            "timestamp": "2025-11-12T19:18:47",
+            "currency": "AUD",
+            "country": "UK",
+            "device_id": "device_6315",
+            "ip_address": "192.168.193.241"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 3,
+          "countries": [
+            "US",
+            "AU",
+            "UK"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0007 made transactions from 3 different countries (AU, FR, DE). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0007"
+        ],
+        "affected_count": 3,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00062",
+            "amount": 2256.36,
+            "user_id": "user_0007",
+            "merchant_id": "merchant_005",
+            "timestamp": "2025-11-19T19:18:47",
+            "currency": "GBP",
+            "country": "AU",
+            "device_id": "device_7377",
+            "ip_address": "192.168.30.145"
+          },
+          {
+            "transaction_id": "txn_00071",
+            "amount": 2823.55,
+            "user_id": "user_0007",
+            "merchant_id": "merchant_012",
+            "timestamp": "2025-11-11T19:18:47",
+            "currency": "JPY",
+            "country": "FR",
+            "device_id": "device_9416",
+            "ip_address": "192.168.244.202"
+          },
+          {
+            "transaction_id": "txn_00075",
+            "amount": 21.99,
+            "user_id": "user_0007",
+            "merchant_id": "merchant_012",
+            "timestamp": "2025-12-03T19:18:47",
+            "currency": "AUD",
+            "country": "DE",
+            "device_id": "device_3595",
+            "ip_address": "192.168.98.148"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 3,
+          "countries": [
+            "AU",
+            "FR",
+            "DE"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0008 made transactions from 2 different countries (US, UK). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0008"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00079",
+            "amount": 2572.14,
+            "user_id": "user_0008",
+            "merchant_id": "merchant_012",
+            "timestamp": "2025-11-29T19:18:47",
+            "currency": "USD",
+            "country": "US",
+            "device_id": "device_3134",
+            "ip_address": "192.168.40.107"
+          },
+          {
+            "transaction_id": "txn_00088",
+            "amount": 2211.45,
+            "user_id": "user_0008",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-12-03T19:18:47",
+            "currency": "AUD",
+            "country": "UK",
+            "device_id": "device_6329",
+            "ip_address": "192.168.96.229"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "US",
+            "UK"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0010 made transactions from 2 different countries (CA, DE). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0010"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00020",
+            "amount": 4524.14,
+            "user_id": "user_0010",
+            "merchant_id": "merchant_014",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "EUR",
+            "country": "CA",
+            "device_id": "device_6440",
+            "ip_address": "192.168.210.120"
+          },
+          {
+            "transaction_id": "txn_00037",
+            "amount": 3703.77,
+            "user_id": "user_0010",
+            "merchant_id": "merchant_008",
+            "timestamp": "2025-11-26T19:18:47",
+            "currency": "USD",
+            "country": "DE",
+            "device_id": "device_3664",
+            "ip_address": "192.168.153.195"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "CA",
+            "DE"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0012 made transactions from 3 different countries (JP, UK, FR). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0012"
+        ],
+        "affected_count": 3,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00046",
+            "amount": 3867.68,
+            "user_id": "user_0012",
+            "merchant_id": "merchant_011",
+            "timestamp": "2025-11-13T19:18:47",
+            "currency": "EUR",
+            "country": "JP",
+            "device_id": "device_1054",
+            "ip_address": "192.168.222.55"
+          },
+          {
+            "transaction_id": "txn_00083",
+            "amount": 4766.81,
+            "user_id": "user_0012",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-21T19:18:47",
+            "currency": "USD",
+            "country": "UK",
+            "device_id": "device_8849",
+            "ip_address": "192.168.95.78"
+          },
+          {
+            "transaction_id": "txn_00091",
+            "amount": 3761.09,
+            "user_id": "user_0012",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-12-08T19:18:47",
+            "currency": "GBP",
+            "country": "FR",
+            "device_id": "device_6626",
+            "ip_address": "192.168.108.75"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 3,
+          "countries": [
+            "JP",
+            "UK",
+            "FR"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0013 made transactions from 3 different countries (CA, DE, FR). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0013"
+        ],
+        "affected_count": 3,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00015",
+            "amount": 4139.46,
+            "user_id": "user_0013",
+            "merchant_id": "merchant_006",
+            "timestamp": "2025-12-03T19:18:47",
+            "currency": "USD",
+            "country": "CA",
+            "device_id": "device_2142",
+            "ip_address": "192.168.65.132"
+          },
+          {
+            "transaction_id": "txn_00090",
+            "amount": 1962.0,
+            "user_id": "user_0013",
+            "merchant_id": "merchant_017",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "USD",
+            "country": "DE",
+            "device_id": "device_4356",
+            "ip_address": "192.168.87.229"
+          },
+          {
+            "transaction_id": "txn_00096",
+            "amount": 213.3,
+            "user_id": "user_0013",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-12-05T19:18:47",
+            "currency": "EUR",
+            "country": "FR",
+            "device_id": "device_1615",
+            "ip_address": "192.168.155.227"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 3,
+          "countries": [
+            "CA",
+            "DE",
+            "FR"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0014 made transactions from 2 different countries (CA, FR). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0014"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00008",
+            "amount": 3347.41,
+            "user_id": "user_0014",
+            "merchant_id": "merchant_020",
+            "timestamp": "2025-12-08T19:18:47",
+            "currency": "JPY",
+            "country": "CA",
+            "device_id": "device_6618",
+            "ip_address": "192.168.13.18"
+          },
+          {
+            "transaction_id": "txn_00076",
+            "amount": 514.87,
+            "user_id": "user_0014",
+            "merchant_id": "merchant_019",
+            "timestamp": "2025-12-05T19:18:47",
+            "currency": "GBP",
+            "country": "CA",
+            "device_id": "device_7105",
+            "ip_address": "192.168.49.163"
+          },
+          {
+            "transaction_id": "txn_00093",
+            "amount": 3146.85,
+            "user_id": "user_0014",
+            "merchant_id": "merchant_014",
+            "timestamp": "2025-11-21T19:18:47",
+            "currency": "GBP",
+            "country": "FR",
+            "device_id": "device_6943",
+            "ip_address": "192.168.184.224"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "CA",
+            "FR"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0015 made transactions from 2 different countries (UK, US). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0015"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00055",
+            "amount": 3862.36,
+            "user_id": "user_0015",
+            "merchant_id": "merchant_006",
+            "timestamp": "2025-12-03T19:18:47",
+            "currency": "JPY",
+            "country": "UK",
+            "device_id": "device_9270",
+            "ip_address": "192.168.100.199"
+          },
+          {
+            "transaction_id": "txn_00072",
+            "amount": 3441.38,
+            "user_id": "user_0015",
+            "merchant_id": "merchant_019",
+            "timestamp": "2025-12-03T19:18:47",
+            "currency": "GBP",
+            "country": "US",
+            "device_id": "device_2286",
+            "ip_address": "192.168.212.245"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "UK",
+            "US"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0016 made transactions from 2 different countries (US, UK). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0016"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00002",
+            "amount": 3715.26,
+            "user_id": "user_0016",
+            "merchant_id": "merchant_014",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "EUR",
+            "country": "US",
+            "device_id": "device_8347",
+            "ip_address": "192.168.250.22"
+          },
+          {
+            "transaction_id": "txn_00070",
+            "amount": 1281.46,
+            "user_id": "user_0016",
+            "merchant_id": "merchant_018",
+            "timestamp": "2025-11-17T19:18:47",
+            "currency": "USD",
+            "country": "UK",
+            "device_id": "device_7348",
+            "ip_address": "192.168.84.195"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "US",
+            "UK"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0017 made transactions from 2 different countries (CA, US). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0017"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00050",
+            "amount": 4872.35,
+            "user_id": "user_0017",
+            "merchant_id": "merchant_010",
+            "timestamp": "2025-11-16T19:18:47",
+            "currency": "EUR",
+            "country": "CA",
+            "device_id": "device_5215",
+            "ip_address": "192.168.129.187"
+          },
+          {
+            "transaction_id": "txn_00097",
+            "amount": 2665.36,
+            "user_id": "user_0017",
+            "merchant_id": "merchant_005",
+            "timestamp": "2025-11-17T19:18:47",
+            "currency": "JPY",
+            "country": "US",
+            "device_id": "device_9123",
+            "ip_address": "192.168.22.247"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "CA",
+            "US"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0018 made transactions from 2 different countries (JP, FR). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0018"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00027",
+            "amount": 2795.46,
+            "user_id": "user_0018",
+            "merchant_id": "merchant_010",
+            "timestamp": "2025-12-04T19:18:47",
+            "currency": "USD",
+            "country": "JP",
+            "device_id": "device_2071",
+            "ip_address": "192.168.79.242"
+          },
+          {
+            "transaction_id": "txn_00066",
+            "amount": 1029.35,
+            "user_id": "user_0018",
+            "merchant_id": "merchant_004",
+            "timestamp": "2025-11-28T19:18:47",
+            "currency": "GBP",
+            "country": "FR",
+            "device_id": "device_5334",
+            "ip_address": "192.168.39.34"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "JP",
+            "FR"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0020 made transactions from 2 different countries (UK, AU). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0020"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00041",
+            "amount": 2071.52,
+            "user_id": "user_0020",
+            "merchant_id": "merchant_011",
+            "timestamp": "2025-11-17T19:18:47",
+            "currency": "AUD",
+            "country": "UK",
+            "device_id": "device_3992",
+            "ip_address": "192.168.150.240"
+          },
+          {
+            "transaction_id": "txn_00061",
+            "amount": 27.09,
+            "user_id": "user_0020",
+            "merchant_id": "merchant_008",
+            "timestamp": "2025-11-13T19:18:47",
+            "currency": "USD",
+            "country": "AU",
+            "device_id": "device_6941",
+            "ip_address": "192.168.28.171"
+          },
+          {
+            "transaction_id": "txn_00098",
+            "amount": 4130.61,
+            "user_id": "user_0020",
+            "merchant_id": "merchant_019",
+            "timestamp": "2025-11-16T19:18:47",
+            "currency": "JPY",
+            "country": "UK",
+            "device_id": "device_2854",
+            "ip_address": "192.168.6.33"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "UK",
+            "AU"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0021 made transactions from 5 different countries (CA, JP, FR, DE, AU). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0021"
+        ],
+        "affected_count": 5,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00005",
+            "amount": 4523.83,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "GBP",
+            "country": "CA",
+            "device_id": "device_7406",
+            "ip_address": "192.168.39.201"
+          },
+          {
+            "transaction_id": "txn_00006",
+            "amount": 1162.98,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_010",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "JPY",
+            "country": "JP",
+            "device_id": "device_9954",
+            "ip_address": "192.168.142.212"
+          },
+          {
+            "transaction_id": "txn_00017",
+            "amount": 529.32,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_012",
+            "timestamp": "2025-11-30T19:18:47",
+            "currency": "JPY",
+            "country": "FR",
+            "device_id": "device_7216",
+            "ip_address": "192.168.134.181"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 5,
+          "countries": [
+            "CA",
+            "JP",
+            "FR",
+            "DE",
+            "AU"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0022 made transactions from 2 different countries (US, FR). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0022"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00016",
+            "amount": 4076.72,
+            "user_id": "user_0022",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-17T19:18:47",
+            "currency": "EUR",
+            "country": "US",
+            "device_id": "device_2623",
+            "ip_address": "192.168.158.213"
+          },
+          {
+            "transaction_id": "txn_00064",
+            "amount": 2555.69,
+            "user_id": "user_0022",
+            "merchant_id": "merchant_008",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "USD",
+            "country": "US",
+            "device_id": "device_3762",
+            "ip_address": "192.168.19.25"
+          },
+          {
+            "transaction_id": "txn_00065",
+            "amount": 182.6,
+            "user_id": "user_0022",
+            "merchant_id": "merchant_020",
+            "timestamp": "2025-11-16T19:18:47",
+            "currency": "JPY",
+            "country": "FR",
+            "device_id": "device_7933",
+            "ip_address": "192.168.19.40"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "US",
+            "FR"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0024 made transactions from 2 different countries (AU, US). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0024"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00056",
+            "amount": 1131.09,
+            "user_id": "user_0024",
+            "merchant_id": "merchant_001",
+            "timestamp": "2025-11-18T19:18:47",
+            "currency": "EUR",
+            "country": "AU",
+            "device_id": "device_2170",
+            "ip_address": "192.168.201.214"
+          },
+          {
+            "transaction_id": "txn_00095",
+            "amount": 2665.96,
+            "user_id": "user_0024",
+            "merchant_id": "merchant_011",
+            "timestamp": "2025-11-09T19:18:47",
+            "currency": "EUR",
+            "country": "US",
+            "device_id": "device_3912",
+            "ip_address": "192.168.10.28"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "AU",
+            "US"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0025 made transactions from 3 different countries (FR, AU, CA). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0025"
+        ],
+        "affected_count": 3,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00048",
+            "amount": 255.01,
+            "user_id": "user_0025",
+            "merchant_id": "merchant_010",
+            "timestamp": "2025-11-27T19:18:47",
+            "currency": "USD",
+            "country": "FR",
+            "device_id": "device_5413",
+            "ip_address": "192.168.104.242"
+          },
+          {
+            "transaction_id": "txn_00053",
+            "amount": 150.73,
+            "user_id": "user_0025",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-11-18T19:18:47",
+            "currency": "AUD",
+            "country": "AU",
+            "device_id": "device_4892",
+            "ip_address": "192.168.159.108"
+          },
+          {
+            "transaction_id": "txn_00067",
+            "amount": 884.27,
+            "user_id": "user_0025",
+            "merchant_id": "merchant_004",
+            "timestamp": "2025-11-13T19:18:47",
+            "currency": "AUD",
+            "country": "CA",
+            "device_id": "device_7588",
+            "ip_address": "192.168.189.128"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 3,
+          "countries": [
+            "FR",
+            "AU",
+            "CA"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0027 made transactions from 2 different countries (JP, US). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0027"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00003",
+            "amount": 1477.21,
+            "user_id": "user_0027",
+            "merchant_id": "merchant_012",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "EUR",
+            "country": "JP",
+            "device_id": "device_5412",
+            "ip_address": "192.168.80.69"
+          },
+          {
+            "transaction_id": "txn_00069",
+            "amount": 3212.08,
+            "user_id": "user_0027",
+            "merchant_id": "merchant_005",
+            "timestamp": "2025-12-06T19:18:47",
+            "currency": "AUD",
+            "country": "US",
+            "device_id": "device_5251",
+            "ip_address": "192.168.44.83"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "JP",
+            "US"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0029 made transactions from 2 different countries (AU, CA). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0029"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00007",
+            "amount": 2565.1,
+            "user_id": "user_0029",
+            "merchant_id": "merchant_017",
+            "timestamp": "2025-12-06T19:18:47",
+            "currency": "GBP",
+            "country": "AU",
+            "device_id": "device_2216",
+            "ip_address": "192.168.25.162"
+          },
+          {
+            "transaction_id": "txn_00043",
+            "amount": 3688.31,
+            "user_id": "user_0029",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-11-26T19:18:47",
+            "currency": "EUR",
+            "country": "CA",
+            "device_id": "device_1737",
+            "ip_address": "192.168.210.86"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "AU",
+            "CA"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0031 made transactions from 4 different countries (DE, US, UK, CA). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0031"
+        ],
+        "affected_count": 4,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00011",
+            "amount": 4169.05,
+            "user_id": "user_0031",
+            "merchant_id": "merchant_016",
+            "timestamp": "2025-12-04T19:18:47",
+            "currency": "AUD",
+            "country": "DE",
+            "device_id": "device_2055",
+            "ip_address": "192.168.227.95"
+          },
+          {
+            "transaction_id": "txn_00031",
+            "amount": 4296.77,
+            "user_id": "user_0031",
+            "merchant_id": "merchant_018",
+            "timestamp": "2025-11-26T19:18:47",
+            "currency": "USD",
+            "country": "US",
+            "device_id": "device_6313",
+            "ip_address": "192.168.85.92"
+          },
+          {
+            "transaction_id": "txn_00036",
+            "amount": 2120.38,
+            "user_id": "user_0031",
+            "merchant_id": "merchant_008",
+            "timestamp": "2025-11-15T19:18:47",
+            "currency": "JPY",
+            "country": "UK",
+            "device_id": "device_4729",
+            "ip_address": "192.168.164.79"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 4,
+          "countries": [
+            "DE",
+            "US",
+            "UK",
+            "CA"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0032 made transactions from 2 different countries (AU, DE). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0032"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00034",
+            "amount": 2322.73,
+            "user_id": "user_0032",
+            "merchant_id": "merchant_001",
+            "timestamp": "2025-11-16T19:18:47",
+            "currency": "GBP",
+            "country": "AU",
+            "device_id": "device_3732",
+            "ip_address": "192.168.206.242"
+          },
+          {
+            "transaction_id": "txn_00042",
+            "amount": 3457.99,
+            "user_id": "user_0032",
+            "merchant_id": "merchant_012",
+            "timestamp": "2025-12-03T19:18:47",
+            "currency": "EUR",
+            "country": "DE",
+            "device_id": "device_4584",
+            "ip_address": "192.168.68.114"
+          },
+          {
+            "transaction_id": "txn_00080",
+            "amount": 157.58,
+            "user_id": "user_0032",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-12-01T19:18:47",
+            "currency": "EUR",
+            "country": "AU",
+            "device_id": "device_1390",
+            "ip_address": "192.168.160.81"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "AU",
+            "DE"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0035 made transactions from 2 different countries (FR, AU). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0035"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00082",
+            "amount": 2384.59,
+            "user_id": "user_0035",
+            "merchant_id": "merchant_001",
+            "timestamp": "2025-11-26T19:18:47",
+            "currency": "JPY",
+            "country": "FR",
+            "device_id": "device_1594",
+            "ip_address": "192.168.16.139"
+          },
+          {
+            "transaction_id": "txn_00092",
+            "amount": 4098.54,
+            "user_id": "user_0035",
+            "merchant_id": "merchant_014",
+            "timestamp": "2025-11-10T19:18:47",
+            "currency": "JPY",
+            "country": "AU",
+            "device_id": "device_3355",
+            "ip_address": "192.168.94.119"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "FR",
+            "AU"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0038 made transactions from 3 different countries (JP, CA, UK). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0038"
+        ],
+        "affected_count": 3,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00004",
+            "amount": 3655.59,
+            "user_id": "user_0038",
+            "merchant_id": "merchant_014",
+            "timestamp": "2025-11-18T19:18:47",
+            "currency": "AUD",
+            "country": "JP",
+            "device_id": "device_3839",
+            "ip_address": "192.168.71.169"
+          },
+          {
+            "transaction_id": "txn_00035",
+            "amount": 304.4,
+            "user_id": "user_0038",
+            "merchant_id": "merchant_016",
+            "timestamp": "2025-12-03T19:18:47",
+            "currency": "GBP",
+            "country": "CA",
+            "device_id": "device_1000",
+            "ip_address": "192.168.253.112"
+          },
+          {
+            "transaction_id": "txn_00073",
+            "amount": 1275.77,
+            "user_id": "user_0038",
+            "merchant_id": "merchant_014",
+            "timestamp": "2025-11-27T19:18:47",
+            "currency": "EUR",
+            "country": "UK",
+            "device_id": "device_1269",
+            "ip_address": "192.168.195.6"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 3,
+          "countries": [
+            "JP",
+            "CA",
+            "UK"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "MEDIUM",
+        "explanation": "User user_0042 made transactions from 2 different countries (US, DE). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0042"
+        ],
+        "affected_count": 2,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00057",
+            "amount": 4907.16,
+            "user_id": "user_0042",
+            "merchant_id": "merchant_005",
+            "timestamp": "2025-11-16T19:18:47",
+            "currency": "GBP",
+            "country": "US",
+            "device_id": "device_3386",
+            "ip_address": "192.168.82.194"
+          },
+          {
+            "transaction_id": "txn_00058",
+            "amount": 2912.86,
+            "user_id": "user_0042",
+            "merchant_id": "merchant_015",
+            "timestamp": "2025-11-15T19:18:47",
+            "currency": "USD",
+            "country": "DE",
+            "device_id": "device_1371",
+            "ip_address": "192.168.110.62"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 2,
+          "countries": [
+            "US",
+            "DE"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0043 made transactions from 3 different countries (AU, JP, DE). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0043"
+        ],
+        "affected_count": 3,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00010",
+            "amount": 3706.23,
+            "user_id": "user_0043",
+            "merchant_id": "merchant_008",
+            "timestamp": "2025-12-06T19:18:47",
+            "currency": "USD",
+            "country": "AU",
+            "device_id": "device_6443",
+            "ip_address": "192.168.236.51"
+          },
+          {
+            "transaction_id": "txn_00022",
+            "amount": 4317.32,
+            "user_id": "user_0043",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-12-08T19:18:47",
+            "currency": "EUR",
+            "country": "JP",
+            "device_id": "device_3513",
+            "ip_address": "192.168.146.61"
+          },
+          {
+            "transaction_id": "txn_00074",
+            "amount": 4448.39,
+            "user_id": "user_0043",
+            "merchant_id": "merchant_001",
+            "timestamp": "2025-12-06T19:18:47",
+            "currency": "AUD",
+            "country": "DE",
+            "device_id": "device_4735",
+            "ip_address": "192.168.12.132"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 3,
+          "countries": [
+            "AU",
+            "JP",
+            "DE"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0045 made transactions from 3 different countries (UK, JP, CA). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0045"
+        ],
+        "affected_count": 3,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00001",
+            "amount": 21.47,
+            "user_id": "user_0045",
+            "merchant_id": "merchant_003",
+            "timestamp": "2025-12-02T19:18:47",
+            "currency": "EUR",
+            "country": "UK",
+            "device_id": "device_5379",
+            "ip_address": "192.168.148.201"
+          },
+          {
+            "transaction_id": "txn_00026",
+            "amount": 4077.32,
+            "user_id": "user_0045",
+            "merchant_id": "merchant_005",
+            "timestamp": "2025-12-03T19:18:47",
+            "currency": "AUD",
+            "country": "UK",
+            "device_id": "device_1247",
+            "ip_address": "192.168.55.240"
+          },
+          {
+            "transaction_id": "txn_00033",
+            "amount": 1979.03,
+            "user_id": "user_0045",
+            "merchant_id": "merchant_018",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "USD",
+            "country": "JP",
+            "device_id": "device_1060",
+            "ip_address": "192.168.145.44"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 3,
+          "countries": [
+            "UK",
+            "JP",
+            "CA"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0046 made transactions from 3 different countries (FR, AU, UK). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0046"
+        ],
+        "affected_count": 3,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00032",
+            "amount": 3940.13,
+            "user_id": "user_0046",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-12-08T19:18:47",
+            "currency": "USD",
+            "country": "FR",
+            "device_id": "device_2557",
+            "ip_address": "192.168.31.37"
+          },
+          {
+            "transaction_id": "txn_00054",
+            "amount": 793.27,
+            "user_id": "user_0046",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-11-21T19:18:47",
+            "currency": "USD",
+            "country": "AU",
+            "device_id": "device_7869",
+            "ip_address": "192.168.232.71"
+          },
+          {
+            "transaction_id": "txn_00059",
+            "amount": 3782.87,
+            "user_id": "user_0046",
+            "merchant_id": "merchant_005",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "JPY",
+            "country": "UK",
+            "device_id": "device_7642",
+            "ip_address": "192.168.240.199"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 3,
+          "countries": [
+            "FR",
+            "AU",
+            "UK"
+          ]
+        }
+      },
+      {
+        "pattern_id": "CROSS_BORDER_ACTIVITY",
+        "title": "Multi-Country Transaction Activity",
+        "severity": "HIGH",
+        "explanation": "User user_0049 made transactions from 3 different countries (CA, UK, DE). This geographic inconsistency may indicate compromised credentials being used from multiple locations, typical of organized fraud rings. Legitimate users rarely transact from multiple countries in short periods unless they're frequent travelers with documented travel patterns.",
+        "affected_entities": [
+          "user_0049"
+        ],
+        "affected_count": 3,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00077",
+            "amount": 4683.14,
+            "user_id": "user_0049",
+            "merchant_id": "merchant_004",
+            "timestamp": "2025-11-21T19:18:47",
+            "currency": "JPY",
+            "country": "CA",
+            "device_id": "device_3766",
+            "ip_address": "192.168.226.158"
+          },
+          {
+            "transaction_id": "txn_00084",
+            "amount": 2282.58,
+            "user_id": "user_0049",
+            "merchant_id": "merchant_012",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "USD",
+            "country": "UK",
+            "device_id": "device_5660",
+            "ip_address": "192.168.3.8"
+          },
+          {
+            "transaction_id": "txn_00089",
+            "amount": 3829.27,
+            "user_id": "user_0049",
+            "merchant_id": "merchant_001",
+            "timestamp": "2025-11-11T19:18:47",
+            "currency": "GBP",
+            "country": "DE",
+            "device_id": "device_9169",
+            "ip_address": "192.168.111.168"
+          }
+        ],
+        "metadata": {
+          "threshold": 2,
+          "country_count": 3,
+          "countries": [
+            "CA",
+            "UK",
+            "DE"
+          ]
+        }
+      },
+      {
+        "pattern_id": "TEMPORAL_CLUSTERING",
+        "title": "Suspicious Temporal Uniformity",
+        "severity": "LOW",
+        "explanation": "100% of all transactions occurred at hour 19:00. This extreme temporal clustering is statistically impossible in organic traffic and suggests either synthetic/test data or coordinated bot activity. Real transaction patterns show natural variance across hours. This uniformity indicates automated systems or scripted fraud attempts.",
+        "affected_entities": [
+          "DATASET"
+        ],
+        "affected_count": 100,
+        "sample_transactions": [],
+        "metadata": {
+          "dominant_hour": 19,
+          "concentration_pct": 100.0,
+          "hour_distribution": {
+            "19": 100
+          }
+        }
+      },
+      {
+        "pattern_id": "ML_ANOMALY",
+        "title": "ML-Detected Behavioral Anomaly",
+        "severity": "MEDIUM",
+        "explanation": "User user_0021's transaction pattern shows unusual combinations of behavioral signals. ML analysis detected: 7 transactions, $1866.25 average amount, 7 merchants, 5 countries. While each factor alone may be normal, this combination is statistically atypical and warrants manual review. This pattern often appears in sophisticated fraud that evades simple rule-based detection.",
+        "affected_entities": [
+          "user_0021"
+        ],
+        "affected_count": 7,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00005",
+            "amount": 4523.83,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "GBP",
+            "country": "CA",
+            "device_id": "device_7406",
+            "ip_address": "192.168.39.201",
+            "hour": 19
+          },
+          {
+            "transaction_id": "txn_00006",
+            "amount": 1162.98,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_010",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "JPY",
+            "country": "JP",
+            "device_id": "device_9954",
+            "ip_address": "192.168.142.212",
+            "hour": 19
+          },
+          {
+            "transaction_id": "txn_00017",
+            "amount": 529.32,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_012",
+            "timestamp": "2025-11-30T19:18:47",
+            "currency": "JPY",
+            "country": "FR",
+            "device_id": "device_7216",
+            "ip_address": "192.168.134.181",
+            "hour": 19
+          }
+        ],
+        "metadata": {
+          "txn_count": 7,
+          "amount_mean": 1866.25,
+          "amount_std": 1533.3209579645522,
+          "merchant_diversity": 7,
+          "country_diversity": 5
+        }
+      },
+      {
+        "pattern_id": "ML_ANOMALY",
+        "title": "ML-Detected Behavioral Anomaly",
+        "severity": "MEDIUM",
+        "explanation": "User user_0050's transaction pattern shows unusual combinations of behavioral signals. ML analysis detected: 1 transactions, $4981.74 average amount, 1 merchants, 1 countries. While each factor alone may be normal, this combination is statistically atypical and warrants manual review. This pattern often appears in sophisticated fraud that evades simple rule-based detection.",
+        "affected_entities": [
+          "user_0050"
+        ],
+        "affected_count": 1,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00009",
+            "amount": 4981.74,
+            "user_id": "user_0050",
+            "merchant_id": "merchant_016",
+            "timestamp": "2025-12-07T19:18:47",
+            "currency": "EUR",
+            "country": "DE",
+            "device_id": "device_8912",
+            "ip_address": "192.168.87.121",
+            "hour": 19
+          }
+        ],
+        "metadata": {
+          "txn_count": 1,
+          "amount_mean": 4981.74,
+          "amount_std": 0.0,
+          "merchant_diversity": 1,
+          "country_diversity": 1
+        }
+      },
+      {
+        "pattern_id": "ML_ANOMALY",
+        "title": "ML-Detected Behavioral Anomaly",
+        "severity": "MEDIUM",
+        "explanation": "User user_0022's transaction pattern shows unusual combinations of behavioral signals. ML analysis detected: 4 transactions, $2767.42 average amount, 4 merchants, 2 countries. While each factor alone may be normal, this combination is statistically atypical and warrants manual review. This pattern often appears in sophisticated fraud that evades simple rule-based detection.",
+        "affected_entities": [
+          "user_0022"
+        ],
+        "affected_count": 4,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00016",
+            "amount": 4076.72,
+            "user_id": "user_0022",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-17T19:18:47",
+            "currency": "EUR",
+            "country": "US",
+            "device_id": "device_2623",
+            "ip_address": "192.168.158.213",
+            "hour": 19
+          },
+          {
+            "transaction_id": "txn_00064",
+            "amount": 2555.69,
+            "user_id": "user_0022",
+            "merchant_id": "merchant_008",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "USD",
+            "country": "US",
+            "device_id": "device_3762",
+            "ip_address": "192.168.19.25",
+            "hour": 19
+          },
+          {
+            "transaction_id": "txn_00065",
+            "amount": 182.6,
+            "user_id": "user_0022",
+            "merchant_id": "merchant_020",
+            "timestamp": "2025-11-16T19:18:47",
+            "currency": "JPY",
+            "country": "FR",
+            "device_id": "device_7933",
+            "ip_address": "192.168.19.40",
+            "hour": 19
+          }
+        ],
+        "metadata": {
+          "txn_count": 4,
+          "amount_mean": 2767.42,
+          "amount_std": 1884.3480815921457,
+          "merchant_diversity": 4,
+          "country_diversity": 2
+        }
+      },
+      {
+        "pattern_id": "ML_ANOMALY",
+        "title": "ML-Detected Behavioral Anomaly",
+        "severity": "MEDIUM",
+        "explanation": "User user_0001's transaction pattern shows unusual combinations of behavioral signals. ML analysis detected: 5 transactions, $1955.35 average amount, 5 merchants, 4 countries. While each factor alone may be normal, this combination is statistically atypical and warrants manual review. This pattern often appears in sophisticated fraud that evades simple rule-based detection.",
+        "affected_entities": [
+          "user_0001"
+        ],
+        "affected_count": 5,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00023",
+            "amount": 1514.66,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "AUD",
+            "country": "JP",
+            "device_id": "device_1779",
+            "ip_address": "192.168.243.175",
+            "hour": 19
+          },
+          {
+            "transaction_id": "txn_00030",
+            "amount": 15.41,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "GBP",
+            "country": "UK",
+            "device_id": "device_7612",
+            "ip_address": "192.168.115.60",
+            "hour": 19
+          },
+          {
+            "transaction_id": "txn_00045",
+            "amount": 2855.73,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-12-04T19:18:47",
+            "currency": "GBP",
+            "country": "AU",
+            "device_id": "device_6430",
+            "ip_address": "192.168.175.28",
+            "hour": 19
+          }
+        ],
+        "metadata": {
+          "txn_count": 5,
+          "amount_mean": 1955.35,
+          "amount_std": 1226.1871816121711,
+          "merchant_diversity": 5,
+          "country_diversity": 4
+        }
+      },
+      {
+        "pattern_id": "ML_ANOMALY",
+        "title": "ML-Detected Behavioral Anomaly",
+        "severity": "MEDIUM",
+        "explanation": "User user_0025's transaction pattern shows unusual combinations of behavioral signals. ML analysis detected: 3 transactions, $430.00 average amount, 3 merchants, 3 countries. While each factor alone may be normal, this combination is statistically atypical and warrants manual review. This pattern often appears in sophisticated fraud that evades simple rule-based detection.",
+        "affected_entities": [
+          "user_0025"
+        ],
+        "affected_count": 3,
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00048",
+            "amount": 255.01,
+            "user_id": "user_0025",
+            "merchant_id": "merchant_010",
+            "timestamp": "2025-11-27T19:18:47",
+            "currency": "USD",
+            "country": "FR",
+            "device_id": "device_5413",
+            "ip_address": "192.168.104.242",
+            "hour": 19
+          },
+          {
+            "transaction_id": "txn_00053",
+            "amount": 150.73,
+            "user_id": "user_0025",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-11-18T19:18:47",
+            "currency": "AUD",
+            "country": "AU",
+            "device_id": "device_4892",
+            "ip_address": "192.168.159.108",
+            "hour": 19
+          },
+          {
+            "transaction_id": "txn_00067",
+            "amount": 884.27,
+            "user_id": "user_0025",
+            "merchant_id": "merchant_004",
+            "timestamp": "2025-11-13T19:18:47",
+            "currency": "AUD",
+            "country": "CA",
+            "device_id": "device_7588",
+            "ip_address": "192.168.189.128",
+            "hour": 19
+          }
+        ],
+        "metadata": {
+          "txn_count": 3,
+          "amount_mean": 430.00333333333333,
+          "amount_std": 396.8466113416282,
+          "merchant_diversity": 3,
+          "country_diversity": 3
+        }
+      }
+    ]
+  },
+  "fraud_rings": {
+    "total_rings_detected": 5,
+    "critical_count": 3,
+    "high_count": 2,
+    "medium_count": 0,
+    "rings": [
+      {
+        "ring_type": "HIGH_VELOCITY",
+        "ring_name": "High Velocity Fraud Ring",
+        "severity": "HIGH",
+        "members": [
+          "user_0001",
+          "user_0021"
+        ],
+        "member_count": 2,
+        "detection_method": "Transaction velocity analysis (threshold: 5+ transactions)",
+        "evidence": {
+          "detection_threshold": 5,
+          "user_transaction_counts": {
+            "user_0001": 5,
+            "user_0021": 7
+          },
+          "average_dataset_velocity": 2.2222222222222223,
+          "velocity_multiplier": 2.6999999999999997
+        },
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00023",
+            "amount": 1514.66,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "AUD",
+            "country": "JP",
+            "device_id": "device_1779",
+            "ip_address": "192.168.243.175"
+          },
+          {
+            "transaction_id": "txn_00030",
+            "amount": 15.41,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "GBP",
+            "country": "UK",
+            "device_id": "device_7612",
+            "ip_address": "192.168.115.60"
+          },
+          {
+            "transaction_id": "txn_00005",
+            "amount": 4523.83,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "GBP",
+            "country": "CA",
+            "device_id": "device_7406",
+            "ip_address": "192.168.39.201"
+          },
+          {
+            "transaction_id": "txn_00006",
+            "amount": 1162.98,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_010",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "JPY",
+            "country": "JP",
+            "device_id": "device_9954",
+            "ip_address": "192.168.142.212"
+          }
+        ],
+        "risk_score": 0.8,
+        "explanation": "Identified 2 users with abnormally high transaction velocity (5+ transactions). Average user has 2.2 transactions, but these users averaged 6.0x. This pattern suggests account takeover, bot activity, or coordinated money laundering. Key members: user_0001, user_0021",
+        "recommendations": [
+          "Immediately flag all member accounts for manual review",
+          "Implement velocity-based rate limiting (max 4 transactions per hour)",
+          "Enable multi-factor authentication for all flagged users",
+          "Monitor for device/IP sharing among ring members",
+          "Review transaction patterns for structuring behavior"
+        ],
+        "network_data": {
+          "type": "velocity",
+          "icon": "\u26a1",
+          "color": "#f97316",
+          "description": "High transaction velocity network (2 members)"
+        }
+      },
+      {
+        "ring_type": "CROSS_BORDER",
+        "ring_name": "Cross-Border Fraud Ring",
+        "severity": "CRITICAL",
+        "members": [
+          "user_0001",
+          "user_0006",
+          "user_0007",
+          "user_0012",
+          "user_0013",
+          "user_0021",
+          "user_0025",
+          "user_0031",
+          "user_0038",
+          "user_0043",
+          "user_0045",
+          "user_0046",
+          "user_0049"
+        ],
+        "member_count": 13,
+        "detection_method": "Geographic diversity analysis (3+ countries per user)",
+        "evidence": {
+          "detection_threshold": "3+ countries",
+          "user_country_details": {
+            "user_0001": {
+              "country_count": 4,
+              "countries": [
+                "JP",
+                "UK",
+                "AU",
+                "US"
+              ]
+            },
+            "user_0006": {
+              "country_count": 3,
+              "countries": [
+                "US",
+                "AU",
+                "UK"
+              ]
+            },
+            "user_0007": {
+              "country_count": 3,
+              "countries": [
+                "AU",
+                "FR",
+                "DE"
+              ]
+            },
+            "user_0012": {
+              "country_count": 3,
+              "countries": [
+                "JP",
+                "UK",
+                "FR"
+              ]
+            },
+            "user_0013": {
+              "country_count": 3,
+              "countries": [
+                "CA",
+                "DE",
+                "FR"
+              ]
+            },
+            "user_0021": {
+              "country_count": 5,
+              "countries": [
+                "CA",
+                "JP",
+                "FR",
+                "DE",
+                "AU"
+              ]
+            },
+            "user_0025": {
+              "country_count": 3,
+              "countries": [
+                "FR",
+                "AU",
+                "CA"
+              ]
+            },
+            "user_0031": {
+              "country_count": 4,
+              "countries": [
+                "DE",
+                "US",
+                "UK",
+                "CA"
+              ]
+            },
+            "user_0038": {
+              "country_count": 3,
+              "countries": [
+                "JP",
+                "CA",
+                "UK"
+              ]
+            },
+            "user_0043": {
+              "country_count": 3,
+              "countries": [
+                "AU",
+                "JP",
+                "DE"
+              ]
+            },
+            "user_0045": {
+              "country_count": 3,
+              "countries": [
+                "UK",
+                "JP",
+                "CA"
+              ]
+            },
+            "user_0046": {
+              "country_count": 3,
+              "countries": [
+                "FR",
+                "AU",
+                "UK"
+              ]
+            },
+            "user_0049": {
+              "country_count": 3,
+              "countries": [
+                "CA",
+                "UK",
+                "DE"
+              ]
+            }
+          }
+        },
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00023",
+            "amount": 1514.66,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "AUD",
+            "country": "JP",
+            "device_id": "device_1779",
+            "ip_address": "192.168.243.175"
+          },
+          {
+            "transaction_id": "txn_00030",
+            "amount": 15.41,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "GBP",
+            "country": "UK",
+            "device_id": "device_7612",
+            "ip_address": "192.168.115.60"
+          },
+          {
+            "transaction_id": "txn_00019",
+            "amount": 571.32,
+            "user_id": "user_0006",
+            "merchant_id": "merchant_014",
+            "timestamp": "2025-11-12T19:18:47",
+            "currency": "GBP",
+            "country": "US",
+            "device_id": "device_4313",
+            "ip_address": "192.168.112.166"
+          },
+          {
+            "transaction_id": "txn_00052",
+            "amount": 3773.48,
+            "user_id": "user_0006",
+            "merchant_id": "merchant_001",
+            "timestamp": "2025-11-15T19:18:47",
+            "currency": "GBP",
+            "country": "AU",
+            "device_id": "device_9243",
+            "ip_address": "192.168.151.151"
+          },
+          {
+            "transaction_id": "txn_00062",
+            "amount": 2256.36,
+            "user_id": "user_0007",
+            "merchant_id": "merchant_005",
+            "timestamp": "2025-11-19T19:18:47",
+            "currency": "GBP",
+            "country": "AU",
+            "device_id": "device_7377",
+            "ip_address": "192.168.30.145"
+          }
+        ],
+        "risk_score": 1.0,
+        "explanation": "Detected 13 users transacting from 3+ different countries. This geographic impossibility strongly suggests credential theft being used across multiple fraud cells internationally. Users cannot physically be in multiple countries simultaneously. Key members: user_0001, user_0006, user_0007, user_0012, user_0013",
+        "recommendations": [
+          "Implement geo-velocity checks (impossible travel detection)",
+          "Require additional verification for all cross-border transactions",
+          "Block transactions from high-risk IP geolocations",
+          "Review VPN/proxy usage patterns for all members",
+          "Coordinate with international fraud prevention teams"
+        ],
+        "network_data": {
+          "type": "geographic",
+          "icon": "\ud83c\udf0d",
+          "color": "#ef4444",
+          "description": "Cross-border fraud network (13 members)"
+        }
+      },
+      {
+        "ring_type": "MERCHANT_CYCLING",
+        "ring_name": "Merchant Cycling Fraud Ring",
+        "severity": "HIGH",
+        "members": [
+          "user_0001",
+          "user_0021"
+        ],
+        "member_count": 2,
+        "detection_method": "Merchant diversity analysis (5+ merchants per user)",
+        "evidence": {
+          "detection_threshold": "5+ merchants",
+          "user_merchant_details": {
+            "user_0001": {
+              "merchant_count": 5,
+              "merchants": [
+                "merchant_007",
+                "merchant_002",
+                "merchant_009",
+                "merchant_013",
+                "merchant_010"
+              ]
+            },
+            "user_0021": {
+              "merchant_count": 7,
+              "merchants": [
+                "merchant_009",
+                "merchant_010",
+                "merchant_012",
+                "merchant_004",
+                "merchant_006",
+                "merchant_015",
+                "merchant_008"
+              ]
+            }
+          }
+        },
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00023",
+            "amount": 1514.66,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "AUD",
+            "country": "JP",
+            "device_id": "device_1779",
+            "ip_address": "192.168.243.175"
+          },
+          {
+            "transaction_id": "txn_00030",
+            "amount": 15.41,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "GBP",
+            "country": "UK",
+            "device_id": "device_7612",
+            "ip_address": "192.168.115.60"
+          },
+          {
+            "transaction_id": "txn_00005",
+            "amount": 4523.83,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "GBP",
+            "country": "CA",
+            "device_id": "device_7406",
+            "ip_address": "192.168.39.201"
+          },
+          {
+            "transaction_id": "txn_00006",
+            "amount": 1162.98,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_010",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "JPY",
+            "country": "JP",
+            "device_id": "device_9954",
+            "ip_address": "192.168.142.212"
+          }
+        ],
+        "risk_score": 0.81,
+        "explanation": "Identified 2 users cycling through 5+ different merchants. This rapid merchant switching suggests card testing behavior - validating stolen card details across various merchants to find acceptance patterns. Legitimate users typically use 1-3 preferred merchants. Key members: user_0001, user_0021",
+        "recommendations": [
+          "Flag accounts for card testing investigation",
+          "Implement merchant velocity limits",
+          "Enable enhanced fraud checks at merchant level",
+          "Monitor for micro-transactions followed by large purchases",
+          "Coordinate with affected merchants on fraud patterns"
+        ],
+        "network_data": {
+          "type": "merchant",
+          "icon": "\ud83c\udfea",
+          "color": "#f59e0b",
+          "description": "Merchant cycling network (2 members)"
+        }
+      },
+      {
+        "ring_type": "TEMPORAL_CLUSTERING",
+        "ring_name": "Temporal Clustering Ring (Bot Activity)",
+        "severity": "CRITICAL",
+        "members": [
+          "user_0045",
+          "user_0016",
+          "user_0027",
+          "user_0038",
+          "user_0021",
+          "user_0029",
+          "user_0014",
+          "user_0050",
+          "user_0043",
+          "user_0031",
+          "user_0030",
+          "user_0048",
+          "user_0044",
+          "user_0013",
+          "user_0022",
+          "user_0039",
+          "user_0006",
+          "user_0010",
+          "user_0023",
+          "user_0001",
+          "user_0034",
+          "user_0018",
+          "user_0047",
+          "user_0046",
+          "user_0032",
+          "user_0002",
+          "user_0019",
+          "user_0026",
+          "user_0020",
+          "user_0041",
+          "user_0012",
+          "user_0004",
+          "user_0025",
+          "user_0017",
+          "user_0003",
+          "user_0015",
+          "user_0024",
+          "user_0042",
+          "user_0007",
+          "user_0005",
+          "user_0049",
+          "user_0008",
+          "user_0035",
+          "user_0033",
+          "user_0036"
+        ],
+        "member_count": 45,
+        "detection_method": "Timestamp uniformity analysis (100.0% at same time)",
+        "evidence": {
+          "clustering_percentage": 100.0,
+          "dominant_timestamp": "19:18:47",
+          "total_transactions": 100,
+          "affected_transactions": 100,
+          "time_distribution": {
+            "19:18:47": 100
+          }
+        },
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00001",
+            "amount": 21.47,
+            "user_id": "user_0045",
+            "merchant_id": "merchant_003",
+            "timestamp": "2025-12-02T19:18:47",
+            "currency": "EUR",
+            "country": "UK",
+            "device_id": "device_5379",
+            "ip_address": "192.168.148.201"
+          },
+          {
+            "transaction_id": "txn_00002",
+            "amount": 3715.26,
+            "user_id": "user_0016",
+            "merchant_id": "merchant_014",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "EUR",
+            "country": "US",
+            "device_id": "device_8347",
+            "ip_address": "192.168.250.22"
+          },
+          {
+            "transaction_id": "txn_00003",
+            "amount": 1477.21,
+            "user_id": "user_0027",
+            "merchant_id": "merchant_012",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "EUR",
+            "country": "JP",
+            "device_id": "device_5412",
+            "ip_address": "192.168.80.69"
+          },
+          {
+            "transaction_id": "txn_00004",
+            "amount": 3655.59,
+            "user_id": "user_0038",
+            "merchant_id": "merchant_014",
+            "timestamp": "2025-11-18T19:18:47",
+            "currency": "AUD",
+            "country": "JP",
+            "device_id": "device_3839",
+            "ip_address": "192.168.71.169"
+          },
+          {
+            "transaction_id": "txn_00005",
+            "amount": 4523.83,
+            "user_id": "user_0021",
+            "merchant_id": "merchant_009",
+            "timestamp": "2025-11-25T19:18:47",
+            "currency": "GBP",
+            "country": "CA",
+            "device_id": "device_7406",
+            "ip_address": "192.168.39.201"
+          }
+        ],
+        "risk_score": 1.0,
+        "explanation": "100% of all 100 transactions occurred at exactly 19:18:47. This is statistically impossible in organic traffic and definitively indicates automated bot activity, scripted attacks, or synthetic test data. Real users show natural time distribution across hours and minutes.",
+        "recommendations": [
+          "URGENT: Enable CAPTCHA verification immediately",
+          "Implement timestamp jitter detection",
+          "Deploy bot detection and rate limiting middleware",
+          "Review all transactions at this timestamp for fraud",
+          "Analyze user-agent strings for bot patterns"
+        ],
+        "network_data": {
+          "type": "temporal",
+          "icon": "\u23f1\ufe0f",
+          "color": "#8b5cf6",
+          "description": "Coordinated bot activity (20 members)"
+        }
+      },
+      {
+        "ring_type": "HIGH_VALUE",
+        "ring_name": "High-Value Fraud Ring",
+        "severity": "CRITICAL",
+        "members": [
+          "user_0001",
+          "user_0010",
+          "user_0012",
+          "user_0021",
+          "user_0022",
+          "user_0031",
+          "user_0043",
+          "user_0045",
+          "user_0046",
+          "user_0049"
+        ],
+        "member_count": 10,
+        "detection_method": "Spending threshold analysis ($8,000+ per user)",
+        "evidence": {
+          "detection_threshold": "$8,000.00",
+          "user_spending_details": {
+            "user_0001": {
+              "total_amount": 9776.75,
+              "transaction_count": 5,
+              "average_amount": 1955.35
+            },
+            "user_0010": {
+              "total_amount": 8227.91,
+              "transaction_count": 2,
+              "average_amount": 4113.955
+            },
+            "user_0012": {
+              "total_amount": 12395.580000000002,
+              "transaction_count": 3,
+              "average_amount": 4131.860000000001
+            },
+            "user_0021": {
+              "total_amount": 13063.75,
+              "transaction_count": 7,
+              "average_amount": 1866.25
+            },
+            "user_0022": {
+              "total_amount": 11069.68,
+              "transaction_count": 4,
+              "average_amount": 2767.42
+            },
+            "user_0031": {
+              "total_amount": 12505.240000000002,
+              "transaction_count": 4,
+              "average_amount": 3126.3100000000004
+            },
+            "user_0043": {
+              "total_amount": 12471.939999999999,
+              "transaction_count": 3,
+              "average_amount": 4157.313333333333
+            },
+            "user_0045": {
+              "total_amount": 8081.77,
+              "transaction_count": 4,
+              "average_amount": 2020.4425
+            },
+            "user_0046": {
+              "total_amount": 8516.27,
+              "transaction_count": 3,
+              "average_amount": 2838.7566666666667
+            },
+            "user_0049": {
+              "total_amount": 10794.99,
+              "transaction_count": 3,
+              "average_amount": 3598.33
+            }
+          },
+          "combined_total": 106903.88000000002
+        },
+        "sample_transactions": [
+          {
+            "transaction_id": "txn_00023",
+            "amount": 1514.66,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_007",
+            "timestamp": "2025-11-20T19:18:47",
+            "currency": "AUD",
+            "country": "JP",
+            "device_id": "device_1779",
+            "ip_address": "192.168.243.175"
+          },
+          {
+            "transaction_id": "txn_00030",
+            "amount": 15.41,
+            "user_id": "user_0001",
+            "merchant_id": "merchant_002",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "GBP",
+            "country": "UK",
+            "device_id": "device_7612",
+            "ip_address": "192.168.115.60"
+          },
+          {
+            "transaction_id": "txn_00020",
+            "amount": 4524.14,
+            "user_id": "user_0010",
+            "merchant_id": "merchant_014",
+            "timestamp": "2025-11-08T19:18:47",
+            "currency": "EUR",
+            "country": "CA",
+            "device_id": "device_6440",
+            "ip_address": "192.168.210.120"
+          },
+          {
+            "transaction_id": "txn_00037",
+            "amount": 3703.77,
+            "user_id": "user_0010",
+            "merchant_id": "merchant_008",
+            "timestamp": "2025-11-26T19:18:47",
+            "currency": "USD",
+            "country": "DE",
+            "device_id": "device_3664",
+            "ip_address": "192.168.153.195"
+          },
+          {
+            "transaction_id": "txn_00046",
+            "amount": 3867.68,
+            "user_id": "user_0012",
+            "merchant_id": "merchant_011",
+            "timestamp": "2025-11-13T19:18:47",
+            "currency": "EUR",
+            "country": "JP",
+            "device_id": "device_1054",
+            "ip_address": "192.168.222.55"
+          }
+        ],
+        "risk_score": 1.0,
+        "explanation": "Detected 10 users with extremely high aggregate spending ($8,000+ each, $106,904 combined). These users show consistently large individual transaction amounts. Combined with multi-country access patterns, this strongly suggests coordinated card-not-present fraud or account takeover. Key members: user_0001, user_0010, user_0012, user_0021, user_0022",
+        "recommendations": [
+          "IMMEDIATE: Freeze all high-value member accounts",
+          "Require manual approval for transactions over $5,000",
+          "Implement spending limits based on user history",
+          "Enhanced KYC verification for all members",
+          "Cross-reference with stolen card databases"
+        ],
+        "network_data": {
+          "type": "value",
+          "icon": "\ud83d\udcb0",
+          "color": "#dc2626",
+          "description": "High-value spending network (10 members)"
+        }
+      }
+    ],
+    "overall_risk_level": "CRITICAL",
+    "executive_summary": "Detected 5 major fraud rings involving 45 unique users. 3 critical, 2 high-risk, 0 medium-risk. Immediate action required. Coordinated fraud activity confirmed across multiple attack vectors.",
+    "detection_timestamp": "2025-12-08T20:51:15.679752"
+  }
+}

@@ -17,6 +17,8 @@ from backend.app.api.routes.scoring import router as scoring_router
 from backend.app.api.routes.analytics import router as analytics_router
 from backend.app.api.routes.dashboard import router as dashboard_router
 from backend.app.api.routes.advanced_analytics_routes import router as advanced_analytics_router
+from backend.app.api.routes.file_upload import router as file_upload_router
+from backend.app.api.routes.fraud_ring_routes import router as fraud_ring_router
 
 # ============================================================================
 # FastAPI Application Setup
@@ -48,12 +50,29 @@ app.include_router(scoring_router)
 app.include_router(analytics_router)
 app.include_router(dashboard_router)
 app.include_router(advanced_analytics_router)
+app.include_router(file_upload_router, prefix="/api/v1")
+app.include_router(fraud_ring_router)
 
 # ============================================================================
 # Mount static files (frontend dist)
 # ============================================================================
 
-# After Vite builds the frontend, serve static assets
+# Serve frontend files directly (since we're not using Vite build)
+frontend_dir = Path(__file__).parent.parent.parent / "frontend"
+if frontend_dir.exists():
+    # Mount static resources (CSS, JS, etc.)
+    app.mount("/src", StaticFiles(directory=frontend_dir / "src"), name="frontend-src")
+
+# Serve index.html at root
+from fastapi.responses import FileResponse
+
+@app.get("/")
+async def serve_index():
+    """Serve the main frontend HTML."""
+    index_path = Path(__file__).parent.parent.parent / "frontend" / "index.html"
+    return FileResponse(index_path)
+
+# After Vite builds the frontend, serve static assets (for production)
 frontend_dist = Path(__file__).parent.parent.parent / "frontend" / "dist"
 if frontend_dist.exists():
     app.mount("/assets", StaticFiles(directory=frontend_dist / "assets"), name="assets")
