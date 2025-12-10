@@ -9,18 +9,18 @@ from pathlib import Path
 import tempfile
 import os
 
-from backend.app.models.schemas import AdvancedAnalysisResponse, RiskProfileResponse
-from backend.app.core.fraud_insights import FraudInsightsEngine
+from app.models.schemas import AdvancedAnalysisResponse, RiskProfileResponse
+from app.core.fraud_insights import FraudInsightsEngine
 import numpy as np
 import pandas as pd
 
 # Import analytics modules - with error handling for missing modules
 try:
-    from backend.app.services.analytics.file_processor import FileProcessor
-    from backend.app.services.analytics.advanced_fraud_detection import AdvancedFraudDetectionEngine
-    from backend.app.services.analytics.targeted_ring_detector import TargetedFraudRingDetector
-    from backend.app.services.analytics.organized_fraud_detector import OrganizedFraudDetector
-    from backend.app.services.analytics.data_driven_fraud_detector import DataDrivenFraudDetector
+    from app.services.analytics.file_processor import FileProcessor
+    from app.services.analytics.advanced_fraud_detection import AdvancedFraudDetectionEngine
+    from app.services.analytics.targeted_ring_detector import TargetedFraudRingDetector
+    from app.services.analytics.organized_fraud_detector import OrganizedFraudDetector
+    from app.services.analytics.data_driven_fraud_detector import DataDrivenFraudDetector
     FILE_PROCESSOR_AVAILABLE = True
 except ImportError as e:
     print(f"[WARNING] Analytics modules not fully available: {e}")

@@ -16,9 +16,9 @@ from fastapi import APIRouter, HTTPException, BackgroundTasks
 from typing import List, Dict, Any
 from datetime import datetime
 
-from backend.app.services.analytics.fraud_ring_detector import AdvancedFraudRingDetector
-from backend.app.services.analytics.clustering_detector import HDBSCANFraudDetector
-from backend.app.services.analytics.advanced_fraud_detection import AdvancedFraudDetectionEngine
+from app.services.analytics.fraud_ring_detector import AdvancedFraudRingDetector
+from app.services.analytics.clustering_detector import HDBSCANFraudDetector
+from app.services.analytics.advanced_fraud_detection import AdvancedFraudDetectionEngine
 
 
 router = APIRouter(prefix="/fraud-rings", tags=["Fraud Ring Detection"])

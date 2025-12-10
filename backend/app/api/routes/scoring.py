@@ -7,8 +7,8 @@ from typing import List
 from datetime import datetime
 import time
 
-from backend.app.models.schemas import TransactionRequest, DecisionResponse
-from backend.app.api.dependencies import get_engine, metrics
+from app.models.schemas import TransactionRequest, DecisionResponse
+from app.api.dependencies import get_engine, metrics
 
 router = APIRouter(tags=["Scoring"])
 

@@ -4,8 +4,8 @@ Health check endpoints for Risk Decision Engine API
 
 from fastapi import APIRouter
 from datetime import datetime
-from backend.app.models.schemas import HealthResponse
-from backend.app.api.dependencies import metrics
+from app.models.schemas import HealthResponse
+from app.api.dependencies import metrics
 
 router = APIRouter(tags=["Health"])
 
