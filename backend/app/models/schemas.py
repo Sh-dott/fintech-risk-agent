@@ -158,3 +158,15 @@ class AdvancedAnalysisResponse(BaseModel):
         default=None,
         description="Data-driven fraud ring detection based on discovered patterns"
     )
+    ml_fraud_rings: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="ML-based fraud ring detection with graph analysis and gradient boosting"
+    )
+    consolidated_fraud: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Consolidated fraud rings (deduplicated, probability-weighted)"
+    )
+    data_validation: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Data validation audit trail"
+    )

@@ -6,8 +6,8 @@ from fastapi import APIRouter
 from datetime import datetime
 from typing import Optional
 
-from app.models.schemas import MetricsResponse
-from app.api.dependencies import metrics
+from ...models.schemas import MetricsResponse
+from ..dependencies import metrics
 
 router = APIRouter(tags=["Analytics"])
 

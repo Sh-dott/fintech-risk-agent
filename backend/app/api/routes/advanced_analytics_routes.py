@@ -12,9 +12,9 @@ Provides:
 from fastapi import APIRouter, HTTPException
 from typing import Dict, List, Any, Optional
 from datetime import datetime
-from app.services.analytics.advanced_analytics_engine import AdvancedAnalyticsEngine
+from ...services.analytics.advanced_analytics_engine import AdvancedAnalyticsEngine
 try:
-    from app.services.analytics.advanced_analytics_engine import DenialAnalysis
+    from ...services.analytics.advanced_analytics_engine import DenialAnalysis
 except ImportError:
     # DenialAnalysis might not exist, create a placeholder
     DenialAnalysis = None

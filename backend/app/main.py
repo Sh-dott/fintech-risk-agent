@@ -12,13 +12,14 @@ from pathlib import Path
 import uvicorn
 
 # Import route routers
-from app.api.routes.health import router as health_router
-from app.api.routes.scoring import router as scoring_router
-from app.api.routes.analytics import router as analytics_router
-from app.api.routes.dashboard import router as dashboard_router
-from app.api.routes.advanced_analytics_routes import router as advanced_analytics_router
-from app.api.routes.file_upload import router as file_upload_router
-from app.api.routes.fraud_ring_routes import router as fraud_ring_router
+from .api.routes.health import router as health_router
+from .api.routes.scoring import router as scoring_router
+from .api.routes.analytics import router as analytics_router
+from .api.routes.dashboard import router as dashboard_router
+from .api.routes.advanced_analytics_routes import router as advanced_analytics_router
+from .api.routes.file_upload import router as file_upload_router
+from .api.routes.fraud_ring_routes import router as fraud_ring_router
+from .api.routes.ml_routes import router as ml_router
 
 # ============================================================================
 # FastAPI Application Setup
@@ -52,6 +53,7 @@ app.include_router(dashboard_router)
 app.include_router(advanced_analytics_router)
 app.include_router(file_upload_router, prefix="/api/v1")
 app.include_router(fraud_ring_router)
+app.include_router(ml_router)
 
 # ============================================================================
 # Mount static files (frontend dist)

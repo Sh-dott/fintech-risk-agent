@@ -18,13 +18,12 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8001',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
       },
       // Proxy all API endpoints to backend
-      '^/(health|score|batch-score|metrics|history|analytics|upload-and-analyze|analyze-transactions)': {
-        target: 'http://localhost:8000',
+      '^/(health|score|batch-score|metrics|history|analytics|upload-and-analyze|analyze-transactions|fraud-rings)': {
+        target: 'http://localhost:8001',
         changeOrigin: true,
       },
     },

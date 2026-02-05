@@ -6,21 +6,23 @@ from fastapi import APIRouter, HTTPException, File, UploadFile
 from typing import List, Dict, Any
 from datetime import datetime
 from pathlib import Path
+import asyncio
+import hashlib
 import tempfile
 import os
 
-from app.models.schemas import AdvancedAnalysisResponse, RiskProfileResponse
-from app.core.fraud_insights import FraudInsightsEngine
+from ...models.schemas import AdvancedAnalysisResponse, RiskProfileResponse
+from ...core.fraud_insights import FraudInsightsEngine
 import numpy as np
 import pandas as pd
 
 # Import analytics modules - with error handling for missing modules
 try:
-    from app.services.analytics.file_processor import FileProcessor
-    from app.services.analytics.advanced_fraud_detection import AdvancedFraudDetectionEngine
-    from app.services.analytics.targeted_ring_detector import TargetedFraudRingDetector
-    from app.services.analytics.organized_fraud_detector import OrganizedFraudDetector
-    from app.services.analytics.data_driven_fraud_detector import DataDrivenFraudDetector
+    from ...services.analytics.file_processor import FileProcessor
+    from ...services.analytics.advanced_fraud_detection import AdvancedFraudDetectionEngine
+    from ...services.analytics.targeted_ring_detector import TargetedFraudRingDetector
+    from ...services.analytics.organized_fraud_detector import OrganizedFraudDetector
+    from ...services.analytics.data_driven_fraud_detector import DataDrivenFraudDetector
     FILE_PROCESSOR_AVAILABLE = True
 except ImportError as e:
     print(f"[WARNING] Analytics modules not fully available: {e}")
@@ -85,86 +87,71 @@ async def upload_and_analyze(file: UploadFile = File(...)):
             content = await file.read()
             tmp.write(content)
 
-        # Process file
-        transactions = FileProcessor.process_file(temp_file_path)
+        # Run all CPU-heavy analysis in a thread so the event loop stays free
+        # (keeps /health responsive during long pipeline runs)
+        def _run_analysis():
+            txns = FileProcessor.process_file(temp_file_path)
+            original_txns = txns.copy()
+            txns = FileProcessor.normalize_columns(txns)
+            val = FileProcessor.validate_transactions(txns)
 
-        # Keep original transactions for OrganizedFraudDetector (it does its own normalization)
-        original_transactions = transactions.copy()
+            row_count = len(txns) if isinstance(txns, list) else (len(txns) if hasattr(txns, '__len__') else 50000)
+            LEGACY_ENGINE_ROW_LIMIT = 50000
 
-        # Normalize column names (intelligent mapping)
-        transactions = FileProcessor.normalize_columns(transactions)
+            if row_count <= LEGACY_ENGINE_ROW_LIMIT:
+                print("[DEBUG] Running AdvancedFraudDetectionEngine...")
+                fraud_eng = AdvancedFraudDetectionEngine()
+                fraud_eng.load_transactions(txns)
+                anom = fraud_eng.detect_anomalies()
+                fnets = fraud_eng.detect_fraud_networks()
+                mlp = fraud_eng.detect_money_laundering_patterns()
+                rprof = fraud_eng.calculate_comprehensive_risk_scores()
+                rep = fraud_eng.generate_comprehensive_report()
+                print("[DEBUG] AdvancedFraudDetectionEngine completed successfully")
 
-        # Validate data quality (now flexible - accepts any format)
-        validation = FileProcessor.validate_transactions(transactions)
+                print("[DEBUG] Running FraudInsightsEngine...")
+                fi_engine = FraudInsightsEngine(txns)
+                fi = fi_engine.analyze()
+                print("[DEBUG] FraudInsightsEngine completed successfully")
+            else:
+                print(f"[DEBUG] Skipping legacy engines for large dataset ({row_count} rows > {LEGACY_ENGINE_ROW_LIMIT} limit)")
+                print("[DEBUG] Only CalibratedFraudPipeline will run (primary detection engine)")
+                anom = []
+                fnets = {"suspicious_clusters": 0, "networks": []}
+                mlp = []
+                rprof = {}
+                rep = {"summary": {"message": f"Legacy engines skipped for {row_count}-row dataset", "legacy_skipped": True}}
+                fi = {}
 
-        # Note: Removed strict quality check - system now works with any data!
+            print("[DEBUG] Running CalibratedFraudPipeline...")
+            txns_df = pd.DataFrame(txns) if isinstance(txns, list) else txns
+            fhash = hashlib.sha256(content).hexdigest()
+            try:
+                from ...services.analytics.calibrated_pipeline import CalibratedFraudPipeline
+                cal = CalibratedFraudPipeline()
+                cons = cal.run(txns_df, filename=file.filename, file_hash=fhash)
+                da = cons.get("data_validation", {})
+                print(f"[DEBUG] CalibratedFraudPipeline completed: "
+                      f"{cons.get('total_rings', 0)} rings, "
+                      f"{cons.get('total_flagged_accounts', 0)} flagged accounts, "
+                      f"${cons.get('total_exposure', 0):,.2f} exposure")
+            except Exception as exc:
+                print(f"[ERROR] CalibratedFraudPipeline failed: {exc}")
+                import traceback
+                traceback.print_exc()
+                cons = {
+                    "total_rings": 0, "total_flagged_accounts": 0,
+                    "total_exposure": 0.0, "overall_risk_level": "LOW",
+                    "overall_risk_score": 0.0, "rings": [],
+                    "suspicious_clusters": [],
+                }
+                da = {}
 
-        # Initialize advanced fraud detection engine
-        print("[DEBUG] Running AdvancedFraudDetectionEngine...")
-        try:
-            fraud_engine = AdvancedFraudDetectionEngine()
-            fraud_engine.load_transactions(transactions)
+            return txns, val, anom, fnets, mlp, rprof, rep, fi, cons, da
 
-            # Run all detection analyses
-            anomalies = fraud_engine.detect_anomalies()
-            fraud_networks = fraud_engine.detect_fraud_networks()
-            ml_patterns = fraud_engine.detect_money_laundering_patterns()
-            risk_profiles = fraud_engine.calculate_comprehensive_risk_scores()
-
-            # Generate comprehensive report
-            report = fraud_engine.generate_comprehensive_report()
-            print(f"[DEBUG] AdvancedFraudDetectionEngine completed successfully")
-        except Exception as e:
-            print(f"[ERROR] AdvancedFraudDetectionEngine failed: {e}")
-            raise
-
-        # Run Fraud Intelligence Analysis (NEW!)
-        print("[DEBUG] Running FraudInsightsEngine...")
-        try:
-            fraud_insights_engine = FraudInsightsEngine(transactions)
-            fraud_insights = fraud_insights_engine.analyze()
-            print(f"[DEBUG] FraudInsightsEngine completed successfully")
-        except Exception as e:
-            print(f"[ERROR] FraudInsightsEngine failed: {e}")
-            raise
-
-        # Run Targeted Fraud Ring Detection (5 specific fraud ring types)
-        print("[DEBUG] Running TargetedFraudRingDetector...")
-        try:
-            from dataclasses import asdict
-            ring_detector = TargetedFraudRingDetector()
-            ring_detector.load_transactions(transactions)
-            fraud_rings_obj = ring_detector.detect_all_targeted_rings()
-            # Convert dataclass to dict for JSON serialization
-            fraud_rings_report = asdict(fraud_rings_obj) if fraud_rings_obj else None
-            print(f"[DEBUG] TargetedFraudRingDetector completed successfully")
-        except Exception as e:
-            print(f"[ERROR] TargetedFraudRingDetector failed: {e}")
-            raise
-
-        # Run Organized Fraud Detection (Fake Identity + Geographic Mismatch patterns)
-        # Use ORIGINAL transactions (before normalization) as it does its own normalization
-        print("[DEBUG] Running OrganizedFraudDetector...")
-        try:
-            organized_fraud_detector = OrganizedFraudDetector()
-            organized_fraud_detector.load_transactions(original_transactions)
-            organized_fraud_detector.detect_organized_fraud_rings()
-            organized_fraud_report = organized_fraud_detector.generate_report()
-            print(f"[DEBUG] Organized fraud report: {organized_fraud_report.get('total_rings_detected', 0)} rings")
-        except Exception as e:
-            print(f"[ERROR] OrganizedFraudDetector failed: {e}")
-            raise
-
-        # Run Data-Driven Fraud Detection (Based on discovered patterns from actual fraud data)
-        print("[DEBUG] Running DataDrivenFraudDetector...")
-        try:
-            data_driven_detector = DataDrivenFraudDetector()
-            data_driven_detector.load_transactions(transactions)
-            data_driven_report = data_driven_detector.generate_comprehensive_report()
-            print(f"[DEBUG] Data-driven report: {data_driven_report.get('total_rings_detected', 0)} rings")
-        except Exception as e:
-            print(f"[ERROR] DataDrivenFraudDetector failed: {e}")
-            raise
+        (transactions, validation, anomalies, fraud_networks, ml_patterns,
+         risk_profiles, report, fraud_insights, consolidated, data_audit
+        ) = await asyncio.to_thread(_run_analysis)
 
         # Convert risk profiles to response format (with numpy type conversion)
         risk_profile_responses = [
@@ -197,9 +184,12 @@ async def upload_and_analyze(file: UploadFile = File(...)):
             "money_laundering_patterns": convert_numpy_types(ml_patterns),
             "risk_profiles": risk_profile_responses,
             "fraud_insights": convert_numpy_types(fraud_insights),
-            "fraud_rings": convert_numpy_types(fraud_rings_report),  # Targeted fraud ring detection
-            "organized_fraud": convert_numpy_types(organized_fraud_report),  # Organized fraud (fake ID, email mismatch)
-            "data_driven_fraud_rings": convert_numpy_types(data_driven_report)  # Data-driven fraud rings (NIGHT-TIME, VELOCITY, SHOPPING)
+            "fraud_rings": None,               # Legacy: replaced by calibrated_pipeline
+            "organized_fraud": None,            # Legacy: replaced by calibrated_pipeline
+            "data_driven_fraud_rings": None,    # Legacy: replaced by calibrated_pipeline
+            "ml_fraud_rings": None,             # Legacy: replaced by calibrated_pipeline
+            "consolidated_fraud": convert_numpy_types(consolidated),  # PRIMARY: Calibrated pipeline output
+            "data_validation": convert_numpy_types(data_audit),
         }
 
         return AdvancedAnalysisResponse(**response_data)

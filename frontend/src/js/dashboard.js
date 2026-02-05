@@ -1,4 +1,4 @@
-const API_BASE = window.location.origin;
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8001';
 
 // Initialize charts
 let decisionChart, riskDistributionChart;

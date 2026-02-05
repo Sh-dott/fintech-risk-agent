@@ -1,3 +1,7 @@
+// ============================================================================
+// DOM REFERENCES
+// ============================================================================
+
 const uploadArea = document.getElementById('uploadArea');
 const fileInput = document.getElementById('fileInput');
 const uploadContent = document.getElementById('uploadContent');
@@ -9,7 +13,6 @@ const errorMsg = document.getElementById('errorMsg');
 const errorText = document.getElementById('errorText');
 
 let analysisResults = null;
-let riskChart = null;
 
 // ============================================================================
 // FRAUD RING VISUALIZER CLASS
@@ -21,59 +24,30 @@ class FraudRingVisualizer {
     }
 
     displayFraudRings(fraudRingsReport) {
-        console.log('[FraudRingVisualizer] displayFraudRings called with:', fraudRingsReport);
         this.fraudRingsData = fraudRingsReport;
 
-        // Only display if rings were actually detected
         if (!fraudRingsReport || fraudRingsReport.total_rings_detected === 0) {
-            console.log('[FraudRingVisualizer] No rings to display, hiding sections');
             this.hideAllFraudRingSections();
             return;
         }
 
-        console.log('[FraudRingVisualizer] Displaying', fraudRingsReport.total_rings_detected, 'fraud rings');
-
-        // Calculate risk scores for all rings (used by network graph and cards)
-        console.log('[FraudRingVisualizer] Calculating weighted risk scores...');
+        // Calculate risk scores for all rings
         fraudRingsReport.rings.forEach(ring => {
             const riskScore = this.calculateRiskScore(ring, fraudRingsReport.rings);
             ring.calculated_risk_score = riskScore;
             ring.calculated_severity = this.getRiskLevel(riskScore);
         });
 
-        // Update executive alert banner
-        console.log('[FraudRingVisualizer] Updating alert banner...');
         this.updateExecutiveAlert(fraudRingsReport);
-
-        // Update summary cards (5 ring types)
-        console.log('[FraudRingVisualizer] Updating summary cards...');
-        this.updateSummaryCards(fraudRingsReport);
-
-        // Render network graph
-        console.log('[FraudRingVisualizer] Rendering network graph...');
         this.renderNetworkGraph(fraudRingsReport);
-
-        // Render fraud ring detail cards
-        console.log('[FraudRingVisualizer] Rendering ring cards...');
         this.renderRingCards(fraudRingsReport);
-
-        // Generate AI recommendations
-        console.log('[FraudRingVisualizer] Generating AI recommendations...');
         this.generateAIRecommendations(fraudRingsReport);
-
-        console.log('[FraudRingVisualizer] Display complete!');
     }
 
     hideAllFraudRingSections() {
-        const sections = [
-            'fraudRingAlertBanner',
-            'fraudRingSummarySection',
-            'networkVisualizationSection',
-            'fraudRingDetailsSection'
-        ];
-        sections.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) element.style.display = 'none';
+        ['fraudRingAlertBanner', 'networkVisualizationSection', 'fraudRingDetailsSection', 'aiRecommendationsSection'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
         });
     }
 
@@ -83,79 +57,26 @@ class FraudRingVisualizer {
 
         const totalRingsSpan = document.getElementById('totalFraudRings');
         const totalMembersSpan = document.getElementById('totalFraudMembers');
+        const pluralSpan = document.getElementById('ringsPlural');
 
         if (totalRingsSpan) totalRingsSpan.textContent = report.total_rings_detected;
+        if (pluralSpan) pluralSpan.textContent = report.total_rings_detected === 1 ? '' : 's';
 
-        // Calculate total unique members across all rings
-        // Handle both formats: ring.members (fraud_rings) or ring.member_count (organized_fraud)
         let totalMembers = 0;
         if (report.rings && report.rings.length > 0) {
-            if (report.rings[0].members) {
-                // fraud_rings format: has members array
-                const uniqueMembers = new Set();
-                report.rings.forEach(ring => {
-                    if (ring.members) {
-                        ring.members.forEach(member => uniqueMembers.add(member));
-                    }
-                });
-                totalMembers = uniqueMembers.size;
-            } else {
-                // organized_fraud format: use member_count
-                totalMembers = report.rings.reduce((sum, ring) => sum + (ring.member_count || 0), 0);
-            }
+            const uniqueMembers = new Set();
+            report.rings.forEach(ring => {
+                if (ring.members && Array.isArray(ring.members)) {
+                    ring.members.forEach(m => uniqueMembers.add(m));
+                } else if (ring.member_count) {
+                    totalMembers += ring.member_count;
+                }
+            });
+            if (uniqueMembers.size > 0) totalMembers = uniqueMembers.size;
         }
 
         if (totalMembersSpan) totalMembersSpan.textContent = totalMembers;
-
-        banner.style.display = 'block';
-    }
-
-    updateSummaryCards(report) {
-        const section = document.getElementById('fraudRingSummarySection');
-        if (!section) return;
-
-        // Count rings by type (only for fraud_rings with ring_type, not for organized_fraud)
-        const ringCounts = {
-            'HIGH_VELOCITY': 0,
-            'CROSS_BORDER': 0,
-            'MERCHANT_CYCLING': 0,
-            'TEMPORAL_CLUSTERING': 0,
-            'HIGH_VALUE': 0
-        };
-
-        report.rings.forEach(ring => {
-            const ringType = ring.ring_type;
-            if (ringType && ringCounts.hasOwnProperty(ringType)) {
-                ringCounts[ringType]++;
-            }
-        });
-
-        // Update each card count
-        const countElements = {
-            'velocityRingCount': ringCounts.HIGH_VELOCITY,
-            'crossBorderRingCount': ringCounts.CROSS_BORDER,
-            'merchantCyclingRingCount': ringCounts.MERCHANT_CYCLING,
-            'temporalRingCount': ringCounts.TEMPORAL_CLUSTERING,
-            'highValueRingCount': ringCounts.HIGH_VALUE
-        };
-
-        Object.entries(countElements).forEach(([elementId, count]) => {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.textContent = count;
-                // Highlight if count > 0
-                if (count > 0) {
-                    element.style.color = 'var(--severity-critical)';
-                    element.style.textShadow = '0 0 20px rgba(239, 68, 68, 0.5)';
-                }
-            }
-        });
-
-        // Only show summary section if we have ring_type data (fraud_rings, not organized_fraud)
-        const hasRingTypes = report.rings.some(ring => ring.ring_type);
-        if (hasRingTypes) {
-            section.style.display = 'block';
-        }
+        banner.style.display = 'flex';
     }
 
     renderNetworkGraph(report) {
@@ -163,48 +84,32 @@ class FraudRingVisualizer {
         const container = document.getElementById('networkGraph');
         if (!section || !container) return;
 
-        // Check if vis.js is available
         if (typeof vis === 'undefined') {
-            console.error('[Network Graph] vis.js library not loaded');
-            container.innerHTML = '<p class="text-center text-gray-500">Network visualization library not available</p>';
+            container.innerHTML = '<p style="text-align:center;color:#64748B;padding:2rem;">Network visualization library not available</p>';
             section.style.display = 'block';
             return;
         }
 
-        // Clear container
         container.innerHTML = '';
 
-        // Create nodes from rings
         const nodes = new vis.DataSet();
         const edges = new vis.DataSet();
 
         report.rings.forEach((ring, index) => {
-            // Calculate node size based on member count
             const nodeSize = Math.sqrt(ring.member_count || 1) * 3 + 15;
-
-            // Get ring label
             const label = ring.fake_name_pattern || ring.ring_name || ring.ring_type || `Ring ${index + 1}`;
-
-            // Get ring amount (handle different field names)
             const amount = ring.total_fraud_amount || ring.total_amount || 0;
-            const amountFormatted = new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'EUR'
-            }).format(amount);
-
-            // Get calculated severity and color
+            const amountFormatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EUR' }).format(amount);
             const severity = ring.calculated_severity || ring.severity || 'MEDIUM';
             const riskScore = ring.calculated_risk_score !== undefined ? ring.calculated_risk_score.toFixed(1) : '0';
             const nodeColor = this.getRiskColor(severity);
 
-            // Lighter version for highlight
             const highlightColors = {
-                '#DC2626': '#EF4444',  // CRITICAL: brighter red
-                '#EA580C': '#F97316',  // HIGH: brighter orange
-                '#CA8A04': '#EAB308',  // MEDIUM: brighter yellow
-                '#16A34A': '#22C55E'   // LOW: brighter green
+                '#DC2626': '#EF4444',
+                '#EA580C': '#F97316',
+                '#CA8A04': '#EAB308',
+                '#16A34A': '#22C55E'
             };
-            const highlightColor = highlightColors[nodeColor] || nodeColor;
 
             nodes.add({
                 id: index,
@@ -215,25 +120,22 @@ class FraudRingVisualizer {
                     background: nodeColor,
                     border: nodeColor,
                     highlight: {
-                        background: highlightColor,
-                        border: highlightColor
+                        background: highlightColors[nodeColor] || nodeColor,
+                        border: highlightColors[nodeColor] || nodeColor
                     }
                 },
                 font: {
-                    color: '#FFFFFF',  // White text for visibility
+                    color: '#FFFFFF',
                     size: 16,
                     face: 'Arial',
-                    bold: { color: '#FFFFFF' },
                     strokeWidth: 3,
-                    strokeColor: '#1B263B'  // Dark outline for visibility
+                    strokeColor: '#1B263B'
                 }
             });
         });
 
-        // Create some edges between rings (for visualization)
         report.rings.forEach((ring1, i) => {
             report.rings.slice(i + 1).forEach((ring2, j) => {
-                // Connect rings if they share similar patterns (simplified logic)
                 if (Math.random() > 0.65) {
                     edges.add({
                         from: i,
@@ -246,102 +148,53 @@ class FraudRingVisualizer {
             });
         });
 
-        // Network configuration (improved spacing and visibility)
         const options = {
             physics: {
                 barnesHut: {
-                    gravitationalConstant: -5000,  // More spread (was -3000)
-                    centralGravity: 0.2,           // Less pull to center
-                    springLength: 300,             // More distance (was 200)
-                    springConstant: 0.02,          // Less rigid (was 0.04)
-                    damping: 0.15                  // More damping for stability
+                    gravitationalConstant: -5000,
+                    centralGravity: 0.2,
+                    springLength: 300,
+                    springConstant: 0.02,
+                    damping: 0.15
                 },
-                stabilization: {
-                    iterations: 250                 // More iterations for better layout
-                }
+                stabilization: { iterations: 250 }
             },
             nodes: {
                 shape: 'dot',
-                scaling: {
-                    min: 25,                       // Larger minimum size
-                    max: 70,                       // Larger maximum size
-                    label: { enabled: true, min: 16, max: 24 }
-                },
-                font: {
-                    color: '#FFFFFF',              // White text (overridden per node)
-                    size: 18,                      // Larger font (was 14)
-                    strokeWidth: 3                 // Outline for visibility
-                },
-                borderWidth: 3,                    // Thicker border
+                scaling: { min: 25, max: 70, label: { enabled: true, min: 16, max: 24 } },
+                font: { color: '#FFFFFF', size: 18, strokeWidth: 3 },
+                borderWidth: 3,
                 borderWidthSelected: 4
             },
             edges: {
                 width: 1,
                 color: { inherit: false },
-                smooth: {
-                    type: 'continuous'
-                }
+                smooth: { type: 'continuous' }
             },
-            interaction: {
-                hover: true,
-                tooltipDelay: 100,
-                zoomView: true,
-                dragView: true
-            },
-            layout: {
-                improvedLayout: true,
-                hierarchical: false
-            }
+            interaction: { hover: true, tooltipDelay: 100, zoomView: true, dragView: true },
+            layout: { improvedLayout: true, hierarchical: false }
         };
 
-        // Create network
         const network = new vis.Network(container, { nodes, edges }, options);
-
-        // Fit network to view after stabilization
         network.once('stabilizationIterationsDone', () => {
-            network.fit({
-                animation: {
-                    duration: 1000,
-                    easingFunction: 'easeInOutQuad'
-                }
-            });
+            network.fit({ animation: { duration: 1000, easingFunction: 'easeInOutQuad' } });
         });
 
         section.style.display = 'block';
     }
 
-    /**
-     * Calculate weighted risk score for a fraud ring
-     * Formula: (members × 0.3) + (amount × 0.4) + (transactions × 0.3)
-     * Each factor is normalized to 0-100 scale
-     * Returns score 0-100
-     */
     calculateRiskScore(ring, allRings) {
-        // Find maximum values across all rings for normalization
         const maxMembers = Math.max(...allRings.map(r => r.member_count || 0));
         const maxAmount = Math.max(...allRings.map(r => r.total_fraud_amount || 0));
         const maxTxns = Math.max(...allRings.map(r => r.fraudulent_orders || r.member_count || 0));
 
-        // Normalize each factor to 0-100 scale
         const normMembers = maxMembers > 0 ? (ring.member_count || 0) / maxMembers * 100 : 0;
         const normAmount = maxAmount > 0 ? (ring.total_fraud_amount || 0) / maxAmount * 100 : 0;
         const normTxns = maxTxns > 0 ? (ring.fraudulent_orders || ring.member_count || 0) / maxTxns * 100 : 0;
 
-        // Apply weighted formula
-        const score = (normMembers * 0.3) + (normAmount * 0.4) + (normTxns * 0.3);
-
-        console.log(`[Risk Score] ${ring.ring_name}: members=${normMembers.toFixed(1)}, amount=${normAmount.toFixed(1)}, txns=${normTxns.toFixed(1)} => ${score.toFixed(1)}`);
-
-        return score;
+        return (normMembers * 0.3) + (normAmount * 0.4) + (normTxns * 0.3);
     }
 
-    /**
-     * Convert risk score to severity level
-     * 80-100: CRITICAL
-     * 60-79: HIGH
-     * 40-59: MEDIUM
-     * 0-39: LOW
-     */
     getRiskLevel(score) {
         if (score >= 80) return 'CRITICAL';
         if (score >= 60) return 'HIGH';
@@ -349,16 +202,8 @@ class FraudRingVisualizer {
         return 'LOW';
     }
 
-    /**
-     * Get color for risk level
-     */
     getRiskColor(severity) {
-        const colors = {
-            'CRITICAL': '#DC2626',  // Red
-            'HIGH': '#EA580C',      // Orange
-            'MEDIUM': '#CA8A04',    // Yellow
-            'LOW': '#16A34A'        // Green
-        };
+        const colors = { 'CRITICAL': '#DC2626', 'HIGH': '#EA580C', 'MEDIUM': '#CA8A04', 'LOW': '#16A34A' };
         return colors[severity] || '#6B7280';
     }
 
@@ -368,48 +213,109 @@ class FraudRingVisualizer {
         if (!section || !container) return;
 
         container.innerHTML = '';
-
-        // Risk scores already calculated in displayFraudRings()
-        // Sort rings by calculated risk score - highest first
         const sortedRings = [...report.rings].sort((a, b) =>
             (b.calculated_risk_score || 0) - (a.calculated_risk_score || 0)
         );
 
         sortedRings.forEach((ring, index) => {
-            const card = this.createFraudRingCard(ring, index);
-            container.appendChild(card);
+            container.appendChild(this.createFraudRingCard(ring, index));
         });
 
         section.style.display = 'block';
     }
 
     createFraudRingCard(ring, index) {
-        // Use calculated severity if available, fallback to backend severity
         const severity = ring.calculated_severity || ring.severity;
         const riskScore = ring.calculated_risk_score !== undefined ? ring.calculated_risk_score : (ring.risk_score * 100);
-
         const card = document.createElement('div');
         card.className = `fraud-ring-card severity-${severity.toLowerCase()}`;
-        card.id = `fraud-ring-${index}`;
-
-        // Add entrance animation
         card.style.animation = `fadeIn 0.5s ease-out ${index * 0.1}s both`;
 
-        // Severity emojis
-        const severityEmoji = {
-            'CRITICAL': '🔴',
-            'HIGH': '🟠',
-            'MEDIUM': '🟡',
-            'LOW': '🟢'
-        };
-
-        // Format risk score as percentage
-        const riskPercent = riskScore.toFixed(1);
-
-        // Handle different field names (evidence vs key_indicators, sample_transactions vs sample_orders)
-        const evidence = ring.evidence || ring.key_indicators || [];
+        const severityEmoji = { 'CRITICAL': '🔴', 'HIGH': '🟠', 'MEDIUM': '🟡', 'LOW': '🟢' };
+        const evidence = ring.evidence || ring.key_indicators || {};
         const sampleTransactions = ring.sample_transactions || ring.sample_orders || [];
         const members = ring.members || [];
+
+        // Build signal metrics bars from evidence_metrics
+        const evidenceMetrics = ring.evidence_metrics || evidence;
+        const signalLabels = {
+            device_reuse: 'Device Reuse',
+            device_family: 'Device Family',
+            subnet_reuse: 'Subnet Reuse',
+            shared_device: 'Shared Device',
+            shared_ip: 'Shared IP',
+            geo_mismatch_rate: 'Geo Mismatch',
+            micro_amount_ratio: 'Micro Amounts',
+            threshold_cluster_score: 'Threshold Cluster',
+            merchant_concentration: 'Merchant Conc.',
+            bin_concentration: 'BIN Conc.',
+            disposable_email: 'Disposable Email',
+            burst_score: 'Burstiness',
+            ring_burst_score: 'Ring Burst',
+            night_txn: 'Night Txns',
+        };
+
+        let signalBarsHtml = '';
+        if (evidenceMetrics && typeof evidenceMetrics === 'object') {
+            const entries = Object.entries(evidenceMetrics)
+                .filter(([k, v]) => typeof v === 'number' && signalLabels[k])
+                .sort((a, b) => b[1] - a[1]);
+
+            if (entries.length > 0) {
+                signalBarsHtml = `
+                    <div class="dark-card" style="padding: 1rem;">
+                        <h4 class="text-sm font-bold text-gray-300 mb-2 uppercase tracking-wide">Signal Metrics</h4>
+                        <div class="signal-metrics">
+                            ${entries.map(([key, val]) => {
+                                const pct = Math.min(val * 100, 100);
+                                const barClass = pct >= 80 ? 'critical' : pct >= 60 ? 'high' : pct >= 30 ? 'medium' : 'low';
+                                return `<div class="signal-row">
+                                    <span class="signal-name">${signalLabels[key] || key}</span>
+                                    <div class="signal-bar-bg"><div class="signal-bar-fill ${barClass}" style="width:${pct}%"></div></div>
+                                    <span class="signal-value">${(val * 100).toFixed(0)}%</span>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Fallback if no signal metrics — show raw evidence
+        if (!signalBarsHtml) {
+            signalBarsHtml = `
+                <div class="dark-card" style="padding: 1rem;">
+                    <h4 class="text-sm font-bold text-gray-300 mb-2 uppercase tracking-wide">Evidence</h4>
+                    <div class="text-sm text-gray-400 space-y-1">
+                        ${Array.isArray(evidence) ?
+                            evidence.slice(0, 5).map(item => `<div>• ${item}</div>`).join('') :
+                            Object.entries(evidence).slice(0, 5).map(([key, value]) => `
+                                <div><span class="font-semibold">${key}:</span> ${JSON.stringify(value).substring(0, 50)}</div>
+                            `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Build infrastructure tags
+        const topDevices = ring.top_devices || [];
+        const topIPs = ring.top_ip_prefixes_24 || [];
+        const topBINs = ring.top_bins || [];
+        const topEmails = ring.top_email_domains || [];
+        const hasInfra = topDevices.length + topIPs.length + topBINs.length + topEmails.length > 0;
+
+        let infraHtml = '';
+        if (hasInfra) {
+            infraHtml = `<div class="infra-section">
+                <h5>Shared Infrastructure</h5>
+                <div class="infra-tags">
+                    ${topDevices.map(d => `<span class="infra-tag device">${d}</span>`).join('')}
+                    ${topIPs.map(ip => `<span class="infra-tag ip">${ip}.*</span>`).join('')}
+                    ${topBINs.map(b => `<span class="infra-tag bin">BIN ${b}</span>`).join('')}
+                    ${topEmails.map(e => `<span class="infra-tag email">@${e}</span>`).join('')}
+                </div>
+            </div>`;
+        }
 
         card.innerHTML = `
             <div class="flex items-start justify-between">
@@ -421,76 +327,54 @@ class FraudRingVisualizer {
                             <div class="flex items-center gap-3 text-sm">
                                 <span class="badge badge-${severity.toLowerCase()}">${severity}</span>
                                 <span class="text-gray-400">${ring.member_count} members</span>
-                                <span class="text-gray-400">Risk: ${riskPercent}%</span>
+                                <span class="text-gray-400">Confidence: ${(ring.confidence * 100).toFixed(0)}%</span>
+                                <span class="text-gray-400">Exposure: $${(ring.exposure || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                             </div>
                         </div>
                     </div>
                     <p class="text-gray-300 text-sm mb-3">${ring.explanation}</p>
                     <div class="text-sm text-gray-400">
-                        <span class="font-semibold">Detection Method:</span> ${ring.detection_method}
+                        <span class="font-semibold">Detection:</span> ${ring.detection_method}
+                        <span style="margin-left:0.75rem;" class="font-semibold">Type:</span> ${ring.suspected_type || ring.ring_type || 'Unknown'}
                     </div>
+                    ${infraHtml}
                 </div>
                 <svg class="expand-icon w-6 h-6 ml-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
             </div>
-
-            <!-- Expandable Details -->
             <div class="fraud-ring-details">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    ${signalBarsHtml}
                     <div class="dark-card" style="padding: 1rem;">
-                        <h4 class="text-sm font-bold text-gray-300 mb-2 uppercase tracking-wide">📊 Evidence</h4>
-                        <div class="text-sm text-gray-400 space-y-1">
-                            ${Array.isArray(evidence) ?
-                                evidence.slice(0, 5).map(item => `<div>• ${item}</div>`).join('') :
-                                Object.entries(evidence).slice(0, 5).map(([key, value]) => `
-                                    <div><span class="font-semibold">${key}:</span> ${JSON.stringify(value).substring(0, 50)}</div>
-                                `).join('')
-                            }
-                        </div>
-                    </div>
-
-                    <div class="dark-card" style="padding: 1rem;">
-                        <h4 class="text-sm font-bold text-gray-300 mb-2 uppercase tracking-wide">💡 Recommendations</h4>
+                        <h4 class="text-sm font-bold text-gray-300 mb-2 uppercase tracking-wide">Recommendations</h4>
                         <ul class="text-sm text-gray-400 space-y-1 list-disc list-inside">
-                            ${ring.recommendations.slice(0, 3).map(rec => `
-                                <li>${rec}</li>
-                            `).join('')}
+                            ${(ring.recommendations || []).slice(0, 5).map(rec => `<li>${rec}</li>`).join('')}
                         </ul>
                     </div>
                 </div>
-
                 ${members.length > 0 ? `
                     <div class="mb-4">
-                        <h4 class="text-sm font-bold text-gray-300 mb-2 uppercase tracking-wide">👥 Ring Members (${members.length})</h4>
+                        <h4 class="text-sm font-bold text-gray-300 mb-2 uppercase tracking-wide">Ring Members (${members.length})</h4>
                         <div class="flex flex-wrap gap-2">
-                            ${members.slice(0, 20).map(member => `
-                                <span class="member-chip">${member}</span>
-                            `).join('')}
-                            ${members.length > 20 ? `
-                                <span class="member-chip" style="background: rgba(239, 68, 68, 0.2); border-color: var(--severity-critical);">
-                                    +${members.length - 20} more
-                                </span>
-                            ` : ''}
+                            ${members.slice(0, 20).map(m => `<span class="member-chip">${m}</span>`).join('')}
+                            ${members.length > 20 ? `<span class="member-chip" style="background: rgba(239, 68, 68, 0.2); border-color: #EF4444;">+${members.length - 20} more</span>` : ''}
                         </div>
                     </div>
                 ` : ''}
-
                 ${sampleTransactions.length > 0 ? `
                     <div>
-                        <h4 class="text-sm font-bold text-gray-300 mb-2 uppercase tracking-wide">🔍 Sample Transactions</h4>
+                        <h4 class="text-sm font-bold text-gray-300 mb-2 uppercase tracking-wide">Sample Transactions</h4>
                         <div class="dark-card" style="padding: 0; overflow: hidden;">
                             <table class="w-full text-sm dark-table">
-                                <thead>
-                                    <tr>
-                                        <th class="px-3 py-2 text-left">Transaction ID</th>
-                                        <th class="px-3 py-2 text-left">User</th>
-                                        <th class="px-3 py-2 text-right">Amount</th>
-                                        <th class="px-3 py-2 text-left">Details</th>
-                                    </tr>
-                                </thead>
+                                <thead><tr>
+                                    <th class="px-3 py-2 text-left">Transaction ID</th>
+                                    <th class="px-3 py-2 text-left">User</th>
+                                    <th class="px-3 py-2 text-right">Amount</th>
+                                    <th class="px-3 py-2 text-left">Details</th>
+                                </tr></thead>
                                 <tbody>
-                                    ${sampleTransactions.slice(0, 5).map(txn => `
+                                    ${sampleTransactions.slice(0, 8).map(txn => `
                                         <tr>
                                             <td class="px-3 py-2 font-mono text-xs text-gray-400">${txn.transaction_id || txn.order_id || 'N/A'}</td>
                                             <td class="px-3 py-2 text-gray-300">${txn.user_id || txn.billing_first_name || 'N/A'}</td>
@@ -509,37 +393,21 @@ class FraudRingVisualizer {
             </div>
         `;
 
-        // Add click to expand/collapse
         card.addEventListener('click', (e) => {
             if (window.getSelection().toString()) return;
-
-            const wasExpanded = card.classList.contains('expanded');
-
-            // Close other cards
-            document.querySelectorAll('.fraud-ring-card.expanded').forEach(otherCard => {
-                if (otherCard !== card) {
-                    otherCard.classList.remove('expanded');
-                }
+            document.querySelectorAll('.fraud-ring-card.expanded').forEach(c => {
+                if (c !== card) c.classList.remove('expanded');
             });
-
             card.classList.toggle('expanded');
-
-            // Scroll to card if expanding
-            if (!wasExpanded) {
-                setTimeout(() => {
-                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }, 100);
+            if (card.classList.contains('expanded')) {
+                setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
             }
         });
 
-        // Keyboard accessibility
         card.setAttribute('role', 'button');
         card.setAttribute('tabindex', '0');
         card.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                card.click();
-            }
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
         });
 
         return card;
@@ -549,91 +417,98 @@ class FraudRingVisualizer {
         const section = document.getElementById('aiRecommendationsSection');
         const preventionList = document.getElementById('preventionTipsList');
         const detectionList = document.getElementById('detectionTipsList');
-
         if (!section || !preventionList || !detectionList) return;
 
-        // Extract unique patterns from rings
-        const fakeNamePatterns = new Set();
-        const emailDomains = new Set();
-        const countryCodes = new Set();
-        let totalExposure = 0;
+        // Collect evidence-driven signals across all rings
+        const allDevices = new Set();
+        const allIPs = new Set();
+        const allBINs = new Set();
+        const allEmails = new Set();
+        let hasGeoMismatch = false;
+        let hasMicroAmounts = false;
+        let hasDeviceReuse = false;
+        let hasSubnetReuse = false;
+        let hasBurstiness = false;
+        let hasDisposableEmail = false;
+        let hasNightTxn = false;
+        let hasMerchantConc = false;
         let totalMembers = 0;
 
         report.rings.forEach(ring => {
-            if (ring.fake_name_pattern) fakeNamePatterns.add(ring.fake_name_pattern);
-            if (ring.total_fraud_amount) totalExposure += ring.total_fraud_amount;
             if (ring.member_count) totalMembers += ring.member_count;
+            (ring.top_devices || []).forEach(d => allDevices.add(d));
+            (ring.top_ip_prefixes_24 || []).forEach(ip => allIPs.add(ip));
+            (ring.top_bins || []).forEach(b => allBINs.add(b));
+            (ring.top_email_domains || []).forEach(e => allEmails.add(e));
 
-            // Extract patterns from evidence/key_indicators
-            const evidence = ring.evidence || ring.key_indicators || [];
-            if (Array.isArray(evidence)) {
-                evidence.forEach(item => {
-                    if (typeof item === 'string') {
-                        if (item.includes('@')) {
-                            const domain = item.split('@')[1]?.split(' ')[0];
-                            if (domain) emailDomains.add(domain);
-                        }
-                        if (item.includes('country') || item.includes('BIN_COUNTRY')) {
-                            const match = item.match(/[A-Z]{2}/);
-                            if (match) countryCodes.add(match[0]);
-                        }
-                    }
-                });
-            }
+            const em = ring.evidence_metrics || ring.evidence || {};
+            if ((em.geo_mismatch_rate || 0) > 0.3) hasGeoMismatch = true;
+            if ((em.micro_amount_ratio || 0) > 0.2) hasMicroAmounts = true;
+            if ((em.device_reuse || 0) > 0.3) hasDeviceReuse = true;
+            if ((em.subnet_reuse || 0) > 0.3) hasSubnetReuse = true;
+            if ((em.burst_score || em.ring_burst_score || 0) > 0.3) hasBurstiness = true;
+            if ((em.disposable_email || 0) > 0.3) hasDisposableEmail = true;
+            if ((em.night_txn || 0) > 0.3) hasNightTxn = true;
+            if ((em.merchant_concentration || 0) > 0.3) hasMerchantConc = true;
         });
 
-        // Generate prevention tips
+        const tip = (color, text) =>
+            `<li class="flex items-start gap-2"><span class="text-${color}-400 font-bold">&bull;</span><span>${text}</span></li>`;
+
         const preventionTips = [];
-
-        if (fakeNamePatterns.size > 0) {
-            preventionTips.push(`<li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">•</span><span>Block orders with gibberish billing names like: <strong class="text-indigo-600">${Array.from(fakeNamePatterns).slice(0, 3).join(', ')}</strong></span></li>`);
-            preventionTips.push(`<li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">•</span><span>Implement name validation rules to flag suspicious patterns (repeated characters, keyboard sequences)</span></li>`);
+        if (allDevices.size > 0) {
+            preventionTips.push(tip('blue', `Block compromised device fingerprints: <strong class="text-blue-400">${[...allDevices].slice(0, 3).join(', ')}</strong>`));
+        }
+        if (allIPs.size > 0) {
+            preventionTips.push(tip('blue', `Rate-limit or block IP subnets: <strong class="text-blue-400">${[...allIPs].slice(0, 4).map(ip => ip + '.*').join(', ')}</strong>`));
+        }
+        if (allBINs.size > 0) {
+            preventionTips.push(tip('blue', `Apply enhanced verification for card BINs: <strong class="text-blue-400">${[...allBINs].join(', ')}</strong>`));
+        }
+        if (hasDisposableEmail && allEmails.size > 0) {
+            preventionTips.push(tip('blue', `Block disposable email domains: <strong class="text-blue-400">${[...allEmails].join(', ')}</strong>`));
+        }
+        if (hasMicroAmounts) {
+            preventionTips.push(tip('blue', 'Implement micro-transaction velocity limits (card testing pattern detected)'));
+        }
+        if (hasGeoMismatch) {
+            preventionTips.push(tip('blue', 'Enforce card-country / IP-country match validation'));
+        }
+        if (hasNightTxn) {
+            preventionTips.push(tip('blue', 'Apply time-based risk scoring — elevated night transaction ratio detected'));
         }
 
-        if (countryCodes.size > 0) {
-            preventionTips.push(`<li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">•</span><span>Cross-reference card country with IP country to detect mismatches</span></li>`);
-            preventionTips.push(`<li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">•</span><span>Flag high-risk country codes: <strong class="text-indigo-600">${Array.from(countryCodes).slice(0, 3).join(', ')}</strong></span></li>`);
-        }
-
-        if (totalMembers > 50) {
-            preventionTips.push(`<li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">•</span><span>Implement velocity checks: limit orders per user/card/IP per hour</span></li>`);
-            preventionTips.push(`<li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">•</span><span>Use device fingerprinting to detect multiple accounts from same device</span></li>`);
-        }
-
-        if (emailDomains.size > 0) {
-            preventionTips.push(`<li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">•</span><span>Monitor suspicious email domains for disposable/temporary email services</span></li>`);
-        }
-
-        preventionTips.push(`<li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">•</span><span>Enable 3D Secure (3DS) authentication for high-risk transactions</span></li>`);
-        preventionTips.push(`<li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">•</span><span>Set up real-time alerts for suspicious order patterns</span></li>`);
-
-        // Generate detection tips
         const detectionTips = [];
-
-        detectionTips.push(`<li class="flex items-start gap-2"><span class="text-purple-500 font-bold">•</span><span>Look for patterns in <strong class="text-purple-600">BILLING_FIRST_NAME</strong> field - fraudsters often use gibberish</span></li>`);
-        detectionTips.push(`<li class="flex items-start gap-2"><span class="text-purple-500 font-bold">•</span><span>Check <strong class="text-purple-600">BIN_COUNTRY_CODE</strong> vs <strong class="text-purple-600">IP country</strong> mismatches</span></li>`);
-        detectionTips.push(`<li class="flex items-start gap-2"><span class="text-purple-500 font-bold">•</span><span>Monitor for multiple failed transactions followed by successful ones (card testing)</span></li>`);
-        detectionTips.push(`<li class="flex items-start gap-2"><span class="text-purple-500 font-bold">•</span><span>Track unusual <strong class="text-purple-600">carrier/route patterns</strong> and shipping addresses</span></li>`);
-        detectionTips.push(`<li class="flex items-start gap-2"><span class="text-purple-500 font-bold">•</span><span>Identify accounts created in rapid succession with similar details</span></li>`);
-        detectionTips.push(`<li class="flex items-start gap-2"><span class="text-purple-500 font-bold">•</span><span>Flag orders with round amounts (e.g., $100.00, $50.00) - common in fraud</span></li>`);
-
-        if (totalMembers > 100) {
-            detectionTips.push(`<li class="flex items-start gap-2"><span class="text-purple-500 font-bold">•</span><span><strong class="text-red-600">⚠️ Large-scale attack detected!</strong> ${totalMembers} compromised accounts - escalate immediately</span></li>`);
+        if (hasDeviceReuse) {
+            detectionTips.push(tip('purple', `Device reuse detected across ${totalMembers} accounts — implement device fingerprint clustering`));
         }
+        if (hasSubnetReuse) {
+            detectionTips.push(tip('purple', 'Subnet sharing pattern found — monitor /24 and /16 prefix reuse across accounts'));
+        }
+        if (hasBurstiness) {
+            detectionTips.push(tip('purple', 'Temporal burst pattern detected — add velocity-based ring detection triggers'));
+        }
+        if (hasMerchantConc) {
+            detectionTips.push(tip('purple', 'Merchant concentration anomaly — investigate merchant onboarding and transaction patterns'));
+        }
+        if (hasGeoMismatch) {
+            detectionTips.push(tip('purple', 'Geo-mismatch rate elevated — cross-reference IP geolocation with card issuing country'));
+        }
+        detectionTips.push(tip('purple', `${report.total_rings_detected} ring(s) confirmed — review all ${totalMembers} flagged accounts for coordinated activity`));
 
-        // Update the DOM
-        preventionList.innerHTML = preventionTips.slice(0, 6).join('');
+        preventionList.innerHTML = preventionTips.slice(0, 7).join('');
         detectionList.innerHTML = detectionTips.slice(0, 6).join('');
-
         section.style.display = 'block';
     }
 }
 
-// File upload handling
+// ============================================================================
+// FILE UPLOAD
+// ============================================================================
+
 uploadArea.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', handleFile);
 
-// Drag and drop
 uploadArea.addEventListener('dragover', (e) => {
     e.preventDefault();
     uploadArea.classList.add('dragover');
@@ -652,26 +527,13 @@ uploadArea.addEventListener('drop', (e) => {
     }
 });
 
-// File guidelines toggle
-const guidelinesHeader = document.getElementById('guidelinesHeader');
-const guidelinesContent = document.getElementById('guidelinesContent');
-const guidelinesChevron = document.getElementById('guidelinesChevron');
-
-if (guidelinesHeader && guidelinesContent && guidelinesChevron) {
-    guidelinesHeader.addEventListener('click', () => {
-        const isHidden = guidelinesContent.style.display === 'none';
-        guidelinesContent.style.display = isHidden ? 'block' : 'none';
-        guidelinesChevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
-    });
-}
-
 async function handleFile() {
     const file = fileInput.files[0];
     if (!file) return;
 
     errorMsg.style.display = 'none';
     uploadContent.style.display = 'none';
-    uploadingContent.style.display = 'block';
+    uploadingContent.style.display = 'flex';
 
     const formData = new FormData();
     formData.append('file', file);
@@ -687,967 +549,895 @@ async function handleFile() {
     } catch (error) {
         showError(error.response?.data?.detail || error.message);
     } finally {
-        uploadContent.style.display = 'block';
+        uploadContent.style.display = 'flex';
         uploadingContent.style.display = 'none';
     }
 }
 
+// ============================================================================
+// DISPLAY RESULTS
+// ============================================================================
+
 function displayResults() {
     const data = analysisResults;
+    console.log('[FRS] Analysis results:', data.consolidated_fraud);
 
-    // DEBUG: Log all fraud detection data
-    console.log("=== FRAUD DETECTION DATA ===");
-    console.log("Fraud Rings:", data.fraud_rings);
-    console.log("Organized Fraud:", data.organized_fraud);
-    console.log("Data-Driven Fraud Rings:", data.data_driven_fraud_rings);
-    console.log("===========================");
+    resultsSection.style.display = 'block';
 
-    // Show results section
-    document.getElementById('resultsSection').style.display = 'block';
-
-    // FRAUD INTELLIGENCE DISPLAY (NEW!)
-    try {
-        displayFraudInsights(data.fraud_insights);
-    } catch (error) {
-        console.error('[ERROR] displayFraudInsights failed:', error);
-    }
-
-    // FRAUD RING VISUALIZATION (NEWEST!)
-    if (data.fraud_rings && data.fraud_rings.total_rings_detected > 0) {
-        const fraudRingVisualizer = new FraudRingVisualizer();
-        fraudRingVisualizer.displayFraudRings(data.fraud_rings);
-    }
-
-    // DATA-DRIVEN FRAUD RINGS (NIGHT-TIME, VELOCITY, SHOPPING)
-    if (data.data_driven_fraud_rings && data.data_driven_fraud_rings.total_rings_detected > 0) {
-        const fraudRingVisualizer = new FraudRingVisualizer();
-        fraudRingVisualizer.displayFraudRings(data.data_driven_fraud_rings);
-    }
-
-    // ORGANIZED FRAUD RINGS (FAKE IDENTITY, EMAIL, GEOGRAPHIC MISMATCH)
-    console.log('[DEBUG] Checking organized_fraud:', data.organized_fraud);
-    if (data.organized_fraud && data.organized_fraud.total_rings_detected > 0) {
-        console.log('[DEBUG] Creating FraudRingVisualizer for organized_fraud with', data.organized_fraud.total_rings_detected, 'rings');
-        const fraudRingVisualizer = new FraudRingVisualizer();
-        console.log('[DEBUG] Calling displayFraudRings...');
-        fraudRingVisualizer.displayFraudRings(data.organized_fraud);
-        console.log('[DEBUG] displayFraudRings completed');
+    // Ring visualization using consolidated_fraud as single source of truth
+    const consolidated = data.consolidated_fraud;
+    if (consolidated && consolidated.total_rings > 0) {
+        const report = {
+            total_rings_detected: consolidated.total_rings,
+            rings: consolidated.rings.map(ring => ({
+                ...ring,
+                total_fraud_amount: ring.exposure || 0,
+            })),
+        };
+        new FraudRingVisualizer().displayFraudRings(report);
     } else {
-        console.log('[DEBUG] NOT displaying organized_fraud - condition failed');
+        new FraudRingVisualizer().hideAllFraudRingSections();
     }
 
-    // LIVE INSIGHTS DASHBOARD (animated counters, gauges, progress rings)
-    // IMPORTANT: Must be called AFTER fraud ring visualizers calculate risk scores!
-    try {
-        initLiveInsightsDashboard(data);
-    } catch (error) {
-        console.error('[ERROR] initLiveInsightsDashboard failed:', error);
-    }
-}
+    // Executive summary metrics
+    renderExecutiveSummary(data);
 
-function displayFraudInsights(fraudInsights) {
-    if (!fraudInsights || !fraudInsights.patterns) {
-        return;
+    // Data audit section from audit_appendix
+    renderDataAudit(data);
+
+    // Ring type tags
+    if (consolidated && consolidated.rings) {
+        renderRingTypeTags(consolidated.rings);
     }
 
-    const fraudSection = document.getElementById('fraudInsightsSection');
-    const alertBanner = document.getElementById('fraudAlertBanner');
-    const fraudSummary = document.getElementById('fraudSummary');
-    const fraudPatternsContainer = document.getElementById('fraudPatternsContainer');
-    const fraudPatternsList = document.getElementById('fraudPatternsList');
-
-    if (!fraudSection) return; // Exit if section doesn't exist
-
-    // Show fraud insights section
-    fraudSection.style.display = 'block';
-
-    const totalPatterns = fraudInsights.total_patterns || 0;
-    const highCount = fraudInsights.high_severity_count || 0;
-    const mediumCount = fraudInsights.medium_severity_count || 0;
-    const lowCount = fraudInsights.low_severity_count || 0;
-
-    if (totalPatterns === 0) {
-        // No fraud detected - hide all fraud insight elements
-        if (alertBanner) alertBanner.style.display = 'none';
-        if (fraudSummary) fraudSummary.style.display = 'none';
-        if (fraudPatternsContainer) fraudPatternsContainer.style.display = 'none';
-        return;
-    }
-
-    // Fraud patterns detected
-    // Show alert banner if high severity patterns exist
-    if (highCount > 0 && alertBanner) {
-        alertBanner.style.display = 'block';
-        const highSevCount = document.getElementById('highSeverityCount');
-        if (highSevCount) highSevCount.textContent = highCount;
-    } else if (alertBanner) {
-        alertBanner.style.display = 'none';
-    }
-
-    // Show summary
-    if (fraudSummary) {
-        fraudSummary.style.display = 'block';
-        const highEl = document.getElementById('fraudHighCount');
-        const mediumEl = document.getElementById('fraudMediumCount');
-        const lowEl = document.getElementById('fraudLowCount');
-        const totalEl = document.getElementById('fraudTotalCount');
-        if (highEl) highEl.textContent = highCount;
-        if (mediumEl) mediumEl.textContent = mediumCount;
-        if (lowEl) lowEl.textContent = lowCount;
-        if (totalEl) totalEl.textContent = totalPatterns;
-    }
-
-    // Display pattern cards
-    if (fraudPatternsContainer) fraudPatternsContainer.style.display = 'block';
-    if (fraudPatternsList) fraudPatternsList.innerHTML = '';
-
-    // Sort patterns by severity (HIGH -> MEDIUM -> LOW)
-    if (fraudPatternsList) {
-        const severityOrder = { 'HIGH': 0, 'MEDIUM': 1, 'LOW': 2 };
-        const sortedPatterns = [...fraudInsights.patterns].sort((a, b) =>
-            severityOrder[a.severity] - severityOrder[b.severity]
-        );
-
-        sortedPatterns.forEach((pattern, index) => {
-            const card = createFraudPatternCard(pattern, index);
-            fraudPatternsList.appendChild(card);
-        });
-    }
+    // Financial exposure breakdown from audit_appendix
+    renderFinancialExposure(data);
 }
 
 // ============================================================================
-// LIVE INSIGHTS DASHBOARD FUNCTIONS
+// DATA AUDIT
 // ============================================================================
 
-function initLiveInsightsDashboard(data) {
-    console.log('[DEBUG] initLiveInsightsDashboard called');
-    const dashboard = document.getElementById('liveInsightsDashboard');
-    if (!dashboard || !data.organized_fraud) {
-        console.log('[DEBUG] Dashboard element or organized_fraud not found');
-        return;
-    }
+function renderDataAudit(data) {
+    const section = document.getElementById('dataAuditSection');
+    const grid = document.getElementById('auditGrid');
+    if (!section || !grid) return;
 
-    const organizedFraud = data.organized_fraud;
-    if (!organizedFraud.rings || organizedFraud.total_rings_detected === 0) {
-        console.log('[DEBUG] No rings detected');
-        return;
-    }
+    const consolidated = data.consolidated_fraud;
+    const audit = consolidated?.audit_appendix?.data_proof;
+    const dataValidation = data.data_validation;
 
-    // Show dashboard
-    dashboard.style.display = 'block';
+    // Use audit_appendix if available, fall back to data_validation
+    const source = audit || dataValidation;
+    if (!source) return;
 
-    // Calculate metrics
-    const totalRings = organizedFraud.total_rings_detected || 0;
-    const totalAmount = organizedFraud.total_fraud_amount || 0;
-    const totalMembers = organizedFraud.total_fraudulent_orders || 0;
+    grid.innerHTML = '';
 
-    console.log('[DEBUG] Dashboard metrics:', { totalRings, totalAmount, totalMembers });
+    const items = [
+        { label: 'Rows Processed', value: (source.row_count || 0).toLocaleString() },
+        { label: 'Unique Users', value: (source.unique_user_count || source.unique_user_ids || 0).toLocaleString() },
+        { label: 'Unique Transactions', value: (source.unique_tx_count || source.unique_transaction_ids || 0).toLocaleString() },
+        { label: 'Amount Range', value: `$${(source.amount_min || 0).toFixed(2)} - $${(source.amount_max || 0).toFixed(2)}` },
+        { label: 'Mean Amount', value: `$${(source.amount_mean || 0).toFixed(2)}` },
+        { label: 'Time Window', value: `${source.timestamp_min || 'N/A'} to ${source.timestamp_max || 'N/A'}` },
+    ];
 
-    // Count severity distribution
-    const severityCounts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 };
-    organizedFraud.rings.forEach((ring, index) => {
-        const severity = ring.calculated_severity || ring.severity || 'MEDIUM';
-        const riskScore = ring.calculated_risk_score || 0;
-        console.log(`[DEBUG] Ring ${index + 1}: severity=${severity}, risk_score=${riskScore.toFixed(1)}%, name=${ring.ring_name || ring.shared_value}`);
-        severityCounts[severity] = (severityCounts[severity] || 0) + 1;
+    items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'audit-item';
+        el.innerHTML = `
+            <div class="audit-item-label">${item.label}</div>
+            <div class="audit-item-value">${item.value}</div>
+        `;
+        grid.appendChild(el);
     });
 
-    console.log('[DEBUG] Severity distribution:', severityCounts);
+    // SHA256 hash (full width)
+    const sha = source.sha256_input_file;
+    if (sha) {
+        const hashEl = document.createElement('div');
+        hashEl.className = 'audit-item full-width';
+        hashEl.innerHTML = `
+            <div class="audit-item-label">SHA-256 Input File Hash</div>
+            <div class="audit-item-value hash">${sha}</div>
+        `;
+        grid.appendChild(hashEl);
+    }
 
-    // Calculate overall risk (average of all ring risk scores)
-    let totalRiskScore = 0;
-    organizedFraud.rings.forEach(ring => {
-        totalRiskScore += ring.calculated_risk_score || 0;
-    });
-    const averageRiskScore = totalRings > 0 ? totalRiskScore / totalRings : 0;
-    console.log('[DEBUG] Average risk score:', averageRiskScore.toFixed(1) + '%');
-
-    // Animate counters
-    setTimeout(() => animateCounter('counterFraudRings', totalRings, 0, ''), 300);
-    setTimeout(() => animateCounter('counterFraudAmount', totalAmount, 0, '€'), 500);
-    setTimeout(() => animateCounter('counterFraudMembers', totalMembers, 0, ''), 700);
-
-    // Animate gauge
-    setTimeout(() => animateGauge(averageRiskScore), 900);
-
-    // Animate progress rings
-    setTimeout(() => animateProgressRing('ringCritical', 'ringCriticalValue', severityCounts.CRITICAL, totalRings), 1100);
-    setTimeout(() => animateProgressRing('ringHigh', 'ringHighValue', severityCounts.HIGH, totalRings), 1200);
-    setTimeout(() => animateProgressRing('ringMedium', 'ringMediumValue', severityCounts.MEDIUM, totalRings), 1300);
-    setTimeout(() => animateProgressRing('ringLow', 'ringLowValue', severityCounts.LOW, totalRings), 1400);
+    section.style.display = 'block';
 }
 
-function animateCounter(elementId, targetValue, startValue, prefix) {
-    const element = document.getElementById(elementId);
-    if (!element) return;
+// ============================================================================
+// FINANCIAL EXPOSURE
+// ============================================================================
 
-    const duration = 2000; // 2 seconds
+function renderFinancialExposure(data) {
+    const section = document.getElementById('financialExposureSection');
+    const grid = document.getElementById('exposureGrid');
+    if (!section || !grid) return;
+
+    const consolidated = data.consolidated_fraud;
+    const metrics = consolidated?.audit_appendix?.export_artifacts?.metrics_json;
+    if (!metrics) return;
+
+    grid.innerHTML = '';
+
+    const cards = [
+        {
+            label: 'Expected Loss',
+            value: metrics.expected_loss || 0,
+            cls: 'expected',
+            desc: 'Probability-weighted loss estimate',
+        },
+        {
+            label: 'Potential Loss',
+            value: metrics.potential_loss || 0,
+            cls: 'potential',
+            desc: 'Maximum exposure if all flagged txns are fraudulent',
+        },
+        {
+            label: 'Actual Loss Estimate',
+            value: metrics.actual_loss || 0,
+            cls: 'actual',
+            desc: 'Estimated realized loss based on confidence',
+        },
+    ];
+
+    cards.forEach(card => {
+        const el = document.createElement('div');
+        el.className = 'exposure-card';
+        el.innerHTML = `
+            <div class="exposure-card-label">${card.label}</div>
+            <div class="exposure-card-value ${card.cls}">$${card.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div class="exposure-card-desc">${card.desc}</div>
+        `;
+        grid.appendChild(el);
+    });
+
+    // Additional stats row
+    const statsEl = document.createElement('div');
+    statsEl.className = 'exposure-card';
+    statsEl.style.gridColumn = '1 / -1';
+    const fr = metrics.flagged_transactions || 0;
+    const fa = metrics.flagged_accounts || 0;
+    const cr = metrics.confirmed_rings || 0;
+    const sc = metrics.suspicious_clusters || 0;
+    statsEl.innerHTML = `
+        <div style="display:flex; justify-content:center; gap:2rem; flex-wrap:wrap;">
+            <div><span style="font-size:1.1rem;font-weight:800;color:var(--critical);font-family:monospace;">${fr}</span> <span style="font-size:0.7rem;color:var(--text-muted);">Flagged Txns</span></div>
+            <div><span style="font-size:1.1rem;font-weight:800;color:var(--high);font-family:monospace;">${fa}</span> <span style="font-size:0.7rem;color:var(--text-muted);">Flagged Accounts</span></div>
+            <div><span style="font-size:1.1rem;font-weight:800;color:var(--accent);font-family:monospace;">${cr}</span> <span style="font-size:0.7rem;color:var(--text-muted);">Confirmed Rings</span></div>
+            <div><span style="font-size:1.1rem;font-weight:800;color:var(--medium);font-family:monospace;">${sc}</span> <span style="font-size:0.7rem;color:var(--text-muted);">Suspicious Clusters</span></div>
+        </div>
+    `;
+    grid.appendChild(statsEl);
+
+    section.style.display = 'block';
+}
+
+// ============================================================================
+// EXECUTIVE SUMMARY
+// ============================================================================
+
+function renderExecutiveSummary(data) {
+    const consolidated = data.consolidated_fraud;
+    const hasRings = consolidated && consolidated.total_rings > 0;
+
+    // Metadata line
+    const metaEl = document.getElementById('execMeta');
+    if (metaEl) {
+        const now = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+        metaEl.textContent = `${data.records_processed || 0} records analyzed at ${now}`;
+    }
+
+    const ringsEl = document.getElementById('metricRings');
+    const exposureEl = document.getElementById('metricExposure');
+    const accountsEl = document.getElementById('metricAccounts');
+    const riskEl = document.getElementById('metricRisk');
+    const confEl = document.getElementById('metricConfidence');
+
+    if (hasRings) {
+        if (ringsEl) animateValue(ringsEl, 0, consolidated.total_rings, 1200);
+        if (exposureEl) animateValue(exposureEl, 0, consolidated.total_exposure, 1500, '$');
+        if (accountsEl) animateValue(accountsEl, 0, consolidated.total_flagged_accounts, 1200);
+
+        const riskLevel = consolidated.overall_risk_level || 'LOW';
+        if (riskEl) {
+            riskEl.textContent = riskLevel;
+            riskEl.className = 'exec-risk risk-' + riskLevel.toLowerCase();
+        }
+
+        const avgConf = consolidated.rings.reduce((s, r) => s + (r.confidence || 0), 0) / consolidated.rings.length;
+        if (confEl) confEl.textContent = (avgConf * 100).toFixed(0) + '%';
+    } else {
+        if (ringsEl) ringsEl.textContent = '0';
+        if (exposureEl) exposureEl.textContent = '$0';
+        if (accountsEl) accountsEl.textContent = '0';
+        if (riskEl) {
+            riskEl.textContent = 'CLEAN';
+            riskEl.className = 'exec-risk risk-clean';
+        }
+        if (confEl) confEl.textContent = '--';
+    }
+}
+
+function animateValue(el, start, end, duration, prefix) {
     const startTime = performance.now();
-    const isAmount = prefix === '€';
+    const isAmount = prefix === '$';
 
-    function update(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-
-        // Easing function (easeOutCubic)
-        const easeProgress = 1 - Math.pow(1 - progress, 3);
-        const currentValue = startValue + (targetValue - startValue) * easeProgress;
+    function update(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const current = start + (end - start) * ease;
 
         if (isAmount) {
-            element.textContent = prefix + currentValue.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+            el.textContent = '$' + current.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         } else {
-            element.textContent = Math.floor(currentValue).toLocaleString();
+            el.textContent = Math.round(current).toLocaleString();
         }
 
-        if (progress < 1) {
-            requestAnimationFrame(update);
-        } else {
-            // Final value
-            if (isAmount) {
-                element.textContent = prefix + targetValue.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-            } else {
-                element.textContent = targetValue.toLocaleString();
-            }
-        }
+        if (progress < 1) requestAnimationFrame(update);
     }
-
     requestAnimationFrame(update);
 }
 
-function animateGauge(riskScore) {
-    const gaugeForeground = document.getElementById('gaugeForeground');
-    const gaugeValue = document.getElementById('gaugeValue');
-    const gaugeLabel = document.getElementById('gaugeLabel');
+// ============================================================================
+// RING TYPE TAGS
+// ============================================================================
 
-    if (!gaugeForeground || !gaugeValue || !gaugeLabel) return;
+function renderRingTypeTags(rings) {
+    const container = document.getElementById('ringTags');
+    if (!container) return;
 
-    // Normalize risk score to 0-100
-    const normalizedScore = Math.min(Math.max(riskScore, 0), 100);
+    container.innerHTML = '';
 
-    // Calculate arc length (semicircle circumference = π * radius = π * 100 ≈ 314)
-    const totalLength = 314;
-    const offset = totalLength - (normalizedScore / 100) * totalLength;
+    // Count by type
+    const typeCounts = {};
+    rings.forEach(ring => {
+        const t = ring.ring_type || 'unknown';
+        typeCounts[t] = (typeCounts[t] || 0) + 1;
+    });
 
-    // Determine color and label based on score
-    let color, label;
-    if (normalizedScore >= 80) {
-        color = '#DC2626'; // CRITICAL - Red
-        label = 'CRITICAL';
-    } else if (normalizedScore >= 60) {
-        color = '#EA580C'; // HIGH - Orange
-        label = 'HIGH';
-    } else if (normalizedScore >= 40) {
-        color = '#CA8A04'; // MEDIUM - Yellow
-        label = 'MEDIUM';
-    } else {
-        color = '#16A34A'; // LOW - Green
-        label = 'LOW';
-    }
-
-    // Animate gauge
-    gaugeForeground.style.strokeDashoffset = offset;
-    gaugeForeground.style.stroke = color;
-    gaugeValue.textContent = normalizedScore.toFixed(1) + '%';
-    gaugeLabel.textContent = label;
-}
-
-function animateProgressRing(ringId, valueId, count, total) {
-    const ring = document.getElementById(ringId);
-    const valueElement = document.getElementById(valueId);
-
-    if (!ring || !valueElement) return;
-
-    const percentage = total > 0 ? (count / total) * 100 : 0;
-    const circumference = 2 * Math.PI * 50; // r=50
-    const offset = circumference - (percentage / 100) * circumference;
-
-    ring.style.strokeDashoffset = offset;
-    valueElement.textContent = count;
-}
-
-function createFraudPatternCard(pattern, index) {
-    const card = document.createElement('div');
-    card.className = `fraud-pattern-card severity-${pattern.severity.toLowerCase()}`;
-    card.id = `pattern-${index}`;
-
-    // Add entrance animation with stagger
-    card.style.animation = `fadeIn 0.5s ease-out ${index * 0.1}s both`;
-
-    // Severity icon
-    const severityEmoji = {
-        'HIGH': '🚨',
-        'MEDIUM': '⚠️',
-        'LOW': 'ℹ️'
+    const typeConfig = {
+        'IDENTITY_FRAUD': { icon: '🎭', label: 'Identity Fraud', color: '#EF4444' },
+        'CARD_TESTING': { icon: '💳', label: 'Card Testing', color: '#F97316' },
+        'HIGH_VELOCITY': { icon: '⚡', label: 'High Velocity', color: '#8B5CF6' },
+        'DEVICE_SHARING': { icon: '📱', label: 'Device Sharing', color: '#3B82F6' },
+        'MERCHANT_CYCLING': { icon: '🔄', label: 'Merchant Cycling', color: '#EC4899' },
+        'MULE_MERCHANT_CLUSTER': { icon: '🏪', label: 'Mule/Merchant Cluster', color: '#D946EF' },
+        'UnknownSuspicious': { icon: '🔍', label: 'Suspicious', color: '#9CA3AF' },
+        'TEMPORAL_CLUSTERING': { icon: '⏰', label: 'Temporal Cluster', color: '#14B8A6' },
+        'HIGH_VALUE': { icon: '💰', label: 'High Value', color: '#F59E0B' },
+        'CROSS_BORDER': { icon: '✈️', label: 'Cross-Border', color: '#6366F1' },
+        'unknown': { icon: '❓', label: 'Unclassified', color: '#6B7280' },
     };
 
-    // Truncate explanation for preview
-    const shortExplanation = pattern.explanation.length > 200
-        ? pattern.explanation.substring(0, 200) + '...'
-        : pattern.explanation;
-
-    card.innerHTML = `
-        <div class="flex items-start gap-4">
-            <div class="severity-icon ${pattern.severity.toLowerCase()}">
-                ${severityEmoji[pattern.severity]}
-            </div>
-            <div class="flex-1">
-                <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-lg font-bold text-gray-800">${pattern.title}</h3>
-                    <div class="flex items-center gap-2">
-                        <span class="badge badge-${pattern.severity.toLowerCase()}">${pattern.severity}</span>
-                        <svg class="expand-icon w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </div>
-                </div>
-                <p class="text-gray-700 text-sm mb-2">${shortExplanation}</p>
-                <div class="text-sm text-gray-600">
-                    <span class="font-semibold">Affected:</span> ${pattern.affected_count} ${pattern.affected_count === 1 ? 'entity' : 'entities'}
-                </div>
-
-                <!-- Expandable Details -->
-                <div class="fraud-pattern-details">
-                    <div class="bg-gray-50 p-4 rounded-lg mb-3">
-                        <h4 class="font-semibold text-gray-800 mb-2">📋 Full Explanation</h4>
-                        <p class="text-gray-700 text-sm">${pattern.explanation}</p>
-                    </div>
-
-                    <div class="mb-3">
-                        <h4 class="font-semibold text-gray-800 mb-2">🎯 Affected Entities</h4>
-                        <div class="flex flex-wrap gap-1">
-                            ${pattern.affected_entities.slice(0, 10).map(entity =>
-                                `<span class="entity-chip">${entity}</span>`
-                            ).join('')}
-                            ${pattern.affected_entities.length > 10 ?
-                                `<span class="entity-chip">+${pattern.affected_entities.length - 10} more</span>` : ''}
-                        </div>
-                    </div>
-
-                    ${pattern.sample_transactions && pattern.sample_transactions.length > 0 ? `
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-2">🔍 Sample Transactions</h4>
-                            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                                <table class="w-full text-sm">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-3 py-2 text-left text-gray-600">ID</th>
-                                            <th class="px-3 py-2 text-left text-gray-600">Amount</th>
-                                            <th class="px-3 py-2 text-left text-gray-600">Details</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${pattern.sample_transactions.slice(0, 3).map(txn => `
-                                            <tr class="border-t">
-                                                <td class="px-3 py-2 font-mono text-xs">${txn.transaction_id || 'N/A'}</td>
-                                                <td class="px-3 py-2">$${(txn.amount || 0).toFixed(2)}</td>
-                                                <td class="px-3 py-2 text-gray-600">
-                                                    ${txn.user_id ? `User: ${txn.user_id}` : ''}
-                                                    ${txn.merchant_id ? ` | Merchant: ${txn.merchant_id}` : ''}
-                                                    ${txn.country ? ` | ${txn.country}` : ''}
-                                                </td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${pattern.metadata && Object.keys(pattern.metadata).length > 0 ? `
-                        <div class="mt-3 text-xs text-gray-500">
-                            <strong>Metadata:</strong> ${JSON.stringify(pattern.metadata, null, 2).substring(0, 100)}...
-                        </div>
-                    ` : ''}
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Add click to expand/collapse with smooth animation
-    card.addEventListener('click', (e) => {
-        // Prevent text selection from toggling
-        if (window.getSelection().toString()) return;
-
-        const wasExpanded = card.classList.contains('expanded');
-
-        // Close all other cards for cleaner UX
-        document.querySelectorAll('.fraud-pattern-card.expanded').forEach(otherCard => {
-            if (otherCard !== card) {
-                otherCard.classList.remove('expanded');
-            }
-        });
-
-        // Toggle this card
-        card.classList.toggle('expanded');
-
-        // Smooth scroll to card if expanding
-        if (!wasExpanded) {
-            setTimeout(() => {
-                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
-        }
+    Object.entries(typeCounts).forEach(([type, count]) => {
+        const config = typeConfig[type] || typeConfig['unknown'];
+        const chip = document.createElement('div');
+        chip.className = 'ring-type-chip';
+        chip.style.borderColor = config.color;
+        chip.innerHTML = `
+            <span class="ring-type-icon">${config.icon}</span>
+            <span class="ring-type-count" style="color: ${config.color}">${count}</span>
+            <span class="ring-type-label">${config.label}</span>
+        `;
+        container.appendChild(chip);
     });
 
-    // Add keyboard accessibility
-    card.setAttribute('role', 'button');
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-expanded', 'false');
+    // Severity summary chips
+    const sevCounts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 };
+    rings.forEach(r => { sevCounts[r.severity || 'MEDIUM']++; });
 
-    card.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            card.click();
-        }
+    Object.entries(sevCounts).forEach(([sev, count]) => {
+        if (count === 0) return;
+        const colors = { CRITICAL: '#EF4444', HIGH: '#F97316', MEDIUM: '#EAB308', LOW: '#10B981' };
+        const chip = document.createElement('div');
+        chip.className = 'ring-type-chip severity-chip';
+        chip.style.borderColor = colors[sev];
+        chip.innerHTML = `
+            <span class="ring-type-count" style="color: ${colors[sev]}">${count}</span>
+            <span class="ring-type-label">${sev}</span>
+        `;
+        container.appendChild(chip);
     });
-
-    // Update aria-expanded when card state changes
-    const observer = new MutationObserver(() => {
-        card.setAttribute('aria-expanded', card.classList.contains('expanded'));
-    });
-    observer.observe(card, { attributes: true, attributeFilter: ['class'] });
-
-    return card;
 }
+
+// ============================================================================
+// CLEAR & DOWNLOAD BUTTONS
+// ============================================================================
 
 clearBtn.addEventListener('click', () => {
     fileInput.value = '';
     resultsSection.style.display = 'none';
-    uploadContent.style.display = 'block';
+    uploadContent.style.display = 'flex';
     uploadingContent.style.display = 'none';
     errorMsg.style.display = 'none';
     analysisResults = null;
-    if (riskChart) riskChart.destroy();
 
-    // Clear fraud insights
-    document.getElementById('fraudInsightsSection').style.display = 'none';
-    document.getElementById('fraudAlertBanner').style.display = 'none';
-    document.getElementById('noFraudBanner').style.display = 'none';
-    document.getElementById('fraudSummary').style.display = 'none';
-    document.getElementById('fraudPatternsContainer').style.display = 'none';
+    [
+        'fraudRingAlertBanner', 'networkVisualizationSection', 'fraudRingDetailsSection',
+        'aiRecommendationsSection', 'dataAuditSection', 'financialExposureSection'
+    ].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    // Reset exec summary
+    const ringsEl = document.getElementById('metricRings');
+    const exposureEl = document.getElementById('metricExposure');
+    const accountsEl = document.getElementById('metricAccounts');
+    const riskEl = document.getElementById('metricRisk');
+    const confEl = document.getElementById('metricConfidence');
+    if (ringsEl) ringsEl.textContent = '0';
+    if (exposureEl) exposureEl.textContent = '$0';
+    if (accountsEl) accountsEl.textContent = '0';
+    if (riskEl) { riskEl.textContent = 'LOW'; riskEl.className = 'exec-risk risk-low'; }
+    if (confEl) confEl.textContent = '--';
+
+    // Clear ring tags
+    const ringTags = document.getElementById('ringTags');
+    if (ringTags) ringTags.innerHTML = '';
 });
 
 downloadBtn.addEventListener('click', async () => {
     if (!analysisResults) return;
 
-    // Add download animation
     downloadBtn.classList.add('downloading');
     setTimeout(() => downloadBtn.classList.remove('downloading'), 600);
 
     try {
         await generateWordReport(analysisResults);
-
-        // Show success feedback
-        const originalText = downloadBtn.textContent;
-        downloadBtn.textContent = '✓ Report Downloaded';
-        setTimeout(() => {
-            downloadBtn.textContent = originalText;
-        }, 2000);
-    } catch (error) {
-        console.error('[ERROR] Failed to generate Word report:', error);
-        alert('Failed to generate report. Please try again.');
+        const origHTML = downloadBtn.innerHTML;
+        downloadBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Downloaded';
+        setTimeout(() => { downloadBtn.innerHTML = origHTML; }, 2000);
+    } catch (err) {
+        console.error('[FRS] Report generation failed:', err);
+        showError('Failed to generate report. Please try again.');
     }
 });
 
-function showError(message) {
-    errorMsg.style.display = 'block';
-    errorMsg.style.animation = 'fadeIn 0.3s ease-out';
-    errorText.textContent = message;
+// ============================================================================
+// ERROR DISPLAY
+// ============================================================================
 
-    // Smooth scroll to error
+function showError(message) {
+    errorMsg.style.display = 'flex';
+    errorText.textContent = message;
     errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 // ============================================================================
-// ANIMATED NETWORK BACKGROUND
+// UTILITY
 // ============================================================================
 
-function initNetworkBackground() {
-    const canvas = document.getElementById('networkBackground');
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Network nodes
-    const nodes = [];
-    const nodeCount = 20;
-    const connectionDistance = 150;
-
-    // Create nodes
-    for (let i = 0; i < nodeCount; i++) {
-        nodes.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 0.5,
-            vy: (Math.random() - 0.5) * 0.5,
-            radius: Math.random() * 2 + 1
-        });
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Update and draw nodes
-        nodes.forEach((node, i) => {
-            // Move nodes
-            node.x += node.vx;
-            node.y += node.vy;
-
-            // Bounce off edges
-            if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
-            if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
-
-            // Draw node
-            ctx.fillStyle = 'rgba(147, 197, 253, 0.6)'; // Light blue
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Draw connections
-            nodes.forEach((otherNode, j) => {
-                if (i === j) return;
-
-                const dx = node.x - otherNode.x;
-                const dy = node.y - otherNode.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < connectionDistance) {
-                    const opacity = (1 - distance / connectionDistance) * 0.3;
-                    ctx.strokeStyle = `rgba(147, 197, 253, ${opacity})`;
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(node.x, node.y);
-                    ctx.lineTo(otherNode.x, otherNode.y);
-                    ctx.stroke();
-                }
-            });
-        });
-
-        requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // ============================================================================
-// WORD REPORT GENERATION (Executive Summary)
+// WORD REPORT GENERATION
 // ============================================================================
 
 async function generateWordReport(data) {
-    const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle } = docx;
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
+            Table, TableRow, TableCell, WidthType, BorderStyle, ShadingType,
+            TableLayoutType, PageBreak } = docx;
 
-    // Extract fraud data
-    const organizedFraud = data.organized_fraud || {};
-    const rings = organizedFraud.rings || [];
-    const totalRings = organizedFraud.total_rings_detected || 0;
-    const totalAmount = organizedFraud.total_fraud_amount || 0;
-    const totalMembers = organizedFraud.total_fraudulent_orders || 0;
+    const consolidated = data.consolidated_fraud;
+    const rings = consolidated?.rings || [];
+    const totalRings = consolidated?.total_rings || 0;
+    const totalAmount = consolidated?.total_exposure || 0;
+    const totalMembers = consolidated?.total_flagged_accounts || 0;
+    const overallRiskLevel = consolidated?.overall_risk_level || 'LOW';
+    const overallRiskScore = consolidated?.overall_risk_score || 0;
+    const audit = consolidated?.audit_appendix || {};
+    const dataProof = audit.data_proof || data.data_validation || {};
+    const metrics = audit.export_artifacts?.metrics_json || {};
 
-    // Calculate overall risk level
-    let totalRiskScore = 0;
-    rings.forEach(ring => {
-        totalRiskScore += ring.calculated_risk_score || 0;
+    const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const riskColor = s => s === 'CRITICAL' ? 'DC2626' : s === 'HIGH' ? 'EA580C' : s === 'MEDIUM' ? 'CA8A04' : '16A34A';
+    const fmt$ = n => '$' + (n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const pct = n => ((n || 0) * 100).toFixed(0) + '%';
+    const thinBorder = { top: { style: BorderStyle.SINGLE, size: 1, color: 'D0D0D0' }, bottom: { style: BorderStyle.SINGLE, size: 1, color: 'D0D0D0' }, left: { style: BorderStyle.SINGLE, size: 1, color: 'D0D0D0' }, right: { style: BorderStyle.SINGLE, size: 1, color: 'D0D0D0' } };
+    const hCell = (text, w) => new TableCell({ children: [new Paragraph({ children: [new TextRun({ text, bold: true, size: 18, color: 'FFFFFF' })], spacing: { before: 40, after: 40 } })], shading: { type: ShadingType.SOLID, color: '1B263B' }, width: w ? { size: w, type: WidthType.PERCENTAGE } : undefined, borders: thinBorder });
+    const dCell = (text, o = {}) => new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: String(text), size: 18, color: o.color || '333333', bold: o.bold || false })], spacing: { before: 30, after: 30 }, alignment: o.align || AlignmentType.LEFT })], shading: o.bg ? { type: ShadingType.SOLID, color: o.bg } : undefined, borders: thinBorder });
+
+    // Prose helpers
+    const prose = (text, opts = {}) => new Paragraph({
+        children: [new TextRun({ text, size: opts.size || 22, color: opts.color || '333333', italics: opts.italic || false, bold: opts.bold || false })],
+        spacing: { before: opts.before || 80, after: opts.after || 80 },
+        indent: opts.indent ? { left: opts.indent } : undefined,
     });
-    const averageRiskScore = totalRings > 0 ? totalRiskScore / totalRings : 0;
-
-    let overallRiskLevel = 'LOW';
-    if (averageRiskScore >= 80) overallRiskLevel = 'CRITICAL';
-    else if (averageRiskScore >= 60) overallRiskLevel = 'HIGH';
-    else if (averageRiskScore >= 40) overallRiskLevel = 'MEDIUM';
-
-    // Current date
-    const currentDate = new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+    const callout = (text) => new Paragraph({
+        children: [new TextRun({ text: `"${text}"`, size: 24, color: '1B263B', bold: true, italics: true })],
+        spacing: { before: 150, after: 150 },
+        indent: { left: 400, right: 400 },
+        alignment: AlignmentType.CENTER,
     });
+    const bullet = (text, color = '333333') => new Paragraph({
+        children: [new TextRun({ text: `    ▸  ${text}`, size: 20, color })],
+        spacing: { before: 30, after: 30 },
+    });
+    const divider = () => new Paragraph({
+        children: [new TextRun({ text: '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', color: 'D0D0D0', size: 16 })],
+        alignment: AlignmentType.CENTER, spacing: { before: 200, after: 200 },
+    });
+    const bar = (val) => { const f = Math.round((val || 0) * 10); return '█'.repeat(f) + '░'.repeat(10 - f); };
 
-    // Build document sections
-    const sections = [];
+    // Narrative builders that analyze ring data
+    const describeRingType = (type) => {
+        const d = {
+            'CARD_TESTING': 'Card testing is a technique where fraudsters validate stolen card numbers by making many small transactions in rapid succession. They probe merchants with micro-amounts to find cards that will authorize, then escalate to larger purchases. This pattern is one of the clearest indicators of organized fraud.',
+            'IDENTITY_FRAUD': 'Identity fraud rings operate by creating multiple synthetic or stolen identities, often using disposable email addresses and mismatched geographic signals. Members share devices and infrastructure while posing as different people, a pattern that graph analysis can reliably detect.',
+            'DEVICE_SHARING': 'Device sharing rings involve multiple accounts operating from the same physical devices. While some device sharing is legitimate (family devices, shared computers), the combination with other fraud signals — subnet reuse, unusual transaction patterns — indicates coordinated fraudulent activity.',
+            'MULE_MERCHANT_CLUSTER': 'Mule/merchant clusters involve a network of accounts funneling transactions through specific merchants. This pattern often indicates money laundering or merchant collusion, where the merchant is complicit or compromised. High merchant concentration combined with threshold-amount clustering is the signature.',
+            'HIGH_VELOCITY': 'High-velocity rings generate transactions at rates far exceeding normal user behavior. The temporal clustering and burst patterns suggest automated or coordinated activity designed to extract value before detection systems can respond.',
+        };
+        return d[type] || 'This ring exhibits a combination of fraud signals that, taken together, indicate coordinated fraudulent activity across multiple accounts sharing common infrastructure.';
+    };
 
-    // ========================================================================
-    // TITLE PAGE
-    // ========================================================================
-    sections.push(
-        new Paragraph({
-            text: "FRAUD RING DETECTION REPORT",
-            heading: HeadingLevel.TITLE,
-            alignment: AlignmentType.CENTER,
-            spacing: { before: 400, after: 200 }
-        }),
-        new Paragraph({
-            text: "Executive Summary",
-            heading: HeadingLevel.HEADING_1,
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 100 }
-        }),
-        new Paragraph({
-            text: `Generated: ${currentDate}`,
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 400 }
-        }),
-        new Paragraph({ text: "" }) // Spacer
+    const narrateSignals = (em, ring) => {
+        const insights = [];
+        const dr = em.device_reuse || 0;
+        const sr = em.subnet_reuse || 0;
+        const geo = em.geo_mismatch_rate || 0;
+        const micro = em.micro_amount_ratio || 0;
+        const mc = em.merchant_concentration || 0;
+        const rb = em.ring_burst_score || em.burst_score || 0;
+        const de = em.disposable_email || 0;
+        const nt = em.night_txn || 0;
+        const sd = em.shared_device || 0;
+
+        if (dr >= 0.8) insights.push(`Device reuse is extremely high at ${pct(dr)} — the same devices are appearing across the vast majority of ring members, a hallmark of a single operator controlling multiple accounts.`);
+        else if (dr >= 0.5) insights.push(`Device reuse at ${pct(dr)} shows significant overlap. Multiple ring members are transacting from identical or very similar devices.`);
+
+        if (geo >= 0.8) insights.push(`Geographic mismatch is alarming at ${pct(geo)} — nearly all transactions show a disconnect between the card's issuing country and the IP address location. This is a strong indicator that stolen card data is being used remotely.`);
+        else if (geo >= 0.3) insights.push(`A ${pct(geo)} geo-mismatch rate suggests some members are using cards from different countries than where they're transacting — worth investigating further.`);
+
+        if (micro >= 0.5) insights.push(`${pct(micro)} of transactions are micro-amounts (under $10), which is the classic card-testing signature. Fraudsters start small to validate cards before attempting larger charges.`);
+        else if (micro >= 0.2) insights.push(`Micro-transactions make up ${pct(micro)} of this ring's activity — not conclusive alone, but combined with other signals, it supports the card-testing hypothesis.`);
+
+        if (rb >= 0.7) insights.push(`The ring burst score of ${pct(rb)} indicates highly synchronized timing across members. These accounts are transacting in tight temporal windows, suggesting automated or coordinated operation.`);
+        else if (rb >= 0.3) insights.push(`Moderate temporal clustering (${pct(rb)} burst score) shows some coordination in transaction timing.`);
+
+        if (de >= 0.5) insights.push(`Disposable email usage at ${pct(de)} means many of these accounts were created with throwaway email addresses — a clear sign the accounts were set up specifically for fraud.`);
+
+        if (mc >= 0.6) insights.push(`Merchant concentration at ${pct(mc)} reveals that transactions are funneled through a very small set of merchants. This points to either merchant collusion or deliberate targeting.`);
+        else if (mc >= 0.3) insights.push(`A ${pct(mc)} merchant concentration is above normal — this ring is showing preference for specific merchants.`);
+
+        if (sr >= 0.5) insights.push(`Subnet reuse at ${pct(sr)} shows ring members connecting from the same network segments. They're likely operating from the same location or using the same VPN/proxy infrastructure.`);
+
+        if (nt >= 0.5) insights.push(`${pct(nt)} of transactions occur during nighttime hours, which is unusual for legitimate commerce and suggests automated activity or operations in different time zones.`);
+
+        if (sd >= 0.3 && dr >= 0.3) insights.push(`The combination of shared devices (${pct(sd)}) and device reuse (${pct(dr)}) paints a picture of a small number of physical devices being used to operate many accounts simultaneously.`);
+
+        return insights;
+    };
+
+    const narrateImpact = (ring) => {
+        const exp = ring.exposure || 0;
+        const members = ring.member_count || 0;
+        const conf = ring.confidence || 0;
+        const parts = [];
+        if (exp > 10000) parts.push(`With ${fmt$(exp)} in exposure, this ring represents a significant financial threat that warrants immediate intervention.`);
+        else if (exp > 1000) parts.push(`The ${fmt$(exp)} exposure, while not the largest, is meaningful — and the operational pattern suggests it would grow if unchecked.`);
+        else parts.push(`Although the current exposure of ${fmt$(exp)} is relatively modest, the infrastructure and coordination suggest this ring is in an early or testing phase.`);
+
+        if (members > 20) parts.push(`The ${members} member accounts represent a large-scale operation. Blocking individual accounts won't be sufficient — the shared infrastructure (devices, IPs) must be addressed.`);
+        else if (members > 5) parts.push(`With ${members} members, this is a moderately sized ring where targeted account actions combined with infrastructure blocks should be effective.`);
+
+        if (conf >= 0.7) parts.push(`At ${pct(conf)} confidence, this is a high-certainty detection. The evidence strongly supports immediate action.`);
+        else if (conf >= 0.55) parts.push(`The ${pct(conf)} confidence level meets the confirmation threshold, though enhanced monitoring should continue to gather additional evidence.`);
+
+        return parts.join(' ');
+    };
+
+    const children = [];
+
+    // ═══════════════════════════════════════════════════════════════
+    // COVER PAGE
+    // ═══════════════════════════════════════════════════════════════
+    children.push(
+        new Paragraph({ text: '', spacing: { before: 1200 } }),
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: 'FRAUD RING', size: 56, bold: true, color: '1B263B' }),
+        ]}),
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: 'INVESTIGATION REPORT', size: 56, bold: true, color: '1B263B' }),
+        ], spacing: { after: 200 } }),
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: `${totalRings} Confirmed Ring${totalRings !== 1 ? 's' : ''}  ·  ${totalMembers} Flagged Accounts  ·  `, size: 24, color: '666666' }),
+            new TextRun({ text: overallRiskLevel + ' RISK', size: 24, bold: true, color: riskColor(overallRiskLevel) }),
+        ], spacing: { after: 100 } }),
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: `${fmt$(metrics.expected_loss || totalAmount)} Expected Loss`, size: 28, bold: true, color: 'DC2626' }),
+        ], spacing: { after: 300 } }),
+        divider(),
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: currentDate, size: 22, color: '888888' }),
+        ], spacing: { after: 40 } }),
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: `Analysis of ${(dataProof.row_count || data.records_processed || 0).toLocaleString()} transactions  ·  ${(dataProof.unique_user_count || dataProof.unique_user_ids || 0).toLocaleString()} users  ·  ${dataProof.timestamp_min || ''} to ${dataProof.timestamp_max || ''}`, size: 18, color: '999999' }),
+        ], spacing: { after: 40 } }),
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: 'FRS — FraudRingsSeeker  ·  Calibrated Pipeline v2  ·  Louvain Constrained Detection', size: 18, color: 'AAAAAA' }),
+        ]}),
+        new Paragraph({ children: [new PageBreak()] }),
     );
 
-    // ========================================================================
-    // EXECUTIVE OVERVIEW
-    // ========================================================================
-    sections.push(
-        new Paragraph({
-            text: "EXECUTIVE OVERVIEW",
-            heading: HeadingLevel.HEADING_1,
-            spacing: { before: 400, after: 200 }
-        }),
-        new Paragraph({
-            children: [
-                new TextRun({ text: "• ", bold: true }),
-                new TextRun({ text: `${totalRings} fraud rings detected`, bold: true })
-            ],
-            spacing: { after: 100 }
-        }),
-        new Paragraph({
-            children: [
-                new TextRun({ text: "• ", bold: true }),
-                new TextRun({ text: `Total fraud exposure: `, bold: true }),
-                new TextRun({
-                    text: `€${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-                    bold: true,
-                    color: "DC2626"
-                })
-            ],
-            spacing: { after: 100 }
-        }),
-        new Paragraph({
-            children: [
-                new TextRun({ text: "• ", bold: true }),
-                new TextRun({ text: `${totalMembers} fraudulent transactions identified`, bold: true })
-            ],
-            spacing: { after: 100 }
-        }),
-        new Paragraph({
-            children: [
-                new TextRun({ text: "• ", bold: true }),
-                new TextRun({ text: "Risk Level: ", bold: true }),
-                new TextRun({
-                    text: overallRiskLevel,
-                    bold: true,
-                    color: overallRiskLevel === 'CRITICAL' ? "DC2626" :
-                           overallRiskLevel === 'HIGH' ? "EA580C" :
-                           overallRiskLevel === 'MEDIUM' ? "CA8A04" : "16A34A"
-                })
-            ],
-            spacing: { after: 300 }
-        }),
-        new Paragraph({ text: "" }) // Spacer
+    // ═══════════════════════════════════════════════════════════════
+    // 1. EXECUTIVE NARRATIVE
+    // ═══════════════════════════════════════════════════════════════
+    children.push(
+        new Paragraph({ text: '1. What We Found', heading: HeadingLevel.HEADING_1, spacing: { before: 200, after: 200 } }),
     );
 
-    // ========================================================================
-    // KEY FINDINGS
-    // ========================================================================
-    sections.push(
-        new Paragraph({
-            text: "KEY FINDINGS",
-            heading: HeadingLevel.HEADING_1,
-            spacing: { before: 400, after: 200 }
-        })
+    // Build a dynamic opening paragraph
+    const ringTypes = rings.map(r => (r.suspected_type || r.ring_type || '').replace(/_/g, ' ').toLowerCase());
+    const uniqueTypes = [...new Set(ringTypes)].filter(Boolean);
+    const openingNarrative = `Our analysis of ${(dataProof.row_count || data.records_processed || 0).toLocaleString()} transactions across ${(dataProof.unique_user_count || dataProof.unique_user_ids || 0).toLocaleString()} accounts uncovered ${totalRings} confirmed fraud ring${totalRings !== 1 ? 's' : ''} involving ${totalMembers} accounts. The rings operate using ${uniqueTypes.join(' and ')} techniques, with a combined expected loss of ${fmt$(metrics.expected_loss || totalAmount)}.`;
+
+    children.push(prose(openingNarrative, { size: 24 }));
+
+    // Severity narrative
+    const highRings = rings.filter(r => r.severity === 'HIGH' || r.severity === 'CRITICAL');
+    if (highRings.length > 0) {
+        children.push(prose(
+            `${highRings.length} of ${totalRings} ring${totalRings !== 1 ? 's' : ''} are classified as ${highRings.map(r => r.severity).join('/')} severity. These require immediate attention — the fraud infrastructure is active and growing.`,
+            { size: 22, color: 'DC2626', bold: true }
+        ));
+    }
+
+    // Key insight callout
+    const topSignals = [];
+    rings.forEach(r => {
+        const em = r.evidence_metrics || r.evidence || {};
+        if ((em.device_reuse || 0) > 0.7) topSignals.push('device reuse');
+        if ((em.geo_mismatch_rate || 0) > 0.7) topSignals.push('geographic mismatch');
+        if ((em.micro_amount_ratio || 0) > 0.5) topSignals.push('micro-transaction testing');
+        if ((em.ring_burst_score || 0) > 0.7) topSignals.push('synchronized timing');
+        if ((em.disposable_email || 0) > 0.5) topSignals.push('disposable emails');
+    });
+    const uniqueSignals = [...new Set(topSignals)];
+    if (uniqueSignals.length > 0) {
+        callout(`The strongest fraud indicators are: ${uniqueSignals.join(', ')}. These signals, appearing together across multiple accounts, form the evidentiary basis for each confirmed ring.`);
+        children.push(callout(`The strongest fraud indicators are: ${uniqueSignals.join(', ')}.`));
+    }
+
+    // Exposure breakdown
+    children.push(
+        prose('Financial Impact at a Glance:', { bold: true, size: 24, before: 200 }),
+    );
+    children.push(new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        rows: [
+            new TableRow({ children: [hCell('Measure'), hCell('Amount'), hCell('What It Means')] }),
+            new TableRow({ children: [dCell('Expected Loss'), dCell(fmt$(metrics.expected_loss || totalAmount), { bold: true, color: 'DC2626' }), dCell('The probability-weighted loss — our best single estimate')] }),
+            new TableRow({ children: [dCell('Potential Loss'), dCell(fmt$(metrics.potential_loss), { bold: true, color: 'EA580C' }), dCell('Worst case if every flagged transaction is fraudulent')] }),
+            new TableRow({ children: [dCell('Actual Loss Est.'), dCell(fmt$(metrics.actual_loss), { bold: true, color: 'CA8A04' }), dCell('Realized losses based on historical patterns')] }),
+        ],
+    }));
+
+    children.push(new Paragraph({ children: [new PageBreak()] }));
+
+    // ═══════════════════════════════════════════════════════════════
+    // 2. THE INVESTIGATION — PER RING STORIES
+    // ═══════════════════════════════════════════════════════════════
+    children.push(
+        new Paragraph({ text: '2. The Investigation', heading: HeadingLevel.HEADING_1, spacing: { before: 200, after: 100 } }),
+        prose('Each confirmed ring is analyzed below with its full evidence profile, what makes it tick, and what to do about it.', { italic: true, color: '666666' }),
     );
 
-    // Sort rings by risk score (highest first)
-    const sortedRings = [...rings].sort((a, b) =>
-        (b.calculated_risk_score || 0) - (a.calculated_risk_score || 0)
-    );
+    const sortedRings = [...rings].sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
 
-    sortedRings.forEach((ring, index) => {
-        const ringName = ring.ring_name || ring.shared_value || `Ring ${index + 1}`;
-        const severity = ring.calculated_severity || ring.severity || 'MEDIUM';
-        const memberCount = ring.member_count || 0;
-        const fraudAmount = ring.total_fraud_amount || 0;
-        const pattern = ring.detection_pattern || ring.pattern_type || 'Unknown pattern';
-        const riskScore = ring.calculated_risk_score || 0;
+    sortedRings.forEach((ring, idx) => {
+        const severity = ring.severity || 'MEDIUM';
+        const ringType = ring.suspected_type || ring.ring_type || 'Unknown';
+        const em = ring.evidence_metrics || ring.evidence || {};
+        const topDevices = ring.top_devices || [];
+        const topIPs = ring.top_ip_prefixes_24 || [];
+        const topBINs = ring.top_bins || [];
+        const topEmails = ring.top_email_domains || [];
+        const members = ring.members || [];
 
-        // Ring heading
-        sections.push(
-            new Paragraph({
-                children: [
-                    new TextRun({ text: `${index + 1}. "${ringName}" Ring - `, bold: true, size: 24 }),
-                    new TextRun({
-                        text: `${severity} RISK`,
-                        bold: true,
-                        size: 24,
-                        color: severity === 'CRITICAL' ? "DC2626" :
-                               severity === 'HIGH' ? "EA580C" :
-                               severity === 'MEDIUM' ? "CA8A04" : "16A34A"
-                    })
-                ],
-                spacing: { before: 300, after: 100 }
-            })
+        // Ring title
+        children.push(divider());
+        children.push(new Paragraph({
+            spacing: { before: 200, after: 60 },
+            children: [
+                new TextRun({ text: `RING ${idx + 1}:  `, size: 28, bold: true, color: '1B263B' }),
+                new TextRun({ text: ring.ring_name || ring.ring_id, size: 28, bold: true, color: '1B263B' }),
+            ],
+        }));
+        children.push(new Paragraph({
+            spacing: { after: 60 },
+            children: [
+                new TextRun({ text: `${severity} SEVERITY`, size: 22, bold: true, color: riskColor(severity) }),
+                new TextRun({ text: `   ·   ${ring.member_count} members   ·   ${pct(ring.confidence)} confidence   ·   ${fmt$(ring.exposure)} exposure`, size: 20, color: '777777' }),
+            ],
+        }));
+
+        // What is this type?
+        children.push(
+            prose('What This Is', { bold: true, size: 24, before: 200 }),
+            prose(describeRingType(ringType)),
         );
 
-        // Ring details
-        sections.push(
-            new Paragraph({
-                children: [
-                    new TextRun({ text: "   • ", bold: true }),
-                    new TextRun({ text: `${memberCount} members, ` }),
-                    new TextRun({
-                        text: `€${fraudAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} exposure`,
-                        color: "DC2626"
-                    })
-                ],
-                spacing: { after: 50 }
-            }),
-            new Paragraph({
-                children: [
-                    new TextRun({ text: "   • ", bold: true }),
-                    new TextRun({ text: "Pattern: " }),
-                    new TextRun({ text: pattern, italics: true })
-                ],
-                spacing: { after: 50 }
-            }),
-            new Paragraph({
-                children: [
-                    new TextRun({ text: "   • ", bold: true }),
-                    new TextRun({ text: "Risk Score: " }),
-                    new TextRun({
-                        text: `${riskScore.toFixed(1)}%`,
-                        bold: true,
-                        color: severity === 'CRITICAL' ? "DC2626" :
-                               severity === 'HIGH' ? "EA580C" : "CA8A04"
-                    })
-                ],
-                spacing: { after: 50 }
-            })
-        );
-
-        // Recommendation
-        let recommendation = "Monitor closely";
-        if (severity === 'CRITICAL') {
-            recommendation = "Block immediately and investigate all related accounts";
-        } else if (severity === 'HIGH') {
-            recommendation = "Flag for manual review and restrict high-value transactions";
-        } else if (severity === 'MEDIUM') {
-            recommendation = "Monitor and apply additional verification";
+        // Evidence narrative
+        const insights = narrateSignals(em, ring);
+        if (insights.length > 0) {
+            children.push(prose('What the Evidence Shows', { bold: true, size: 24, before: 200 }));
+            insights.forEach(insight => children.push(prose(insight, { indent: 200 })));
         }
 
-        sections.push(
-            new Paragraph({
-                children: [
-                    new TextRun({ text: "   • ", bold: true }),
-                    new TextRun({ text: "Recommendation: ", bold: true }),
-                    new TextRun({ text: recommendation })
-                ],
-                spacing: { after: 200 }
-            })
+        // Signal strength visual table
+        const signalLabels = {
+            device_reuse: 'Device Reuse', device_family: 'Device Family', subnet_reuse: 'Subnet Reuse',
+            shared_device: 'Shared Device', shared_ip: 'Shared IP', geo_mismatch_rate: 'Geo Mismatch',
+            micro_amount_ratio: 'Micro Amounts', threshold_cluster_score: 'Threshold Cluster',
+            merchant_concentration: 'Merchant Conc.', bin_concentration: 'BIN Conc.',
+            disposable_email: 'Disposable Email', burst_score: 'Burstiness',
+            ring_burst_score: 'Ring Burst', night_txn: 'Night Activity',
+        };
+        const signalEntries = Object.entries(em)
+            .filter(([k, v]) => typeof v === 'number' && signalLabels[k])
+            .sort((a, b) => b[1] - a[1]);
+
+        if (signalEntries.length > 0) {
+            children.push(prose('Signal Strength Profile', { bold: true, size: 22, before: 200, after: 100 }));
+            const rows = [new TableRow({ children: [hCell('Signal', 30), hCell('Strength', 45), hCell('Score', 12), hCell('Level', 13)] })];
+            signalEntries.forEach(([key, val]) => {
+                const bg = val >= 0.8 ? 'FDECEC' : val >= 0.6 ? 'FEF3E2' : val >= 0.3 ? 'FEF9E7' : 'ECFDF5';
+                const level = val >= 0.8 ? 'CRITICAL' : val >= 0.6 ? 'HIGH' : val >= 0.3 ? 'MEDIUM' : 'LOW';
+                rows.push(new TableRow({ children: [
+                    dCell(signalLabels[key] || key, { bold: true }),
+                    dCell(bar(val), { bg }),
+                    dCell(pct(val), { bold: true, align: AlignmentType.CENTER, color: riskColor(level) }),
+                    dCell(level, { color: riskColor(level), bold: true }),
+                ]}));
+            });
+            children.push(new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows }));
+        }
+
+        // Infrastructure — narrative style
+        const infraParts = [];
+        if (topDevices.length > 0) infraParts.push(`device fingerprint${topDevices.length > 1 ? 's' : ''} ${topDevices.map(d => `"${d}"`).join(', ')}`);
+        if (topIPs.length > 0) infraParts.push(`IP subnet${topIPs.length > 1 ? 's' : ''} ${topIPs.map(ip => ip + '.*').join(', ')}`);
+        if (topBINs.length > 0) infraParts.push(`card BIN${topBINs.length > 1 ? 's' : ''} ${topBINs.join(', ')}`);
+        if (topEmails.length > 0) infraParts.push(`email domain${topEmails.length > 1 ? 's' : ''} @${topEmails.join(', @')}`);
+
+        if (infraParts.length > 0) {
+            children.push(
+                prose('Shared Infrastructure', { bold: true, size: 22, before: 200 }),
+                prose(`Ring members are connected through shared ${infraParts.join('; and ')}. This infrastructure overlap is what links otherwise separate accounts into a single coordinated operation.`),
+            );
+        }
+
+        // Business impact narrative
+        children.push(
+            prose('Business Impact', { bold: true, size: 22, before: 200 }),
+            prose(narrateImpact(ring)),
         );
+
+        // What to do — ring-specific
+        const recs = ring.recommendations || [];
+        if (recs.length > 0) {
+            children.push(prose('Recommended Response', { bold: true, size: 22, before: 200 }));
+            recs.forEach(rec => children.push(bullet(rec)));
+        }
+
+        // Members (collapsed)
+        if (members.length > 0) {
+            children.push(
+                prose(`Affected Accounts (${members.length}):`, { bold: true, size: 20, before: 200, color: '777777' }),
+                prose(members.slice(0, 40).join(', ') + (members.length > 40 ? ` ... and ${members.length - 40} more` : ''), { size: 18, color: '999999' }),
+            );
+        }
     });
 
-    // ========================================================================
-    // RECOMMENDED ACTIONS
-    // ========================================================================
-    sections.push(
-        new Paragraph({ text: "" }), // Spacer
-        new Paragraph({
-            text: "RECOMMENDED ACTIONS",
-            heading: HeadingLevel.HEADING_1,
-            spacing: { before: 400, after: 200 }
-        }),
-        new Paragraph({
-            children: [
-                new TextRun({ text: "1. ", bold: true }),
-                new TextRun({ text: "Immediate Actions", bold: true })
-            ],
-            spacing: { after: 100 }
-        }),
-        new Paragraph({
-            text: "   • Block all accounts identified in CRITICAL risk rings",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Freeze pending transactions from HIGH risk ring members",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Initiate manual review for all flagged patterns",
-            spacing: { after: 200 }
-        }),
-        new Paragraph({
-            children: [
-                new TextRun({ text: "2. ", bold: true }),
-                new TextRun({ text: "Short-Term Improvements (1-2 weeks)", bold: true })
-            ],
-            spacing: { after: 100 }
-        }),
-        new Paragraph({
-            text: "   • Implement velocity monitoring for rapid transaction sequences",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Add validation for gibberish or fake billing names",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Deploy card country vs IP country mismatch detection",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Enhance email domain validation rules",
-            spacing: { after: 200 }
-        }),
-        new Paragraph({
-            children: [
-                new TextRun({ text: "3. ", bold: true }),
-                new TextRun({ text: "Long-Term Strategy (1-3 months)", bold: true })
-            ],
-            spacing: { after: 100 }
-        }),
-        new Paragraph({
-            text: "   • Implement device fingerprinting for better user identification",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Deploy machine learning models for real-time fraud scoring",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Establish automated fraud ring detection pipeline",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Build merchant risk profiling system",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Create cross-border transaction monitoring dashboard",
-            spacing: { after: 200 }
-        })
+    children.push(new Paragraph({ children: [new PageBreak()] }));
+
+    // ═══════════════════════════════════════════════════════════════
+    // 3. THE BIG PICTURE — CROSS-RING INSIGHTS
+    // ═══════════════════════════════════════════════════════════════
+    children.push(
+        new Paragraph({ text: '3. The Big Picture', heading: HeadingLevel.HEADING_1, spacing: { before: 200, after: 200 } }),
     );
 
-    // ========================================================================
-    // TECHNICAL DETAILS
-    // ========================================================================
-    sections.push(
-        new Paragraph({ text: "" }), // Spacer
-        new Paragraph({
-            text: "TECHNICAL DETAILS",
-            heading: HeadingLevel.HEADING_1,
-            spacing: { before: 400, after: 200 }
-        }),
-        new Paragraph({
-            children: [
-                new TextRun({ text: "Detection Methods:", bold: true })
-            ],
-            spacing: { after: 100 }
-        }),
-        new Paragraph({
-            text: "   • Advanced fraud detection engine with multi-dimensional analysis",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Network graph analysis for fraud ring identification",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Pattern recognition for fake identities and geographic mismatches",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • Weighted risk scoring algorithm (members×0.3 + amount×0.4 + transactions×0.3)",
-            spacing: { after: 200 }
-        }),
-        new Paragraph({
-            children: [
-                new TextRun({ text: "Risk Level Classification:", bold: true })
-            ],
-            spacing: { after: 100 }
-        }),
-        new Paragraph({
-            text: "   • CRITICAL: Risk score 80-100% - Immediate action required",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • HIGH: Risk score 60-79% - Priority investigation needed",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • MEDIUM: Risk score 40-59% - Enhanced monitoring recommended",
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "   • LOW: Risk score 0-39% - Standard monitoring sufficient",
-            spacing: { after: 200 }
-        })
+    // Cross-ring comparison table
+    if (rings.length > 1) {
+        children.push(prose('How do the confirmed rings compare? This side-by-side view reveals whether they share tactics or represent independent threats.', { italic: true, color: '666666' }));
+
+        const compSignals = ['device_reuse', 'geo_mismatch_rate', 'micro_amount_ratio', 'merchant_concentration', 'ring_burst_score', 'disposable_email', 'subnet_reuse', 'night_txn'];
+        const compLabels = { device_reuse: 'Device Reuse', geo_mismatch_rate: 'Geo Mismatch', micro_amount_ratio: 'Micro Amounts', merchant_concentration: 'Merchant Conc.', ring_burst_score: 'Ring Burst', disposable_email: 'Disp. Email', subnet_reuse: 'Subnet Reuse', night_txn: 'Night Activity' };
+
+        const header = [hCell('Signal', 25)];
+        sortedRings.forEach(r => header.push(hCell((r.ring_name || r.ring_id).substring(0, 20), Math.floor(75 / sortedRings.length))));
+        const compRows = [new TableRow({ children: header })];
+
+        compSignals.forEach(sig => {
+            const cells = [dCell(compLabels[sig] || sig, { bold: true })];
+            sortedRings.forEach(r => {
+                const em = r.evidence_metrics || r.evidence || {};
+                const val = em[sig] || 0;
+                const bg = val >= 0.8 ? 'FDECEC' : val >= 0.6 ? 'FEF3E2' : val >= 0.3 ? 'FEF9E7' : 'ECFDF5';
+                const level = val >= 0.8 ? 'CRITICAL' : val >= 0.6 ? 'HIGH' : val >= 0.3 ? 'MEDIUM' : 'LOW';
+                cells.push(dCell(`${bar(val)} ${pct(val)}`, { bg, color: riskColor(level) }));
+            });
+            compRows.push(new TableRow({ children: cells }));
+        });
+
+        children.push(new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: compRows }));
+    }
+
+    // Cross-ring narrative insights
+    const allDevices = new Set(), allIPs = new Set(), allBINs = new Set(), allEmails = new Set();
+    let maxGeo = 0, maxDevice = 0, maxBurst = 0, maxMicro = 0;
+    rings.forEach(r => {
+        (r.top_devices || []).forEach(d => allDevices.add(d));
+        (r.top_ip_prefixes_24 || []).forEach(ip => allIPs.add(ip));
+        (r.top_bins || []).forEach(b => allBINs.add(b));
+        (r.top_email_domains || []).forEach(e => allEmails.add(e));
+        const em = r.evidence_metrics || r.evidence || {};
+        maxGeo = Math.max(maxGeo, em.geo_mismatch_rate || 0);
+        maxDevice = Math.max(maxDevice, em.device_reuse || 0);
+        maxBurst = Math.max(maxBurst, em.ring_burst_score || em.burst_score || 0);
+        maxMicro = Math.max(maxMicro, em.micro_amount_ratio || 0);
+    });
+
+    children.push(prose('Key Patterns Across All Rings:', { bold: true, size: 24, before: 300 }));
+
+    if (allDevices.size > 0) children.push(prose(
+        `Across all rings, ${allDevices.size} unique device fingerprint${allDevices.size > 1 ? 's were' : ' was'} flagged. Device reuse peaks at ${pct(maxDevice)}, meaning the same physical devices are being used to operate accounts across ring boundaries. This is the single most reliable indicator of coordinated fraud.`
+    ));
+    if (maxGeo > 0.3) children.push(prose(
+        `Geographic inconsistency is a recurring theme, reaching ${pct(maxGeo)} in the worst case. Fraudsters are using cards issued in one country while connecting from IP addresses in another — a pattern that legitimate users rarely exhibit at this scale.`
+    ));
+    if (maxBurst > 0.3) children.push(prose(
+        `Temporal analysis reveals coordinated timing with burst scores up to ${pct(maxBurst)}. Ring members are not transacting independently — they're operating in synchronized windows, which strongly suggests a central operator or automated tooling.`
+    ));
+    if (allEmails.size > 0) children.push(prose(
+        `Disposable email domains (${[...allEmails].join(', ')}) appear across ring accounts. These throwaway addresses are created solely for fraud operations and should be blocklisted.`
+    ));
+
+    // Suspicious clusters note
+    const sc = metrics.suspicious_clusters || 0;
+    if (sc > 0) {
+        children.push(prose('Beyond the Confirmed Rings:', { bold: true, size: 24, before: 300 }));
+        children.push(prose(
+            `In addition to the ${totalRings} confirmed ring${totalRings !== 1 ? 's' : ''}, our analysis identified ${sc} suspicious cluster${sc !== 1 ? 's' : ''} that fell below the confirmation threshold. These clusters share some fraud indicators but lack sufficient evidence for conclusive classification. They should be monitored — some may graduate to confirmed rings as more data becomes available.`
+        ));
+    }
+
+    children.push(new Paragraph({ children: [new PageBreak()] }));
+
+    // ═══════════════════════════════════════════════════════════════
+    // 4. WHAT TO DO NOW — PRIORITIZED ACTIONS
+    // ═══════════════════════════════════════════════════════════════
+    children.push(
+        new Paragraph({ text: '4. What To Do Now', heading: HeadingLevel.HEADING_1, spacing: { before: 200, after: 200 } }),
+        prose('Actions are prioritized by urgency and tied directly to the evidence uncovered in this investigation.', { italic: true, color: '666666' }),
     );
 
-    // ========================================================================
+    // Immediate
+    children.push(prose('Immediate (within 24 hours)', { bold: true, size: 24, color: 'DC2626', before: 200 }));
+    if (allDevices.size > 0) children.push(bullet(`Block device fingerprints: ${[...allDevices].slice(0, 5).join(', ')}. These are the connective tissue between ring accounts.`, 'DC2626'));
+    if (allIPs.size > 0) children.push(bullet(`Rate-limit or block IP subnets: ${[...allIPs].slice(0, 5).map(ip => ip + '.*').join(', ')}. Ring members route through these networks.`, 'DC2626'));
+    children.push(bullet(`Freeze the ${totalMembers} flagged accounts pending manual review. Focus first on accounts in HIGH-severity rings.`, 'DC2626'));
+
+    // Short-term
+    children.push(prose('Short-Term (within 1 week)', { bold: true, size: 24, color: 'EA580C', before: 200 }));
+    if (allEmails.size > 0) children.push(bullet(`Add ${[...allEmails].join(', ')} to the email domain blocklist.`));
+    if (allBINs.size > 0) children.push(bullet(`Apply enhanced verification (3DS, step-up auth) for card BINs: ${[...allBINs].join(', ')}.`));
+    if (maxGeo > 0.3) children.push(bullet(`Deploy card-country vs. IP-country validation rules. Current mismatch rate: ${pct(maxGeo)}.`));
+    if (maxMicro > 0.2) children.push(bullet(`Implement micro-transaction velocity limits to catch card-testing patterns early.`));
+
+    // Long-term
+    children.push(prose('Long-Term (ongoing)', { bold: true, size: 24, color: '3B82F6', before: 200 }));
+    children.push(bullet('Integrate real-time graph analysis into the transaction pipeline for continuous ring detection.'));
+    children.push(bullet('Build feedback loops — confirmed fraud cases should retrain the model to improve future detection.'));
+    children.push(bullet(`Monitor the ${sc} suspicious clusters for escalation. Set alerts if their confidence scores rise.`));
+    children.push(bullet('Implement cross-merchant fraud intelligence sharing to detect rings operating across platforms.'));
+
+    children.push(new Paragraph({ children: [new PageBreak()] }));
+
+    // ═══════════════════════════════════════════════════════════════
+    // 5. DATA PROVENANCE & METHODOLOGY
+    // ═══════════════════════════════════════════════════════════════
+    children.push(
+        new Paragraph({ text: '5. Data Provenance & Methodology', heading: HeadingLevel.HEADING_1, spacing: { before: 200, after: 200 } }),
+        prose('This section documents the input data and detection parameters for audit and reproducibility purposes.', { italic: true, color: '666666' }),
+    );
+
+    children.push(new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        rows: [
+            new TableRow({ children: [hCell('Property', 35), hCell('Value', 65)] }),
+            new TableRow({ children: [dCell('Records Analyzed'), dCell((dataProof.row_count || data.records_processed || 0).toLocaleString())] }),
+            new TableRow({ children: [dCell('Unique Users'), dCell((dataProof.unique_user_count || dataProof.unique_user_ids || 0).toLocaleString())] }),
+            new TableRow({ children: [dCell('Unique Transactions'), dCell((dataProof.unique_tx_count || dataProof.unique_transaction_ids || 0).toLocaleString())] }),
+            new TableRow({ children: [dCell('Amount Range'), dCell(`${fmt$(dataProof.amount_min)} — ${fmt$(dataProof.amount_max)} (mean: ${fmt$(dataProof.amount_mean)})`)] }),
+            new TableRow({ children: [dCell('Time Window'), dCell(`${dataProof.timestamp_min || 'N/A'} to ${dataProof.timestamp_max || 'N/A'}`)] }),
+            new TableRow({ children: [dCell('SHA-256 Input Hash'), dCell(dataProof.sha256_input_file || 'N/A', { color: '3B82F6' })] }),
+            new TableRow({ children: [dCell('Model'), dCell('Calibrated Pipeline v2 (calibrated_v2)')] }),
+            new TableRow({ children: [dCell('Detection Algorithm'), dCell('Louvain Community Detection (constrained)')] }),
+            new TableRow({ children: [dCell('Ring Confidence Floor'), dCell('55%')] }),
+            new TableRow({ children: [dCell('Tx Risk Threshold'), dCell('60 / 100')] }),
+            new TableRow({ children: [dCell('Account Risk Threshold'), dCell('50 / 100')] }),
+            new TableRow({ children: [dCell('Exposure Method'), dCell(metrics.exposure_method || 'expected_loss')] }),
+        ],
+    }));
+
+    // ═══════════════════════════════════════════════════════════════
     // FOOTER
-    // ========================================================================
-    sections.push(
-        new Paragraph({ text: "" }), // Spacer
-        new Paragraph({ text: "" }), // Spacer
-        new Paragraph({
-            text: "─────────────────────────────────────────────────────────────────",
-            alignment: AlignmentType.CENTER,
-            spacing: { before: 400, after: 100 }
-        }),
-        new Paragraph({
-            text: "This report is confidential and intended for authorized personnel only.",
-            alignment: AlignmentType.CENTER,
-            italics: true,
-            spacing: { after: 50 }
-        }),
-        new Paragraph({
-            text: "Generated by Advanced Fraud Ring Detection System",
-            alignment: AlignmentType.CENTER,
-            italics: true
-        })
+    // ═══════════════════════════════════════════════════════════════
+    children.push(
+        new Paragraph({ text: '', spacing: { before: 600 } }),
+        divider(),
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: 'CONFIDENTIAL', size: 20, bold: true, color: 'AAAAAA' }),
+        ], spacing: { after: 60 } }),
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: 'This report contains sensitive fraud intelligence and is intended for authorized personnel only.', size: 18, color: '999999', italics: true }),
+        ], spacing: { after: 40 } }),
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [
+            new TextRun({ text: 'Automated analysis by FRS — FraudRingsSeeker v2.0', size: 18, color: 'AAAAAA' }),
+        ]}),
     );
 
-    // ========================================================================
-    // CREATE DOCUMENT
-    // ========================================================================
-    const doc = new Document({
-        sections: [{
-            properties: {},
-            children: sections
-        }]
-    });
-
-    // Generate and download
+    const doc = new Document({ sections: [{ properties: { page: { margin: { top: 1000, bottom: 1000, left: 1200, right: 1200 } } }, children }] });
     const blob = await Packer.toBlob(doc);
-    const fileName = `fraud-detection-report-${new Date().toISOString().slice(0, 10)}.docx`;
-    saveAs(blob, fileName);
+    saveAs(blob, `fraud-investigation-${new Date().toISOString().slice(0, 10)}.docx`);
 }
 
-// Page load animation
+// ============================================================================
+// HEALTH CHECK & SYSTEM STATUS
+// ============================================================================
+
+async function checkHealth() {
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const footerDot = document.getElementById('footerDot');
+    const footerStatus = document.getElementById('footerStatus');
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    try {
+        const resp = await fetch('/health', { signal: controller.signal });
+        clearTimeout(timeoutId);
+        const online = resp.ok;
+
+        if (statusDot) statusDot.className = 'status-dot ' + (online ? 'online' : 'offline');
+        if (statusText) statusText.textContent = online ? 'System Online' : 'API Error ' + resp.status;
+        if (footerDot) footerDot.className = 'footer-dot ' + (online ? 'online' : 'offline');
+        if (footerStatus) footerStatus.textContent = online ? 'API: Connected' : 'API: Error ' + resp.status;
+    } catch (e) {
+        clearTimeout(timeoutId);
+        if (statusDot) statusDot.className = 'status-dot offline';
+        if (statusText) statusText.textContent = 'System Offline';
+        if (footerDot) footerDot.className = 'footer-dot offline';
+        if (footerStatus) footerStatus.textContent = 'API: Offline';
+    }
+}
+
+function updateFooterTime() {
+    const el = document.getElementById('footerTime');
+    if (el) {
+        el.textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+}
+
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize network background
-    initNetworkBackground();
+    checkHealth();
+    setInterval(checkHealth, 60000);
 
-    // Add fade-in animation to main sections
-    const sections = document.querySelectorAll('nav, .max-w-7xl > div');
-    sections.forEach((section, index) => {
-        section.style.opacity = '0';
-        section.style.animation = `fadeIn 0.6s ease-out ${index * 0.1}s forwards`;
-    });
-
-    // Add hover effect sound feedback (visual only, no actual sound)
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach(button => {
-        button.addEventListener('mouseenter', () => {
-            button.style.transition = 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
-        });
-    });
+    updateFooterTime();
+    setInterval(updateFooterTime, 30000);
 });

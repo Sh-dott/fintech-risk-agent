@@ -3,7 +3,7 @@ Dependency injection and metrics tracking for Risk Decision Engine API
 """
 
 from datetime import datetime
-from app.core.decision_engine import RiskDecisionEngine
+from ..core.decision_engine import RiskDecisionEngine
 
 # Initialize decision engine (lazy loaded to avoid startup delays)
 engine = None
